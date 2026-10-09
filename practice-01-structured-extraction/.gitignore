@@ -1,0 +1,15 @@
+# Your own runs from the notebook (results and call logs). The lecturer's reference runs
+# (runs/<setup>/) and the replay files (data/replay/) are in git on purpose.
+runs/my-*/
+runs/nb_check/
+# Executed copies of the notebook
+notebooks/*.nbconvert.ipynb
+.env
+*.log
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+.idea/
+.vscode/

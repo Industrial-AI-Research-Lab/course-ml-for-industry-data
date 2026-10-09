@@ -1,0 +1,33 @@
+equipment_id,equipment_type,area,name
+P-101,pump,Pump station 1,pump P-101
+P-101A,pump,Pump station 1,pump P-101A
+P-102A,pump,Pump station 1,pump P-102A
+P-102B,pump,Pump station 1,pump P-102B
+P-103,pump,Pump station 1,pump P-103
+P-104,pump,Pump station 1,pump P-104
+P-201,pump,Pump station 2,pump P-201
+P-202A,pump,Pump station 2,pump P-202A
+P-202B,pump,Pump station 2,pump P-202B
+P-301,pump,Water treatment,pump P-301
+K-110,compressor,Compressor house,compressor K-110
+K-120,compressor,Compressor house,compressor K-120
+K-210,compressor,Compressor house,compressor K-210
+F-130,fan,Cooling tower,fan F-130
+F-131,fan,Cooling tower,fan F-131
+F-230,fan,Boiler house,fan F-230
+M-101,electric_motor,Pump station 1,motor M-101
+M-102,electric_motor,Pump station 1,motor M-102
+M-201,electric_motor,Pump station 2,motor M-201
+M-310,electric_motor,Water treatment,motor M-310
+V-112,valve,Pump station 1,valve V-112
+V-113,valve,Pump station 1,valve V-113
+V-214,valve,Pump station 2,valve V-214
+XV-301,valve,Water treatment,valve XV-301
+FV-305,valve,Water treatment,valve FV-305
+E-140,heat_exchanger,Compressor house,heat exchanger E-140
+E-141,heat_exchanger,Compressor house,heat exchanger E-141
+E-240,heat_exchanger,Boiler house,heat exchanger E-240
+CV-401,conveyor,Warehouse,conveyor CV-401
+CV-402,conveyor,Warehouse,conveyor CV-402
+GB-401,gearbox,Warehouse,gearbox GB-401
+GB-402,gearbox,Warehouse,gearbox GB-402

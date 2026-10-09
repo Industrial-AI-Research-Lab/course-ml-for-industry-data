@@ -1,0 +1,28 @@
+{
+  "name": "local-structured-schema-only",
+  "n": 50,
+  "valid_first_pct": 24.0,
+  "valid_final_pct": 96.0,
+  "field_accuracy_pct": 76.2,
+  "record_exact_pct": 14.0,
+  "invented_pct": 12.5,
+  "missed_pct": 12.5,
+  "latency_median_s": 2.76,
+  "latency_p90_s": 3.77,
+  "tokens_in_avg": 476,
+  "tokens_out_avg": 239,
+  "cost_per_1000_usd": 0.0,
+  "per_field_pct": {
+    "equipment_id": 74.0,
+    "equipment_type": 88.0,
+    "work_type": 68.0,
+    "failure_mode": 40.0,
+    "replaced_parts": 80.0,
+    "duration_hours": 90.0,
+    "work_date": 96.0,
+    "downtime": 74.0
+  },
+  "mode": "structured-schema-only",
+  "model": "qwen3.5:4b-q4_K_M",
+  "profile": "local"
+}

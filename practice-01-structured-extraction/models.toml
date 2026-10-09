@@ -1,0 +1,105 @@
+# Model profiles. The code never hard-codes a model: pick a profile by name.
+# Values like "${A|B}" are read from environment variables (first one that is set).
+# Secrets live only in .env (see .env.example), never in this file.
+#
+# Prices are USD per 1M tokens. LiteLLM prices were read from /model_group/info on 2026-10-06.
+# Self-hosted models (Ollama, course Qwen, iairlab/*) cost 0 USD per token; you pay with hardware.
+
+[defaults]
+timeout_s = 120
+max_tokens = 1500
+temperature = 0.0
+concurrency = 4
+# LiteLLM caches identical requests. A unique "user" field per run bypasses the cache,
+# so latency and randomness are measured honestly.
+bypass_proxy_cache = true
+
+# ---------- available to students ----------
+
+[profiles.local]
+description = "Small open-weight model on your laptop via Ollama (Qwen3.5 4B, Q4)"
+base_url = "${LOCAL_LLM_BASE_URL:-http://localhost:11434/v1}"
+api_key = "ollama"
+model = "${LOCAL_LLM_MODEL:-qwen3.5:4b-q4_K_M}"
+concurrency = 1
+bypass_proxy_cache = false
+extra_body = { reasoning_effort = "none" }
+
+[profiles.local-small]
+description = "Smaller fallback model for weak laptops (Qwen3.5 2B, Q4)"
+base_url = "${LOCAL_LLM_BASE_URL:-http://localhost:11434/v1}"
+api_key = "ollama"
+model = "${LOCAL_SMALL_LLM_MODEL:-qwen3.5:2b-q4_K_M}"
+concurrency = 1
+# On a CPU-only laptop one answer can take a minute or more: give the model time instead of failing.
+timeout_s = 300
+bypass_proxy_cache = false
+extra_body = { reasoning_effort = "none" }
+
+[profiles.course]
+description = "Course model Qwen 3.8 27B via LiteLLM + vLLM, thinking off"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
+model = "iairlab/qwen3.8-27b"
+concurrency = 8
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+
+[profiles.course-thinking]
+description = "Course model Qwen 3.8 27B, thinking on"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
+model = "iairlab/qwen3.8-27b"
+concurrency = 8
+max_tokens = 8000
+extra_body = { chat_template_kwargs = { enable_thinking = true } }
+
+# ---------- lecturer only (students see these models through replay files) ----------
+
+[profiles.gpt-oss-120b]
+description = "gpt-oss-120b, self-hosted open-weight (lecturer key)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|LITE_LLM_TOKEN_FULL}"
+model = "iairlab/gpt-oss-120b"
+concurrency = 8
+max_tokens = 3000
+extra_body = { reasoning_effort = "low" }
+
+[profiles."gpt-6.1-sol"]
+description = "OpenAI gpt-6.1-sol, frontier API (lecturer key)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|LITE_LLM_TOKEN_FULL}"
+model = "openai/gpt-6.1-sol"
+price_in_per_m = 2.00
+price_out_per_m = 10.00
+concurrency = 4
+max_tokens = 3000
+extra_body = { reasoning_effort = "low" }
+
+[profiles."gpt-6-luna"]
+description = "OpenAI gpt-6-luna, small frontier API (lecturer key)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|LITE_LLM_TOKEN_FULL}"
+model = "openai/gpt-6-luna"
+price_in_per_m = 0.10
+price_out_per_m = 0.50
+concurrency = 4
+max_tokens = 3000
+extra_body = { reasoning_effort = "low" }
+
+[profiles.claude-sonnet-5]
+description = "Anthropic Claude Sonnet 5 via OpenRouter (lecturer key)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|LITE_LLM_TOKEN_FULL}"
+model = "openrouter/anthropic/claude-sonnet-5"
+price_in_per_m = 2.00
+price_out_per_m = 10.00
+concurrency = 4
+
+[profiles."deepseek-v3.2"]
+description = "DeepSeek V3.2 via OpenRouter, large open-weight model (lecturer key)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|LITE_LLM_TOKEN_FULL}"
+model = "openrouter/deepseek/deepseek-v3.2"
+price_in_per_m = 0.26
+price_out_per_m = 0.38
+concurrency = 4

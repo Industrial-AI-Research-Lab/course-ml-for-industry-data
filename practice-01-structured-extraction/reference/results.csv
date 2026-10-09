@@ -1,0 +1,16 @@
+setup,"valid 1st try, %","valid final, %","field accuracy, %","all fields right, %","invented, %","median latency, s",USD per 1000 records
+rules,100.0,100.0,94.5,56.0,0.0,0.0,0.0
+local-baseline,20.0,20.0,18.0,12.0,4.2,1.13,0.0
+local-structured-schema-only,24.0,96.0,76.2,14.0,12.5,2.76,0.0
+local-structured,50.0,98.0,89.8,58.0,16.7,1.64,0.0
+local-small-structured,22.0,60.0,50.8,18.0,27.1,1.69,0.0
+course-baseline,80.0,80.0,77.8,62.0,0.0,1.68,0.0
+course-structured-schema-only,58.0,98.0,85.2,24.0,8.3,3.48,0.0
+course-structured,62.0,100.0,99.8,98.0,0.0,3.12,0.0
+course-thinking-structured,72.0,100.0,98.8,90.0,2.1,11.89,0.0
+gpt-oss-120b-structured,46.0,100.0,98.2,88.0,2.1,11.93,0.0
+deepseek-v3.2-structured,58.0,100.0,97.5,86.0,2.1,34.68,0.287
+gpt-6-luna-structured,72.0,100.0,98.8,90.0,0.0,4.12,0.238
+gpt-6.1-sol-structured,42.0,100.0,99.0,92.0,0.0,6.35,5.02
+claude-sonnet-5-structured,94.0,100.0,99.2,94.0,4.2,4.8,7.043
+local-structured+course-fallback,50.0,100.0,91.8,60.0,16.7,1.76,0.0

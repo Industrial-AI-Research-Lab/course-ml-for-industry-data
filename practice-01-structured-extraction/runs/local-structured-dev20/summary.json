@@ -1,0 +1,28 @@
+{
+  "name": "local-structured-dev20",
+  "n": 20,
+  "valid_first_pct": 35.0,
+  "valid_final_pct": 100.0,
+  "field_accuracy_pct": 91.9,
+  "record_exact_pct": 55.0,
+  "invented_pct": 11.1,
+  "missed_pct": 3.5,
+  "latency_median_s": 2.05,
+  "latency_p90_s": 2.57,
+  "tokens_in_avg": 952,
+  "tokens_out_avg": 251,
+  "cost_per_1000_usd": 0.0,
+  "per_field_pct": {
+    "equipment_id": 80.0,
+    "equipment_type": 85.0,
+    "work_type": 95.0,
+    "failure_mode": 100.0,
+    "replaced_parts": 100.0,
+    "duration_hours": 90.0,
+    "work_date": 100.0,
+    "downtime": 85.0
+  },
+  "mode": "structured",
+  "model": "qwen3.5:4b-q4_K_M",
+  "profile": "local"
+}
