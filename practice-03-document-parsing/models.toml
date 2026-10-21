@@ -1,0 +1,57 @@
+# Model profiles. The code never hard-codes a model: pick a profile by name.
+# Values like "${A|B}" are read from environment variables (first one that is set).
+# Secrets live only in .env (see .env.example), never in this file.
+#
+# Every profile below is also a VLM: it accepts images (a scanned page, a drawing, a photo) through the
+# same OpenAI-compatible API. Prices are USD per 1M tokens; self-hosted models cost 0 USD per token.
+
+[defaults]
+timeout_s = 300
+# A scanned page in Markdown is 1,000-3,000 tokens; the limit also stops a repetition loop.
+max_tokens = 4000
+temperature = 0.0
+concurrency = 4
+# LiteLLM caches identical requests. A unique "user" field per run bypasses the cache,
+# so latency and randomness are measured honestly.
+bypass_proxy_cache = true
+
+# ---------- available to students ----------
+
+[profiles.local]
+description = "Small open-weight VLM on your laptop via Ollama (Qwen3.5 4B, Q4, vision)"
+base_url = "${LOCAL_LLM_BASE_URL:-http://localhost:11434/v1}"
+api_key = "ollama"
+model = "${LOCAL_LLM_MODEL:-qwen3.5:4b-q4_K_M}"
+concurrency = 1
+bypass_proxy_cache = false
+extra_body = { reasoning_effort = "none" }
+
+[profiles.course]
+description = "Course model Qwen 3.8 27B (multimodal) via LiteLLM + vLLM, thinking off"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
+model = "iairlab/qwen3.8-27b"
+concurrency = 8
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+
+# ---------- lecturer only (students see this model through replay files) ----------
+
+[profiles."gpt-6.1-sol"]
+description = "OpenAI gpt-6.1-sol, frontier API (lecturer key)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|LITE_LLM_TOKEN_FULL}"
+model = "openai/gpt-6.1-sol"
+price_in_per_m = 2.00
+price_out_per_m = 10.00
+concurrency = 4
+max_tokens = 8000
+extra_body = { reasoning_effort = "low" }
+
+[profiles.dots-ocr]
+description = "dots.ocr 1.5, document VLM: layout boxes + text (lecturer key, self-hosted)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|LITE_LLM_TOKEN_FULL}"
+model = "iairlab/dots.ocr-1.5"
+concurrency = 4
+# a page in layout JSON is 1,500-3,000 tokens; the limit leaves room for dense pages
+max_tokens = 8000

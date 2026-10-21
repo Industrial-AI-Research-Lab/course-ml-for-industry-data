@@ -1,0 +1,11 @@
+{
+ "manufacturer": "АО «Учебный насосный завод»",
+ "model": "НК 65/35-125",
+ "serial_number": "101-2019-0457",
+ "year": 2019,
+ "flow_m3h": 65,
+ "head_m": 125,
+ "speed_rpm": 2950,
+ "power_kw": 55,
+ "mass_kg": 640
+}

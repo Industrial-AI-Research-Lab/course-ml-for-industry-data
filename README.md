@@ -19,9 +19,10 @@ engineer work with maintenance logs, regulations and equipment data.
 | # | Practice | Topic | What you build | Folder |
 |---|----------|-------|----------------|--------|
 | 1 | Structured extraction from maintenance logs | LLM-based systems in industry | typed schema, constrained output, business rules, retry, rules baseline, model comparison, call logs | [practice-01-structured-extraction/](practice-01-structured-extraction/) |
+| 3 | Reading industrial documents: six readers, one regulation | Industrial documents | triage, text layer / OCR / Docling / document VLM / VLM readers, reading metrics beyond CER, tables, a VLM on a drawing and a nameplate, chunk store with metadata and revisions, mini-eval with paired comparison | [practice-03-document-parsing/](practice-03-document-parsing/) |
 
-Practices for topics 2–7 (evaluation, industrial documents, RAG, tools and agents, LLMOps, safety and
-security) will appear here after the corresponding lectures.
+Practices for the other topics (evaluation, RAG, tools and agents, LLMOps, safety and security) will
+appear here after the corresponding lectures.
 
 ## How to start
 

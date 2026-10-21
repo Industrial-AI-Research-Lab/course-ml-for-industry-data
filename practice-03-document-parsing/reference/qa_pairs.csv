@@ -1,0 +1,10 @@
+A,B,A − B,95% CI,only A right,only B right,verdict
+"Qwen 3.8 27B, course VLM",Docling (+EasyOCR),+42%,+28% … +56%,22,1,A is better
+Docling (+EasyOCR),EasyOCR,-28%,-42% … -14%,1,15,A is worse
+"Qwen 3.8 27B, course VLM",EasyOCR,+14%,+4% … +26%,8,1,A is better
+EasyOCR,"PyMuPDF, text layer",+68%,+54% … +80%,34,0,A is better
+"dots.ocr 1.5, document VLM (replay)",Docling (+EasyOCR),+42%,+28% … +56%,22,1,A is better
+"dots.ocr 1.5, document VLM (replay)","Qwen 3.8 27B, course VLM",+0%,+0% … +0%,0,0,not different
+"Qwen 3.8 27B, course VLM","Qwen3.5 4B, local VLM",+0%,+0% … +0%,0,0,not different
+gpt-6.1-sol (replay),"Qwen 3.8 27B, course VLM",+0%,+0% … +0%,0,0,not different
+Born-digital original (ceiling),"Qwen 3.8 27B, course VLM",+0%,+0% … +0%,0,0,not different
