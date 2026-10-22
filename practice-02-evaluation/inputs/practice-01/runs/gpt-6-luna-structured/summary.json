@@ -1,0 +1,28 @@
+{
+  "name": "gpt-6-luna-structured",
+  "n": 50,
+  "valid_first_pct": 72.0,
+  "valid_final_pct": 100.0,
+  "field_accuracy_pct": 98.8,
+  "record_exact_pct": 90.0,
+  "invented_pct": 0.0,
+  "missed_pct": 0.9,
+  "latency_median_s": 4.12,
+  "latency_p90_s": 7.36,
+  "tokens_in_avg": 1265,
+  "tokens_out_avg": 222,
+  "cost_per_1000_usd": 0.238,
+  "per_field_pct": {
+    "equipment_id": 100.0,
+    "equipment_type": 100.0,
+    "work_type": 98.0,
+    "failure_mode": 96.0,
+    "replaced_parts": 98.0,
+    "duration_hours": 98.0,
+    "work_date": 100.0,
+    "downtime": 100.0
+  },
+  "mode": "structured",
+  "model": "openai/gpt-6-luna",
+  "profile": "gpt-6-luna"
+}

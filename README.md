@@ -19,8 +19,9 @@ engineer work with maintenance logs, regulations and equipment data.
 | # | Practice | Topic | What you build | Folder |
 |---|----------|-------|----------------|--------|
 | 1 | Structured extraction from maintenance logs | LLM-based systems in industry | typed schema, constrained output, business rules, retry, rules baseline, model comparison, call logs | [practice-01-structured-extraction/](practice-01-structured-extraction/) |
+| 2 | An evaluation harness | Evaluating LLM systems | golden set with tags, per-case scoring and slices, error analysis, code checks, LLM judge tested against human labels, paired comparison, prediction-powered inference, regression gate | [practice-02-evaluation/](practice-02-evaluation/) |
 
-Practices for topics 2–7 (evaluation, industrial documents, RAG, tools and agents, LLMOps, safety and
+Practices for topics 3–7 (industrial documents, RAG, tools and agents, LLMOps, safety and
 security) will appear here after the corresponding lectures.
 
 ## How to start

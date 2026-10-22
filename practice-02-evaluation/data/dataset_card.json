@@ -1,0 +1,41 @@
+{
+  "created_with": {
+    "profile": "gpt-oss-120b",
+    "model": "iairlab/gpt-oss-120b",
+    "temperature": 1.0,
+    "seed": 2026
+  },
+  "wording": {
+    "hint": 153,
+    "free": 147
+  },
+  "records_with_typos": 74,
+  "n_records": 300,
+  "text_source": {
+    "llm": 289,
+    "template": 11
+  },
+  "llm_attempts_needed": {
+    "1": 227,
+    "2": 50,
+    "3": 12
+  },
+  "languages": {
+    "en": 73,
+    "ru": 180,
+    "mixed": 47
+  },
+  "work_types": {
+    "corrective_repair": 120,
+    "preventive_maintenance": 47,
+    "cleaning": 35,
+    "inspection": 53,
+    "adjustment": 19,
+    "lubrication": 26
+  },
+  "splits": {
+    "eval_50": 50,
+    "dev_20": 20,
+    "dev": 250
+  }
+}

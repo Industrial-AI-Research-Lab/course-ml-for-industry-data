@@ -1,0 +1,28 @@
+{
+  "name": "local-structured+course-fallback",
+  "n": 50,
+  "valid_first_pct": 50.0,
+  "valid_final_pct": 100.0,
+  "field_accuracy_pct": 91.8,
+  "record_exact_pct": 60.0,
+  "invented_pct": 16.7,
+  "missed_pct": 3.7,
+  "latency_median_s": 1.76,
+  "latency_p90_s": 2.61,
+  "tokens_in_avg": 895,
+  "tokens_out_avg": 236,
+  "cost_per_1000_usd": 0.0,
+  "per_field_pct": {
+    "equipment_id": 78.0,
+    "equipment_type": 90.0,
+    "work_type": 92.0,
+    "failure_mode": 98.0,
+    "replaced_parts": 92.0,
+    "duration_hours": 98.0,
+    "work_date": 100.0,
+    "downtime": 86.0
+  },
+  "mode": "structured",
+  "model": "qwen3.5:4b-q4_K_M",
+  "profile": "local"
+}

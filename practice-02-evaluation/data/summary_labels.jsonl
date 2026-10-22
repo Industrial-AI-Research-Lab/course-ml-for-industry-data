@@ -1,0 +1,213 @@
+{"item_id": "S-b34cdb5c", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the blockage caused the failure", "labeller": "lecturer"}
+{"item_id": "S-50874a58", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-05c9399e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-46c2e39e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6ef230f6", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-a33e964c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-7279e403", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the unit stopped because of the blockage", "labeller": "lecturer"}
+{"item_id": "S-82d8db08", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c43263b7", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-42809064", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-1cb00fce", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-52b5a170", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-f833ee65", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-de77db54", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4f4b7792", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-fde7012e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-5edcca31", "label": "FAIL", "rule": "term", "note": "'saddle' is a wrong translation of 'седло' (valve seat)", "labeller": "lecturer"}
+{"item_id": "S-42cd6c5f", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-ebb80199", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e81e61ec", "label": "FAIL", "rule": "added_fact", "note": "the entry does not say where the blockage was; 'filter clogged' is a guess", "labeller": "lecturer"}
+{"item_id": "S-581d3260", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-78d5fc6d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0756ff42", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-abfe2e82", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-b58d5c5f", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c32030e8", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-a7b0de3a", "label": "FAIL", "rule": "added_fact", "note": "the entry does not say that the blockage was in the filter", "labeller": "lecturer"}
+{"item_id": "S-ed40f52c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-a29efceb", "label": "FAIL", "rule": "added_fact", "note": "the entry does not say that the filter was clogged", "labeller": "lecturer"}
+{"item_id": "S-de30a271", "label": "PASS", "rule": null, "note": "faithful, but describes the work, not the defect", "labeller": "lecturer"}
+{"item_id": "S-5ad64dd8", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-f3ff8aea", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-2758f90d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-25b3e5f0", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-bf3c8dcb", "label": "FAIL", "rule": "cause", "note": "the fan was stopped for preventive maintenance, not because of the misalignment", "labeller": "lecturer"}
+{"item_id": "S-31ee7439", "label": "PASS", "rule": null, "note": "the equipment type comes from the registry: allowed", "labeller": "lecturer"}
+{"item_id": "S-da7a3c21", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the strainer caused the failure", "labeller": "lecturer"}
+{"item_id": "S-258eb10e", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the strainer caused the failure", "labeller": "lecturer"}
+{"item_id": "S-6ce85c1b", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-bcef0e46", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-58838b99", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the unit stopped because of the strainer", "labeller": "lecturer"}
+{"item_id": "S-1d900b0c", "label": "FAIL", "rule": "contradiction", "note": "the strainer was plugged, it did not fail", "labeller": "lecturer"}
+{"item_id": "S-4cb91522", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the unit stopped because of the strainer", "labeller": "lecturer"}
+{"item_id": "S-632557dc", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-8103bb66", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d282e280", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-cc6f7d96", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-28404b55", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-2f5b4515", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-16df5f29", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-5908c865", "label": "FAIL", "rule": "added_fact", "note": "the work was an adjustment, not an inspection", "labeller": "lecturer"}
+{"item_id": "S-832849b8", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4c1b11f8", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-04d220ef", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e61604ca", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-533c1f7a", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-2055abf5", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-fa962585", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-94ee7be6", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c3b5a4cd", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-1546205d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-37637f74", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0f2d002d", "label": "FAIL", "rule": "cause", "note": "bearing wear is not stated; the entry lists symptoms and a replaced bearing", "labeller": "lecturer"}
+{"item_id": "S-818ca0cb", "label": "FAIL", "rule": "cause", "note": "bearing wear is not stated; the entry lists symptoms and a replaced bearing", "labeller": "lecturer"}
+{"item_id": "S-d1a3660b", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-416b91bf", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6505af0e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4004dcbe", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-13ec428e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-87953dfc", "label": "FAIL", "rule": "cause", "note": "bearing wear is not stated; the entry lists symptoms and a replaced bearing", "labeller": "lecturer"}
+{"item_id": "S-c42588e0", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-87e917b3", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-1f809589", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-2a854b04", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d6450a38", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-f5b9624a", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c863cf9d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-135bf82e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-3130e102", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c31131be", "label": "PASS", "rule": null, "note": "the string 'null' is a format bug (caught by a code check), not an unsupported claim", "labeller": "lecturer"}
+{"item_id": "S-e19da7c1", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-cb2e8992", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-06783222", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-75c0dbed", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-cc2aaee4", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-b1233d69", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e497ac6e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-7b6afc8f", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-fe8ad112", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0506322c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0f1dc10e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0ced995c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-ffab3a57", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-a301eaba", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e9122ec7", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-711961a2", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-cab82379", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-5721e6a1", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-3c0c9cd1", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-7accc4c6", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-98e0cf2b", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-9501cd81", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4f0f6ddb", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-09d735ab", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-626e3e10", "label": "FAIL", "rule": "contradiction", "note": "the entry reports a leak at the seal", "labeller": "lecturer"}
+{"item_id": "S-9fc4b58f", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6fea92e2", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-5cf90221", "label": "PASS", "rule": null, "note": "faithful, but describes the work, not the defect", "labeller": "lecturer"}
+{"item_id": "S-d71a51e3", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the failure was caused by misalignment", "labeller": "lecturer"}
+{"item_id": "S-c8baaa4c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-9b9b4142", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e81c06b6", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-dba01168", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e50f0791", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-19b82510", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-487accc9", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-01170580", "label": "FAIL", "rule": "term", "note": "'refurbishment' is a wrong translation of 'расцентровка'", "labeller": "lecturer"}
+{"item_id": "S-b02e47ce", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-77d359c4", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-86037455", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-2de99520", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-224fd8cf", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c6fabc9d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-81f3a1de", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-1e635969", "label": "FAIL", "rule": "added_fact", "note": "'packing' is not in the entry; the leak was at the gasket", "labeller": "lecturer"}
+{"item_id": "S-6cb5ac05", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-bb7a66af", "label": "FAIL", "rule": "contradiction", "note": "a gasket was replaced, not a seal", "labeller": "lecturer"}
+{"item_id": "S-162e1b74", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c8214faf", "label": "FAIL", "rule": "cause", "note": "the entry reports misalignment and vibration, not that one caused the other", "labeller": "lecturer"}
+{"item_id": "S-551ddd5f", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-dbd07db3", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-03e7ea3f", "label": "FAIL", "rule": "cause", "note": "the entry reports misalignment and vibration, not that one caused the other", "labeller": "lecturer"}
+{"item_id": "S-4b12c1c5", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-fd467f99", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-964de101", "label": "FAIL", "rule": "cause", "note": "the entry reports misalignment and vibration, not that one caused the other", "labeller": "lecturer"}
+{"item_id": "S-e2521559", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d9c9b28c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-a9bfb22f", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-2e2fafb1", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-f343549c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-bbd12820", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-3e4b99f7", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-10732335", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e6195450", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-cca31abf", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-af3f17c1", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e0bea4de", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4744c3e1", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-64ffa07a", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c1d18f11", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6f1e26e1", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-9fd7651c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-43d76cd6", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-245ec088", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-b0ad7be2", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-afe9b680", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d5470816", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-a7d7aa6c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e1aedccc", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-f0311ce6", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6d287fa6", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-f8b87e54", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-339c7d36", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-de000b69", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-b1f6c2bd", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4c85436f", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-96e605eb", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-74149e37", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-15ba4b67", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4f5e160d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d1d03bfd", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-15d1d4b0", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6e00622c", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-dd570686", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0fda420a", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-a42fb99d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-12e04f4e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d89caab0", "label": "FAIL", "rule": "cause", "note": "the entry says 'typical of a winding fault', not that a winding fault was the cause", "labeller": "lecturer"}
+{"item_id": "S-7e612bf5", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-7ed44382", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c14cd921", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-ca9f7e30", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-fd0723b8", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-4a66f52b", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-49a0e795", "label": "FAIL", "rule": "added_fact", "note": "the entry says the leak was at the seal; the gasket is the replaced part", "labeller": "lecturer"}
+{"item_id": "S-b96632e3", "label": "PASS", "rule": null, "note": "the equipment type comes from the registry: allowed", "labeller": "lecturer"}
+{"item_id": "S-83f9d440", "label": "FAIL", "rule": "cause", "note": "bearing wear is not stated; the entry reports bearing noise", "labeller": "lecturer"}
+{"item_id": "S-f321c3b4", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6583393d", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e9da2cde", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-051770bf", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-ef15ceb9", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-539fe659", "label": "FAIL", "rule": "added_fact", "note": "bearing wear is not stated; the entry reports bearing noise", "labeller": "lecturer"}
+{"item_id": "S-59d19bba", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-b41f8681", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-101d90f0", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-ee63bb32", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-25cbe07e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d58aeeea", "label": "FAIL", "rule": "added_fact", "note": "the entry does not say that the corrosion was on the gasket", "labeller": "lecturer"}
+{"item_id": "S-9e9c0b0e", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-c86fe19b", "label": "FAIL", "rule": "added_fact", "note": "the entry does not say that the corrosion was on the gasket", "labeller": "lecturer"}
+{"item_id": "S-89ce5640", "label": "FAIL", "rule": "cause", "note": "the entry does not say that the corrosion required the gasket replacement", "labeller": "lecturer"}
+{"item_id": "S-224ed7d8", "label": "PASS", "rule": null, "note": "faithful, but describes the work, not the defect", "labeller": "lecturer"}
+{"item_id": "S-a73ebe75", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-8adc4b02", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-e12d11fd", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0e9096fb", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-d93e6769", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-0a1daf48", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-8b8b5f09", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-37387ecd", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-6e46b916", "label": "PASS", "rule": null, "note": "", "labeller": "lecturer"}
+{"item_id": "S-143168e1", "label": "FAIL", "rule": "term", "note": "'toroidal' is a wrong translation of 'торцевое' (mechanical, end-face seal)", "labeller": "lecturer"}
