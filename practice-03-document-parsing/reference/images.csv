@@ -1,0 +1,11 @@
+profile,sample,task,result,latency_s,prompt_tokens
+local,clean,pid,"tags 12/12 correct, precision 100%, recall 100%; invented: —; missed: —; title block 3/3",8.65,2713
+local,dense,pid,"tags 29/31 correct, precision 94%, recall 97%; invented: PID-R12-001, PID-R12-003; missed: F-215B; title block 3/3",5.135,4158
+local,dense,pid_tiles,"tags 28/34 correct, precision 82%, recall 93%; invented: 100-DR-011, LSL-211, P-2, PID-R12-001, PID-R12-003, PT-213; missed: HV-217, TT-213; title block 3/3",4.46,10196
+local,dense_scan,pid,"tags 16/29 correct, precision 55%, recall 53%; invented: LG-223, LPSL-211, LV-219, PD-R12-001, PD-R12-003, PI-214, PI-215A, PI-216, PT-11, PT-212A, PT-213, PT-215, PT-215B; missed: FIC-216, FT-216, LG-222, LSHH-211, LSLL-211, LT-211, PDIT-215, PI-212A, PI-212B, PT-221, TIC-214, TT-213, TT-214, XV-219; title block 3/3",2.194,2796
+local,dense_scan,pid_tiles,"tags 20/38 correct, precision 53%, recall 67%; invented: 50-CW-021, 50-CW-022, LH-211, LRL-211, LSL-211, LV-223, PC-216, PI-215, PID-R12-001, PID-R12-002, PID-R12-003, PS-214, PT-211, PT-214, PT-215, RT-216, V-206, YT-213; missed: FIC-216, FT-216, LSHH-211, LSLL-211, PDIT-215, PI-212B, PT-221, TIC-214, TT-213, TT-214; title block 3/3",4.34,4120
+local,nameplate,nameplate,fields 88%; wrong: power_kw=None,4.394,1847
+course,clean,pid,"tags 12/12 correct, precision 100%, recall 100%; invented: —; missed: —; title block 3/3",2.32,2667
+course,nameplate,nameplate,fields 100%; wrong: —,1.516,1842
+gpt-6.1-sol,clean,pid,"tags 12/12 correct, precision 100%, recall 100%; invented: —; missed: —; title block 3/3",3.76,3267
+gpt-6.1-sol,nameplate,nameplate,fields 100%; wrong: —,3.397,2551

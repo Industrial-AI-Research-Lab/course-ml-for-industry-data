@@ -1,0 +1,9 @@
+reader,clauses found,table chunks,missed (first 6)
+Born-digital original (ceiling),55/55,0,—
+"PyMuPDF, text layer",0/55,0,"1, 1.1, 1.2, 1.3, 1.4, 2"
+EasyOCR,40/55,0,"3.4, 3.5, 3.6, 3.7, 4.5.2, 6.1"
+Docling (+EasyOCR),13/55,3,"3.2, 3.3, 3.4, 3.5, 3.6, 3.7"
+"dots.ocr 1.5, document VLM (replay)",55/55,3,—
+"Qwen3.5 4B, local VLM",53/55,3,"3.2, 3.3"
+"Qwen 3.8 27B, course VLM",55/55,3,—
+gpt-6.1-sol (replay),55/55,3,—

@@ -1,0 +1,19 @@
+profile,representation,question,expected,answer,correct,reason,prompt_tokens
+course,markdown (merged cells lost),What is the inspection limit of vibration velocity for class II machines?,"4,5","4,5",True,ok,368
+course,markdown (merged cells lost),What is the stop limit of vibration velocity for class II machines?,"7,1","7,1",True,ok,368
+course,markdown (merged cells lost),What is the inspection limit of vibration velocity for class IV machines?,"11,2","11,2",True,ok,368
+course,"html (rowspan, colspan)",What is the inspection limit of vibration velocity for class II machines?,"4,5","4,5",True,ok,478
+course,"html (rowspan, colspan)",What is the stop limit of vibration velocity for class II machines?,"7,1","7,1",True,ok,478
+course,"html (rowspan, colspan)",What is the inspection limit of vibration velocity for class IV machines?,"11,2","11,2",True,ok,478
+course,json records,What is the inspection limit of vibration velocity for class II machines?,"4,5","4,5",True,ok,615
+course,json records,What is the stop limit of vibration velocity for class II machines?,"7,1","7,1",True,ok,615
+course,json records,What is the inspection limit of vibration velocity for class IV machines?,"11,2","11,2",True,ok,615
+local,markdown (merged cells lost),What is the inspection limit of vibration velocity for class II machines?,"4,5","4,5",True,ok,368
+local,markdown (merged cells lost),What is the stop limit of vibration velocity for class II machines?,"7,1","4,5",False,wrong value,368
+local,markdown (merged cells lost),What is the inspection limit of vibration velocity for class IV machines?,"11,2","18,0",False,wrong value,368
+local,"html (rowspan, colspan)",What is the inspection limit of vibration velocity for class II machines?,"4,5","4,5",True,ok,478
+local,"html (rowspan, colspan)",What is the stop limit of vibration velocity for class II machines?,"7,1","7,1",True,ok,478
+local,"html (rowspan, colspan)",What is the inspection limit of vibration velocity for class IV machines?,"11,2","18,0",False,wrong value,478
+local,json records,What is the inspection limit of vibration velocity for class II machines?,"4,5","4,5",True,ok,615
+local,json records,What is the stop limit of vibration velocity for class II machines?,"7,1","7,1",True,ok,615
+local,json records,What is the inspection limit of vibration velocity for class IV machines?,"11,2","11,2",True,ok,615

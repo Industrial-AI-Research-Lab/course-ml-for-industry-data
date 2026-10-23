@@ -1,0 +1,9 @@
+reader,accuracy,95% CI,table,text,datasheet,rare_language,not_stated,lost in reading,lost in the model
+Born-digital original (ceiling),0.98,90%–100%,14/14,17/17,6/6,5/5,7/8,0,1
+"PyMuPDF, text layer",0.16,8%–29%,0/14,0/17,0/6,0/5,8/8,42,0
+EasyOCR,0.84,71%–92%,11/14,14/17,5/6,4/5,8/8,8,0
+Docling (+EasyOCR),0.56,42%–69%,4/14,11/17,4/6,1/5,8/8,22,0
+"dots.ocr 1.5, document VLM (replay)",0.98,90%–100%,14/14,17/17,6/6,5/5,7/8,0,1
+"Qwen3.5 4B, local VLM",0.98,90%–100%,14/14,17/17,6/6,5/5,7/8,0,1
+"Qwen 3.8 27B, course VLM",0.98,90%–100%,14/14,17/17,6/6,5/5,7/8,0,1
+gpt-6.1-sol (replay),0.98,90%–100%,14/14,17/17,6/6,5/5,7/8,0,1

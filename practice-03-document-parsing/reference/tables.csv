@@ -1,0 +1,9 @@
+reader,Table 3: recovered,Table 3: lost,Table A.1: recovered,Table A.1: lost
+Born-digital original (ceiling),0/5,"I, II, III, IV, V",0/6,"P-101, P-102, P-205, K-301, K-302, B-401"
+"PyMuPDF, text layer",0/5,"I, II, III, IV, V",0/6,"P-101, P-102, P-205, K-301, K-302, B-401"
+EasyOCR,2/5,"I, II, III",3/6,"P-205, K-302, B-401"
+Docling (+EasyOCR),1/5,"I, II, III, V",1/6,"P-101, P-205, K-301, K-302, B-401"
+"dots.ocr 1.5, document VLM (replay)",5/5,—,6/6,—
+"Qwen3.5 4B, local VLM",5/5,—,6/6,—
+"Qwen 3.8 27B, course VLM",5/5,—,6/6,—
+gpt-6.1-sol (replay),5/5,—,6/6,—
