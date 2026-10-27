@@ -12,7 +12,7 @@ choose it: the class, the table), action (what to do). `build_questions.py` turn
 
 Expected: (value, unit) as written in the document; ("values", [..], unit): every number must be in the answer
 text (questions "what changed", and decisions like "is it normal, what to do": the limit and the deadline);
-("status", "not_in_documents" | "conflict").
+("status", "not_in_documents" | "conflict" | "needs_human").
 """
 
 from corpus_content import TODAY
@@ -345,3 +345,44 @@ NEW = [
 ]
 
 __all__ = ["BASE", "LANGUAGE_IDS", "NEW", "TODAY"]
+
+# ---------------------------------------------------------------------------------------------
+# "Needs a person": the norm is in the documents, but the answer depends on data about the equipment (or the
+# measurement) that no document and no registry card has. The right answer is the status needs_human: name what
+# is missing and who has it. Not part of the retrieval set: data/needs_human.jsonl, reported as its own table.
+# Registry rows: scripts/corpus_content.py (P-215, P-216, P-220A, P-220B). R-12 rev. 3: class I 2,8 / 4,5,
+# class II 4,5 / 7,1 mm/s; R-14 (station 3): class II 3,5 / 5,6.
+# ---------------------------------------------------------------------------------------------
+NEEDS_HUMAN = [
+    ("nh01", "Насос P-215 вибрирует 4,0 мм/с. Это норма?",
+     "Pump P-215 vibrates at 4.0 mm/s. Is that normal?",
+     [("answer", [T3]), ("support", ["R-12 r3 cl 4.5.2"])],
+     "registry: station 2, no power, no class, no datasheet; not in Table A.1. Class I: above 2,8, inspect within "
+     "24 h; class II: normal"),
+    ("nh02", "Насос P-220 вибрирует 5,0 мм/с. Его нужно останавливать?",
+     "Pump P-220 vibrates at 5.0 mm/s. Must it be stopped?",
+     [("answer", [T3])],
+     "no P-220 in the registry: P-220A (11 kW, class I) and P-220B (37 kW, class II). A: above 4,5, stop; "
+     "B: inspect within 24 h"),
+    ("nh03", "На насосной станции № 2 насос вибрирует 4,0 мм/с. Нужно ли его осматривать?",
+     "A pump at pump station No. 2 vibrates at 4.0 mm/s. Must it be inspected?",
+     [("answer", [T3])],
+     "no tag: station 2 has class I and class II pumps. Class I: inspect; class II: normal"),
+    ("nh04", "Насос P-216 после установки вибрирует 4,0 мм/с. Нужно ли его осматривать?",
+     "Pump P-216 vibrates at 4.0 mm/s after installation. Must it be inspected?",
+     [("answer", [T3]), ("answer", ["R-14 r1 t 3"])],
+     "spare pump, class II, station not assigned: R-12 (station 2) 4,5, normal; R-14 (station 3) 3,5, inspect. "
+     "Not a conflict: only one of the two applies, and the registry does not say which"),
+    ("nh05", "Какой смазкой смазывать подшипники насоса P-215?",
+     "Which grease must be used for the bearings of pump P-215?",
+     [("answer", ["R-12 r3 cl 7.1"])],
+     "R-12 7.1: the grease named in the datasheet; P-215 has no datasheet in the archive"),
+    ("nh06", "Насос P-101: в вертикальном направлении 4,2 мм/с, горизонтальное и осевое направления не измеряли. "
+             "Вибрация в норме?",
+     "Pump P-101: 4.2 mm/s in the vertical direction; the horizontal and axial directions were not measured. "
+     "Is the vibration normal?",
+     [("answer", ["R-12 r3 cl 4.3.1"]), ("support", [T3])],
+     "R-12 4.3.1: the result is the largest of three directions; two are missing, so 4,2 < 4,5 proves nothing. "
+     "Needs a person: measure again. The status is arguable (a careful 'answered' that asks to re-measure is also "
+     "safe); graded by status"),
+]

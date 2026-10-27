@@ -269,6 +269,44 @@ def test_grade(cases):
     assert grade(by["x01"], {"status": "not_in_documents", "value": None})[0]
     assert not grade(by["f01"], {"status": "answered", "value": "4,5"})[0]
     assert grade(by["f01"], {"status": "conflict", "value": None})[0]
+    assert grade(by["x01"], {"status": "needs_human", "value": None})[0]  # no value: accepted
+
+
+def test_outcomes_split_the_failures(cases):
+    """Every question is one of: right, false refusal, wrong, invented, invalid. The counts of the reference run."""
+    from plant_assistant.reval import failure_modes, outcome
+
+    by = {c.case_id: c for c in cases}
+    assert outcome(by["t03"], {"status": "not_in_documents", "value": None}, False) == "false refusal"
+    assert outcome(by["t03"], {"status": "needs_human", "value": None}, False) == "false refusal"
+    assert outcome(by["f01"], {"status": "answered", "value": "4,5"}, False) == "wrong"
+    assert outcome(by["x01"], {"status": "answered", "value": "16"}, False) == "invented"
+    assert outcome(by["t03"], None, False) == "invalid"
+    ref = pd.read_csv(REFERENCE_DIR / "per_question.csv")
+    got = {name: failure_modes(ref[ref.config == name]) for name in ("S0", "S6", "M3@S0", "M3@S6")}
+    assert got["S0"]["false refusals"].startswith("42/123") and got["S0"]["wrong or invented"].startswith("28")
+    assert got["S6"]["false refusals"].startswith("12/123") and got["S6"]["wrong or invented"] == "1"
+    assert got["M3@S0"]["wrong or invented"] == "27 (3 invented)"
+    assert got["M3@S6"]["invalid"] == "3"
+    for name in ("S0", "S6", "M3@S0", "M3@S6"):
+        assert ref[ref.config == name].outcome.notna().all()
+
+
+def test_needs_human_set(cases, by_id):
+    """A separate set: the right answer is "needs a person"; the registry rows it needs do not touch the 143."""
+    nh = load_cases(REPLAY_DIR.parent / "needs_human.jsonl")
+    assert 4 <= len(nh) <= 6 and {c.slice for c in nh} == {"needs_human"}
+    assert not {c.case_id for c in nh} & {c.case_id for c in cases}
+    assert all(e["chunk_ids"] for c in nh for e in c.evidence)
+    reg = load_registry()
+    assert reg["P-215"].machine_class == "" and reg["P-215"].power_kw == "" and not reg["P-215"].documents
+    assert reg["P-216"].station == "" and "P-220" not in reg and {"P-220A", "P-220B"} <= set(reg)
+    asked = " ".join(c.question_ru for c in cases)
+    assert not any(t in asked for t in ("P-215", "P-216", "P-220"))
+    case = nh[0]
+    assert grade(case, {"status": "needs_human", "value": None})[0]
+    assert not grade(case, {"status": "not_in_documents", "value": None})[0]
+    assert grade(case, {"status": "answered", "value": "2,8"}) == (False, "answered without the missing data")
 
 
 def test_citation_checks_catch_the_neighbour_clause(chunks, by_id):
@@ -336,6 +374,15 @@ def test_holdout_is_separate_and_graded(cases):
     assert 25 <= len(holdout) <= 30 and {c.slice for c in holdout} == {"holdout"}
     assert not {c.case_id for c in holdout} & {c.case_id for c in cases}
     assert all(c.note.startswith("role: ") for c in holdout)
+
+
+def test_needs_human_replay(system):
+    nh = load_cases(REPLAY_DIR.parent / "needs_human.jsonl")
+    ref = pd.read_csv(REFERENCE_DIR / "needs_human_per_question.csv")
+    for name in ("S6", "M3@S6"):
+        df = score(nh, system.run(nh, CONFIGS[name], progress=False), system.by_id)
+        assert list(df.correct) == list(ref[ref.config == name].correct), name
+    assert int(ref[ref.config == "M3@S6"].correct.sum()) == 5
 
 
 def test_cost_columns(system, cases):

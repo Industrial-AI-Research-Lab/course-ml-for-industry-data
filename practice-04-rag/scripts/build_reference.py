@@ -2,6 +2,7 @@
 
 Live (the lecturer, with the course token):   uv run python scripts/build_reference.py
 From replay (anyone, no network):              uv run python scripts/build_reference.py --replay
+Only the needs_human set, live, merged into the replay:  uv run python scripts/build_reference.py --only-needs-human
 
 Steps:
 1. the store (store/ and its committed copy reference/store/) and the retrieval set (data/questions.jsonl);
@@ -48,6 +49,9 @@ RUN_CONFIGS = [c.name for c in LADDER] + ["M1t", "M3@S0", "M3@S6"]
 TODO_CONFIGS = {"M1@S0": "S0", "M2@S0": "S0", "M1@S6": "S6", "M2@S6": "S6"}
 HOLDOUT_FILE = DATA_DIR / "holdout.jsonl"
 HOLDOUT_CONFIGS = [c.name for c in LADDER] + ["M3@S0", "M3@S6"]
+NEEDS_HUMAN_FILE = DATA_DIR / "needs_human.jsonl"
+# S5 has no status field (the simple answer gives a value or none): the row shows what the contract adds
+NEEDS_HUMAN_CONFIGS = ["S5", "S6", "M3@S6"]
 # the questions that mixed table rows (S2) broke in the first reference run
 BROKEN_BY_MIXED_ROWS = ["d01", "d02", "d04", "z01", "z02", "z04", "z05", "i02", "g01"]
 
@@ -203,6 +207,22 @@ def reason_text(link: str) -> str:
             "model": "every needed chunk was in the context, the answer is still wrong"}[link]
 
 
+def needs_human_table(scores: dict[str, pd.DataFrame], records: dict[str, list[dict]]) -> pd.DataFrame:
+    """Status per question and configuration on the needs_human set, with the summary row. An invalid answer
+    shows why the model stopped (finish reason "length": the token limit)."""
+    def cell(rec: dict) -> str:
+        ans = rec.get("answer")
+        if ans is None:
+            return f"invalid ({rec.get('finish_reason') or 'not JSON'})"
+        return ans.get("status", "") + (f" ({ans['value']})" if ans.get("value") else "")
+
+    t = pd.DataFrame({name: {r["case_id"]: cell(r) for r in recs} for name, recs in records.items()})
+    t.loc["right (needs_human)"] = [f"{int(df.correct.sum())}/{len(df)}" for df in scores.values()]
+    t.loc["gave a value"] = [str(int((df.value.notna() & (df.value != "")).sum())) for df in scores.values()]
+    t.index.name = "question"
+    return t
+
+
 def demo(system: System, cases) -> dict:
     """The demo calls of the notebook that are not part of a configuration run."""
     cid, ctx = CONFLICT_DEMO
@@ -217,7 +237,22 @@ def main() -> None:
     ap.add_argument("--configs", nargs="*", default=RUN_CONFIGS)
     ap.add_argument("--only-demos", action="store_true", help="live: only the demo calls, merged into the replay")
     ap.add_argument("--fresh", action="store_true", help="live: ask the model again even for saved requests")
+    ap.add_argument("--only-needs-human", action="store_true",
+                    help="live: only the needs_human set, merged into the replay (the other rows are not re-run)")
     args = ap.parse_args()
+    if args.only_needs_human:
+        _, chunks = load_store(STORE_DIR)
+        cl = clients(False)
+        system = System(chunks, answer_client=cl["answers"], rerank_client=cl["rerank"],
+                        translate_client=cl["translate"])
+        nh = load_cases(NEEDS_HUMAN_FILE)
+        for name in NEEDS_HUMAN_CONFIGS:
+            df = reval.score(nh, system.run(nh, CONFIGS[name], workers=6, progress=False), system.by_id)
+            print(name, df[["case_id", "status", "value", "correct"]].to_string(index=False))
+        for t in ("answers", "rerank"):
+            print(f"replay {t}:", compact_replay(RUNS_DIR / "lecturer" / f"{t}.jsonl", REPLAY_DIR / f"{t}_course.jsonl",
+                                                 merge=True))
+        return
     if args.only_demos:
         _, chunks = load_store(STORE_DIR)
         cl = clients(False)
@@ -250,6 +285,10 @@ def main() -> None:
             h_records[name] = system.run(holdout, CONFIGS[name], workers=8, progress=False)
             h_scores[name] = reval.score(holdout, h_records[name], system.by_id)
             print(f"holdout {name}: e2e {h_scores[name].correct.mean():.3f}")
+    needs_human = load_cases(NEEDS_HUMAN_FILE)
+    nh_records = {name: system.run(needs_human, CONFIGS[name], workers=6, progress=False)
+                  for name in NEEDS_HUMAN_CONFIGS if name in args.configs}
+    nh_scores = {name: reval.score(needs_human, recs, system.by_id) for name, recs in nh_records.items()}
     conflict_demo = demo(system, cases)
     if not args.replay:
         for t in TASKS:
@@ -280,6 +319,13 @@ def main() -> None:
     h_public = h_table[[c for c in h_table.columns if not c.startswith("_") and c not in ("abstain ok", "conflict ok")]]
     h_public.to_csv(REFERENCE_DIR / "holdout_ablation.csv", index=False)
     pd.concat(h_scores.values()).to_csv(REFERENCE_DIR / "holdout_per_question.csv", index=False)
+    nh_table = needs_human_table(nh_scores, nh_records)
+    nh_table.to_csv(REFERENCE_DIR / "needs_human.csv")
+    pd.concat(nh_scores.values()).to_csv(REFERENCE_DIR / "needs_human_per_question.csv", index=False)
+    on_nid = {name: df[(df.expected == "not_in_documents") & (df.status == "needs_human")].case_id.tolist()
+              for name, df in scores.items()}
+    escalated = {name: df[(df.expected != "not_in_documents") & (df.status == "needs_human")].case_id.tolist()
+                 for name, df in scores.items()}
     broken = pd.DataFrame({name: scores[name].set_index("case_id").loc[BROKEN_BY_MIXED_ROWS, "correct"]
                            for name in ("S1", "S2", "S2b", "S3") if name in scores})
 
@@ -319,6 +365,22 @@ def main() -> None:
         "",
         md_table(public.fillna("")),
         "",
+        "## How the rows fail: refusing against inventing",
+        "",
+        "The columns `false refusals` .. `invalid` split the wrong answers by kind (every question is exactly one of: "
+        "right, false refusal, wrong or invented, invalid). A false refusal is \"not in the documents\" or \"needs a "
+        "person\" on a question whose answer (or conflict) is in the documents: out of the "
+        f"{int((scores['S0'].expected != 'not_in_documents').sum())} such questions. Wrong or invented: a value "
+        "that is not the expected one, one side of a conflict given as the answer, or a value where the right answer "
+        f"is \"not in the documents\". Right abstentions: out of the {int((scores['S0'].expected == 'not_in_documents').sum())} "
+        "questions whose answer is not in the documents (\"needs a person\" is accepted there: no value is given). "
+        "Invalid: no answer of the schema.",
+        "",
+        "A refusal is safe but not free: the engineer searches the archive by hand or waits for a person, and a "
+        "system that refuses a third of the time is not used. A wrong value is worse: it goes into a decision. "
+        "S0 fails both ways; S6 almost only by refusing; the reranker alone (M3@S0) refuses less than S0 but keeps "
+        "giving wrong values and invents values on \"not in the documents\" questions.",
+        "",
         "## Latency and cost per question",
         "",
         "Median seconds per question = search (measured on the lecturer's laptop) + model latency of every call "
@@ -341,6 +403,25 @@ def main() -> None:
         "is `holdout_review.md`. The ladder was never shown to the drafter.",
         "",
         md_table(h_public.fillna("")),
+        "",
+        "## The status \"needs a person\": its own small set",
+        "",
+        f"{len(needs_human)} questions (`data/needs_human.jsonl`, slice `needs_human`, not in the retrieval set): the "
+        "norm is in the documents, but the answer depends on equipment data that no document and no registry card "
+        "has (a pump without power and class, a tag that matches two pumps, no tag, a spare pump without a station, "
+        "a grease named only in a missing datasheet, a measurement in one direction of three). Right: only "
+        "`needs_human`. `not_in_documents` is wrong but safe; a value means the system chose a class, a station or "
+        "a measurement that nobody gave it. S5 has no status field: it shows what the contract adds. Cells: status "
+        "(value).",
+        "",
+        md_table(nh_table, index=True),
+        "",
+        "Notes: " + "; ".join(f"{c.case_id}: {c.note}" for c in needs_human) + ".",
+        "",
+        "`needs_human` on the retrieval set. On a \"not in the documents\" question it is accepted (grader rule, "
+        "unchanged): " + "; ".join(f"{k}: {', '.join(v)}" for k, v in on_nid.items() if v) + ". On a question with "
+        "an answer it is a false refusal (counted in `false refusals`): "
+        + "; ".join(f"{k}: {', '.join(v)}" for k, v in escalated.items() if v) + ".",
         "",
         "## End-to-end by slice (counts, not percentages)",
         "",

@@ -8,6 +8,18 @@ Metrics of one question (questions with the status "not in documents" have no ev
 - end-to-end: code checks the value and the unit, all values of a "what changed" answer, or the status;
 - verified: the answer is right AND its citations pass the three checks (verify.py).
 
+How a configuration fails matters as much as how often (`outcome`, one per question):
+- false refusal: a value (or a conflict) was expected, the answer gives none: "not in the documents" or
+  "needs a person". Safe, but it has a price: the engineer searches the archive by hand or waits for a person;
+- wrong: a value that is not the expected one, or one side of a conflict presented as the answer;
+- invented: a value where the right answer is "not in the documents";
+- invalid: no answer of the schema (the run cannot use it at all).
+Statuses on "not in the documents" questions: "not_in_documents" and "needs_human" are both accepted (no value is
+given, the engineer is sent to the documents or to a person); a value or "conflict" is not.
+The needs_human set (data/needs_human.jsonl, not in the retrieval set): only "needs_human" is right. "Not in the
+documents" is wrong there (the norm is in the documents, the equipment data are not) but safe; a value is the
+dangerous failure: the system chose a class, a station or a measurement that nobody gave it.
+
 A wrong answer is attributed to one link of the chain, the first that lost it:
 reading (the value is in no chunk) -> search (an answer chunk is not in the context) -> assembly (the answer
 chunk is there, another required chunk is not) -> model (everything was in the context).
@@ -43,6 +55,12 @@ def grade(case: TestCase, ans: dict | None) -> tuple[bool, str]:
         if status == "not_in_documents" or (status != "conflict" and ans.get("value") in (None, "")):
             return True, "ok"
         return False, "invented a value"
+    if exp.get("status") == "needs_human":
+        if status == "needs_human":
+            return True, "ok"
+        if status == "answered" and ans.get("value") not in (None, ""):
+            return False, "answered without the missing data"
+        return False, f"status {status}, expected needs_human"
     if status != "answered":
         return False, f"status {status}"
     if "values" in exp:
@@ -59,6 +77,23 @@ def grade(case: TestCase, ans: dict | None) -> tuple[bool, str]:
 # ---------------------------------------------------------------------------------------------
 # Per question
 # ---------------------------------------------------------------------------------------------
+REFUSALS = ("not_in_documents", "needs_human")
+OUTCOMES = ["correct", "false refusal", "wrong", "invented", "invalid"]
+
+
+def outcome(case: TestCase, ans: dict | None, correct: bool) -> str:
+    """How the answer failed (see the module docstring)."""
+    if correct:
+        return "correct"
+    if ans is None:
+        return "invalid"
+    no_value = ans.get("status") in REFUSALS or (ans.get("status", "answered") == "answered"
+                                                 and ans.get("value") in (None, ""))
+    if case.status == "not_in_documents":
+        return "invented"
+    return "false refusal" if no_value else "wrong"
+
+
 def retrieval_metrics(case: TestCase, rec: dict, k: int = 5) -> dict:
     if not case.evidence:
         return {"recall@k": None, "evidence_recall": None, "mrr": None}
@@ -109,7 +144,9 @@ def score(cases: list[TestCase], records: list[dict], chunks_by_id: dict[str, Ch
                      "verified": bool(ok and checks.get("verified")),
                      "link": attribute(case, rec, bool(ok), chunks_by_id) if ok is not None else None,
                      "status": (rec.get("answer") or {}).get("status"),
-                     "value": (rec.get("answer") or {}).get("value")})
+                     "value": (rec.get("answer") or {}).get("value"),
+                     "expected": case.status,
+                     "outcome": outcome(case, rec.get("answer"), bool(ok)) if ok is not None else None})
     return pd.DataFrame(rows)
 
 
@@ -144,6 +181,7 @@ def ablation(scores: dict[str, pd.DataFrame], previous: dict[str, str | None]) -
         row["abstain ok"] = f"{int(nid.correct.sum())}/{len(nid)}" if len(nid) else "—"
         conf = df[df.slice == "conflict"]
         row["conflict ok"] = f"{int(conf.correct.sum())}/{len(conf)}" if len(conf) else "—"
+        row.update(failure_modes(df))
         prev = previous.get(name)
         if prev and prev in scores:
             a = scores[prev].set_index("case_id")
@@ -160,6 +198,26 @@ def ablation(scores: dict[str, pd.DataFrame], previous: dict[str, str | None]) -
             row["evidence verdict"] = f"{r2['decision']} (+{r2['B fixed']}/-{r2['B broke']}, p = {r2['p_value']:.3f})"
         out.append(row)
     return pd.DataFrame(out)
+
+
+def failure_modes(df: pd.DataFrame) -> dict[str, str]:
+    """Columns of the ablation table: false refusals of the questions with an answer in the documents, wrong and
+    invented values of all questions, right abstentions of the "not in the documents" questions."""
+    if "outcome" not in df or df["outcome"].isna().all():
+        return {}
+    answerable = df[df.expected.isin(["answered", "conflict"])]
+    nid = df[df.expected == "not_in_documents"]
+    o = df.outcome.value_counts()
+    fr = int((answerable.outcome == "false refusal").sum())
+    escalated = int(((answerable.outcome == "false refusal") & (answerable.status == "needs_human")).sum())
+    ok_nid = nid[nid.correct.astype(bool)]
+    nh = int((ok_nid.status == "needs_human").sum())
+    pct = lambda k, n: f"{k}/{n} = {k / n:.0%}" if n else "—"  # noqa: E731
+    return {"false refusals": pct(fr, len(answerable)) + (f" ({escalated} needs a person)" if escalated else ""),
+            "wrong or invented": f"{int(o.get('wrong', 0)) + int(o.get('invented', 0))}"
+                                 + (f" ({int(o.get('invented', 0))} invented)" if o.get("invented", 0) else ""),
+            "right abstentions": pct(len(ok_nid), len(nid)) + (f" ({nh} needs a person)" if nh else ""),
+            "invalid": str(int(o.get("invalid", 0)))}
 
 
 def by_slice(scores: dict[str, pd.DataFrame], metric: str = "correct") -> pd.DataFrame:

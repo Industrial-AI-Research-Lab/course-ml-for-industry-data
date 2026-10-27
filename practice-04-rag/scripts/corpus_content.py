@@ -630,4 +630,10 @@ REGISTRY_EXTRA = {
     "P-312": ("pump", "Pump station 3", "pump P-312", "75", "II", ""),
     "K-330": ("compressor", "Pump station 3", "air compressor K-330", "160", "III", ""),
     "B-340": ("fan", "Pump station 3", "exhaust fan B-340", "22", "V", ""),
+    # the needs_human set (data/needs_human.jsonl): equipment whose card lacks what the norm depends on.
+    # None of them is in R-12 Table A.1 (it is updated only with a new revision) or has a datasheet.
+    "P-215": ("pump", "Pump station 2", "pump P-215 (installed 2026, card not filled)", "", "", ""),
+    "P-216": ("pump", "Spare equipment", "spare pump P-216 (station not assigned)", "45", "II", ""),
+    "P-220A": ("pump", "Pump station 2", "pump P-220A", "11", "I", ""),
+    "P-220B": ("pump", "Pump station 2", "pump P-220B", "37", "II", ""),
 }

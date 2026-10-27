@@ -42,7 +42,7 @@ ready module, and we do the engineering around it:
 3. **fix one link at a time** with plant knowledge, each fix is a row of an **ablation table** with a paired
    comparison (practice 2);
 4. mechanisms from Advanced NLP are added as **rows of the same table**;
-5. the answer follows a **contract**; code checks the citations; "not in the documents" and "conflict" are answers.
+5. the answer follows a **contract**; code checks the citations; "not in the documents", "conflict" and "needs a person" are answers.
 
 ```
 question ─► fields (tags, date) ─► registry: station, class ─► filter: scope, date ─► BM25 ─► evidence pack
@@ -541,7 +541,8 @@ for cid in ("f01", "f05"):
     print(f"{cid}: {rec['answer']['status']} | cited {cited} | {rec['answer']['answer'][:220]}")
 """)
 md(r"""
-**Not in the documents.** V-912 is in no document (V-112 is in the registry but in no document either):
+**Not in the documents.** V-912 is in no document (V-112 is in the registry but in no document either). Both
+`not_in_documents` and `needs_human` are right here: no value is given.
 """)
 code(r"""
 for cid in ("x01", "x03"):
@@ -554,6 +555,38 @@ The whole ladder with S6:
 code(r"""
 full = reval.ablation(scores, previous)
 full[full.config.isin([c.name for c in LADDER])][cols + ["correct + verified", "abstain ok", "conflict ok"]].fillna("")
+""")
+md(r"""
+**How a row fails matters, not only how often.** Every question is one of: right, a **false refusal** ("not in
+the documents" or "needs a person" when the answer is in the documents), a **wrong or invented** value, or an
+invalid answer. A refusal is safe but not free: the engineer searches the archive by hand or waits for a person,
+and a system that refuses a third of the time is not used. A wrong value is worse: it goes into a decision. Compare
+S0 (fails both ways), S6 (fails almost only by refusing) and M3@S0 (refuses less, but gives wrong values and invents
+values where the answer is "not in the documents"):
+""")
+code(r"""
+modes = ["false refusals", "wrong or invented", "right abstentions", "invalid"]
+full[full.config.isin(["S0", "S5", "S6", "M3@S0", "M3@S6"])][["config", "end-to-end"] + modes]
+""")
+md(r"""
+**Needs a person.** The fourth status has its own small set (`data/needs_human.jsonl`, not in the 143): the norm
+is in the documents, but the answer depends on data that nobody has given the system: a pump with no power and no
+class in its card, a tag that matches two pumps (P-220A and P-220B), no tag at all, a spare pump without a station
+(R-12 or R-14?), a grease named only in a missing datasheet, a measurement in one direction of three. The right
+answer names what is missing and who has it. A value here is the dangerous failure: the system chose the class or
+the station itself. On the retrieval set, `needs_human` is accepted on a "not in the documents" question (x01:
+no value is given) and counted as a false refusal on a question with an answer (k02 at S6: R-12 Table 3 did not
+reach the context).
+""")
+code(r"""
+from plant_assistant import DATA_DIR
+
+needs_human = load_cases(DATA_DIR / "needs_human.jsonl")
+rows = {}
+for name in ("S6", "M3@S6"):
+    recs = system_live.run(needs_human, CONFIGS[name], workers=4, progress=False)
+    rows[name] = {r["case_id"]: (r.get("answer") or {}).get("status", "invalid") for r in recs}
+pd.DataFrame(rows).assign(question=[c.question_en for c in needs_human])
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -623,7 +656,7 @@ md(r"""
 - the retrieval columns of your ablation table equal `reference/ablation.csv`;
 - the P-101 question at M3@S6: "not normal, inspect within 24 hours", citations R-12 rev. 3 cl. 4.3.3, Table 3,
   cl. 6.1-6.2, all three checks pass (at S6 with BM25 alone it is lost in search: see step 7);
-- V-912: `not_in_documents`; P-205 and the lubrication interval of P-101: `conflict` with both documents cited.
+- V-912: no value (`not_in_documents` or `needs_human`); P-205 and the lubrication interval of P-101: `conflict` with both documents cited.
 
 **What you built:** a retrieval set with evidence from the structure of the documents, loss attribution by link,
 tag normalization, table rows, applicability through the registry, a date filter that understands amendments,

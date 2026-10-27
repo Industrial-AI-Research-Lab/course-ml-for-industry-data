@@ -91,6 +91,12 @@ computed by code (`cases.resolve`).
 | tag_variant | 6 | "Р-101" (Cyrillic Р), "P101", "P 102" |
 | not_in_documents | 10 | "valve V-912", "noise level of P-101" |
 
+**The status "needs a person" has its own small set** (`data/needs_human.jsonl`, 6 questions, slice
+`needs_human`, not in the 143): the norm is in the documents, but the answer depends on data that nobody gave the
+system. P-215 has no power and no class in its registry card; "P-220" matches P-220A (class I) and P-220B
+(class II); a question names no pump; spare pump P-216 has no station (R-12 or R-14?); the grease is named only in a
+datasheet that is not in the archive; P-101 was measured in one direction of three. Only `needs_human` is right.
+
 ## The ladder and the mechanisms
 
 | Row | Configuration |
@@ -148,7 +154,7 @@ Run all cells from top to bottom. Search, filters and evidence packs run live on
 ```bash
 uv run --extra generate python scripts/generate_corpus.py   # the PDFs and the ground truth (deterministic)
 uv run python -m plant_assistant.corpus                      # store/
-uv run python scripts/build_questions.py                     # data/questions.jsonl
+uv run python scripts/build_questions.py                     # data/questions.jsonl, data/needs_human.jsonl
 uv run python scripts/build_reference.py --replay            # reference/ from replay; without --replay: live
 uv run python scripts/build_notebook.py
 ```
@@ -206,6 +212,47 @@ In short (lecturer's run, course Qwen 3.8 27B, thinking off, 143 questions; seco
   and conflicts, and those are rare in the holdout. 27 questions cannot separate S6 from M3@S0.
 - Dense and hybrid rows: TODO (see "Dense search").
 
+**How the rows fail matters, not only how often.** A refusal ("not in the documents" or "needs a person" when the
+answer is in the documents) is safe but not free: the engineer searches the archive by hand or waits for a person,
+and a system that refuses a third of the time is not used. A wrong value is worse: it goes into a decision.
+False refusals are out of the 123 questions with an answer (or a conflict) in the documents; wrong or invented out
+of all 143 ("invented": a value where the answer is not in the documents); right abstentions out of the 20
+"not in the documents" questions (`needs_human` is accepted there: no value is given). Invalid: no answer of the
+schema. Every question is exactly one of: right, false refusal, wrong or invented, invalid.
+
+| Row | end-to-end | false refusals | wrong or invented | right abstentions | invalid |
+|-----|------------|----------------|-------------------|-------------------|---------|
+| S0 | 73 | 42 (34%) | 28 (1 invented) | 19/20 | 0 |
+| S2b | 80 | 35 (28%) | 27 (1 invented) | 19/20 | 1 |
+| S3 | 102 | 19 (15%) | 22 (1 invented) | 19/20 | 0 |
+| S4 | 109 | 18 (15%) | 16 (1 invented) | 19/20 | 0 |
+| S5 | 123 | 11 (9%) | 9 | 20/20 | 0 |
+| S6 | 130 | 12 (10%), 1 of them `needs_human` (k02) | 1 | 20/20 (x01: `needs_human`) | 0 |
+| M3@S0 | 101 | 15 (12%) | 27 (3 invented: n03, n04, n07) | 17/20 | 0 |
+| M3@S6 | 130 | 7 (6%) | 3 (1 invented) | 19/20 (x01: `needs_human`) | 3 |
+| Holdout S6 (27) | 21 | 3/23 | 3 (1 invented) | 3/4 | 0 |
+| Holdout M3@S0 | 23 | 2/23 | 2 (1 invented) | 3/4 | 0 |
+| Holdout M3@S6 | 23 | 2/23 | 2 (1 invented) | 3/4 | 0 |
+
+S6 and M3@S6 have the same end-to-end, but M3@S6 refuses less and fails more often by a wrong value or an invalid
+answer. The reranker alone (M3@S0) refuses three times less than S0 and gives as many wrong values.
+
+**Needs a person** (6 questions; cells: status (value)):
+
+| Question | S5 (no status field) | S6 | M3@S6 |
+|----------|----------------------|----|-------|
+| nh01 P-215, no power, no class | answered (2,8) | invalid: needs_human, then the token limit | needs_human |
+| nh02 "P-220": P-220A or P-220B | not_in_documents | needs_human | needs_human |
+| nh03 no tag, station 2 | not_in_documents | not_in_documents | needs_human |
+| nh04 spare P-216, no station | answered (4,5) | answered (4,5) | conflict |
+| nh05 grease from a missing datasheet | not_in_documents | needs_human | needs_human |
+| nh06 one direction of three measured | answered (4,5) | needs_human | needs_human |
+| right | 0/6 | 3/6 | 5/6 |
+
+The contract gives the system a way to stop; S5 picks a class or a station itself in half of the cases. The station
+case (nh04) is the hardest: the system either applies R-12 or calls the two regulations a conflict, though only one
+of them applies.
+
 ## Success criteria
 
 - `store/manifest.json` has the same `index_version` as `reference/store/manifest.json`;
@@ -213,7 +260,7 @@ In short (lecturer's run, course Qwen 3.8 27B, thinking off, 143 questions; seco
   end-to-end from replay is equal too, a live run is within the interval;
 - the P-101 question at M3@S6: "not normal, inspect within 24 hours", citations R-12 rev. 3 cl. 4.3.3, Table 3,
   cl. 6.1–6.2, all three citation checks pass (at S6 it is lost in search: the reason is the point of step 7);
-- V-912: `not_in_documents`; P-205 and the lubrication interval of P-101 at S6: `conflict` with both documents cited.
+- V-912: no value (`not_in_documents` or `needs_human`, both accepted); P-205 and the lubrication interval of P-101 at S6: `conflict` with both documents cited.
 
 ## Optional tasks (for better understanding)
 

@@ -1,0 +1,9 @@
+question,S5,S6,M3@S6
+nh01,"answered (2,8)",invalid (length),needs_human
+nh02,not_in_documents,needs_human,needs_human
+nh03,not_in_documents,not_in_documents,needs_human
+nh04,"answered (4,5)","answered (4,5)",conflict
+nh05,not_in_documents,needs_human,needs_human
+nh06,"answered (4,5)",needs_human,needs_human
+right (needs_human),0/6,3/6,5/6
+gave a value,3,1,0

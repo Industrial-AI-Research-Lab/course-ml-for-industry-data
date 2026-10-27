@@ -4,6 +4,9 @@ Every question gets its gold chunk ids from the evidence locators, by code. The 
 expected value is really in the text of an answer chunk (otherwise the question is wrong, or the reading lost
 it) and reports how much of the wording overlaps with the answer chunk (a lexical leak makes search too easy).
 
+It also writes data/needs_human.jsonl: the small set whose right answer is "needs a person" (not in the
+retrieval set).
+
 Run:  uv run python scripts/build_questions.py        (needs store/: uv run python -m plant_assistant.corpus)
 """
 
@@ -15,9 +18,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from questions_content import BASE, LANGUAGE_IDS, NEW, TODAY  # noqa: E402
+from questions_content import BASE, LANGUAGE_IDS, NEEDS_HUMAN, NEW, TODAY  # noqa: E402
 
-from plant_assistant import INPUTS_DIR, STORE_DIR  # noqa: E402
+from plant_assistant import DATA_DIR, INPUTS_DIR, STORE_DIR  # noqa: E402
 from plant_assistant.cases import TestCase, counts_by_slice, resolve, write_cases  # noqa: E402
 from plant_assistant.jsonl import read_json_records  # noqa: E402
 from plant_assistant.store import load_store  # noqa: E402
@@ -77,6 +80,12 @@ def main() -> None:
                 problems.append(f"{c.case_id}: value {v} not in its evidence chunks")
     write_cases(cases)
     print(f"{len(cases)} questions:", counts_by_slice(cases))
+    needs_human = [TestCase(qid, "needs_human", "ru", ru, en, TODAY, TODAY, {"status": "needs_human"},
+                            evidence(ev, chunks), "practice 4", note) for qid, ru, en, ev, note in NEEDS_HUMAN]
+    problems += [f"{c.case_id}: evidence {e['any_of']} resolves to no chunk" for c in needs_human for e in c.evidence
+                 if not e["chunk_ids"]]
+    write_cases(needs_human, DATA_DIR / "needs_human.jsonl")
+    print(f"{len(needs_human)} questions of the needs_human set (data/needs_human.jsonl, not in the retrieval set)")
     if problems:
         print("PROBLEMS:\n  " + "\n  ".join(problems))
         sys.exit(1)
