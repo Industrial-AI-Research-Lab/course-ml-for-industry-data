@@ -32,6 +32,7 @@ class EquipmentCard:
     power_kw: str = ""
     machine_class: str = ""
     datasheet: str = ""
+    documents: list[str] = field(default_factory=list)  # datasheet, manufacturer's manual: linked by the registry
     in_registry: bool = True
 
     def describe(self) -> str:
@@ -42,15 +43,16 @@ class EquipmentCard:
             parts.append(f"motor {self.power_kw} kW")
         if self.machine_class:
             parts.append(f"machine class {self.machine_class}")
-        if self.datasheet:
-            parts.append(f"datasheet {self.datasheet}")
+        if self.documents:
+            parts.append(f"documents {', '.join(self.documents)}")
         return ", ".join(parts)
 
 
 def load_registry(path: str | Path = REGISTRY_FILE) -> dict[str, EquipmentCard]:
     with open(path, encoding="utf-8") as f:
         return {r["equipment_id"]: EquipmentCard(r["equipment_id"], r["equipment_type"], r["area"], r["station"],
-                                                 r["power_kw"], r["machine_class"], r["datasheet"])
+                                                 r["power_kw"], r["machine_class"], r["datasheet"],
+                                                 [d for d in r.get("documents", "").split(";") if d])
                 for r in csv.DictReader(f)}
 
 
@@ -108,3 +110,17 @@ def equipment_context(scope: Scope) -> str:
     if not scope.cards:
         return ""
     return "Equipment registry:\n" + "\n".join(f"- {c.describe()}" for c in scope.cards)
+
+
+def linked_chunks(scope: Scope, chunks: list[Chunk], allowed=None) -> list[str]:
+    """Chunks of the documents the registry links to the equipment of the question: a datasheet whole, a manual by
+    its tables (rated data, limits). Search may never find a manufacturer's manual from a Russian question, and the
+    manual does not name the plant tag: only the registry knows that OM-P-205 is the manual of P-205."""
+    docs = {d for card in scope.cards for d in card.documents}
+    out = []
+    for c in chunks:
+        if c.doc_id not in docs or (allowed is not None and not allowed(c)):
+            continue
+        if c.chunk_type == "datasheet" or (c.chunk_type == "table" and not c.split_into_rows):
+            out.append(c.chunk_id)
+    return out

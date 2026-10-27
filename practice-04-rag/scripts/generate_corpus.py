@@ -26,6 +26,7 @@ from pathlib import Path
 
 import matplotlib
 import pymupdf
+from reportlab import rl_config
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
 from reportlab.lib.pagesizes import A4
@@ -45,6 +46,7 @@ DATA = ROOT / "data"
 DOCS = DATA / "docs"
 GT = DATA / "ground_truth"
 TTF_DIR = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
+rl_config.invariant = 1  # no creation date and random ids in the PDF: the same content gives the same bytes
 
 
 def register_fonts() -> None:
@@ -353,13 +355,14 @@ def write_registry() -> None:
                             "machine_class": cls, "datasheet": ds})
     with open(DATA / "equipment_registry.csv", "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, ["equipment_id", "equipment_type", "area", "station", "name", "power_kw",
-                               "machine_class", "datasheet"])
+                               "machine_class", "datasheet", "documents"], lineterminator="\n")
         w.writeheader()
         for r in by_tag.values():
             m = re.match(r"Pump station (\d+)", r["area"])
             w.writerow({"equipment_id": r["equipment_id"], "equipment_type": r["equipment_type"], "area": r["area"],
                         "station": m.group(1) if m else "", "name": r["name"], "power_kw": r.get("power_kw", ""),
-                        "machine_class": r.get("machine_class", ""), "datasheet": r.get("datasheet", "")})
+                        "machine_class": r.get("machine_class", ""), "datasheet": r.get("datasheet", ""),
+                        "documents": ";".join(C.REGISTRY_DOCUMENTS.get(r["equipment_id"], []))})
 
 
 def main() -> None:
@@ -419,7 +422,7 @@ def main() -> None:
                          "header_right": "", "source": "practice 3"})
     registry.sort(key=lambda r: (r["source"] != "practice 3", r["doc_id"], str(r["revision"]), str(r["amendment"])))
     with open(DATA / "documents.csv", "w", encoding="utf-8", newline="") as f:
-        w = csv.DictWriter(f, list(registry[0]))
+        w = csv.DictWriter(f, list(registry[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(registry)
     with open(GT / "pages.jsonl", "w", encoding="utf-8") as f:

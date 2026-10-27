@@ -173,8 +173,9 @@ R15 = {
             ("table", "table1"),
         ]),
         ("4", "Смазка", [
-            ("clause", "4.1", "Смазку подшипников качения выполняют с периодичностью по п. 7.1 R-12 для "
-                              "насосов станции № 2 и по п. 7.1 R-14 для насосов станции № 3."),
+            # a same-language conflict: R-12 and R-14, clause 7.1, say every 2000 hours
+            ("clause", "4.1", "Подшипники качения насосов смазывают каждые 3000 часов наработки смазкой, "
+                              "указанной в паспорте насоса."),
             ("clause", "4.2", "Масло в масляной ванне подшипникового узла заменяют при каждом ТО-2."),
             ("clause", "4.3", "Марку смазочного материала берут из паспорта насоса. Замена марки без "
                               "согласования с главным механиком не допускается."),
@@ -182,7 +183,8 @@ R15 = {
         ("5", "Центровка", [
             ("clause", "5.1", "Центровку валов насоса и двигателя проверяют при каждом ТО-1 и после каждого "
                               "ремонта."),
-            ("clause", "5.2", "Допуск радиального смещения валов принимают по п. 7.2 R-12 и п. 7.2 R-14."),
+            # a same-language conflict: R-12 and R-14, clause 7.2, say 0,05 mm
+            ("clause", "5.2", "Радиальное смещение валов после центровки допускается не более 0,08 мм."),
             ("clause", "5.3", "Результаты центровки заносят в CMMS в порядке, установленном R-20."),
         ]),
         ("6", "Торцевые уплотнения", [
@@ -611,6 +613,10 @@ PRACTICE3_DOCS = {
 # says), plus station, power, machine class and datasheet for the equipment of the regulations
 # ---------------------------------------------------------------------------------------------
 REGISTRY_FIX = {"P-101": "Pump station 2"}
+# The documents of a unit of equipment (datasheet, manufacturer's manual). The manual does not name the plant tag:
+# a manufacturer does not know it. Only the registry links the two.
+REGISTRY_DOCUMENTS = {"P-101": ["PS-101"], "P-102": ["PS-102"], "P-205": ["DS-P-205", "OM-P-205"],
+                      "P-310": ["PS-310"], "P-311": ["PS-311"]}
 REGISTRY_EXTRA = {
     # tag: (type, area, name, power_kw, class, datasheet)
     "P-101": ("pump", "Pump station 2", "pump P-101", "55", "II", "PS-101"),

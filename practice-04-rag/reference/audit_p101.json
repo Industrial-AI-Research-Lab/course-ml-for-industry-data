@@ -1,47 +1,23 @@
 {
- "ts": "2026-10-27T17:38:16+00:00",
+ "ts": "2026-10-27T20:09:08+00:00",
  "case_id": "m01",
  "question": "После замены подшипника насос P-101 вибрирует 4,8 мм/с. Это норма? Что делать и в какой срок?",
  "asked_on": "2026-10-27",
  "as_of": "2026-10-27",
- "config": "S6",
- "index_version": "corpus-cc3cd299df.parser-a53367.emb-none",
+ "config": "M3@S6",
+ "index_version": "corpus-5719c6dc76.parser-a53367.emb-none",
  "filters": "stations=['2'], types=['pump'], tags=['P-101']",
  "retrieved": [
   {
-   "chunk_id": "R-12-r3-4.4.2",
+   "chunk_id": "R-12-r3-table3",
    "doc_id": "R-12",
    "revision": 3,
    "amendment": null,
-   "clause": "4.4.2",
-   "table_no": null,
+   "clause": "А",
+   "table_no": "А.1",
    "row_key": null,
-   "page": 4,
+   "page": 6,
    "effective_from": "2025-03-14",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-15-r1-4.3",
-   "doc_id": "R-15",
-   "revision": 1,
-   "amendment": null,
-   "clause": "4.3",
-   "table_no": null,
-   "row_key": null,
-   "page": 3,
-   "effective_from": "2023-09-01",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-15-r1-5.1",
-   "doc_id": "R-15",
-   "revision": 1,
-   "amendment": null,
-   "clause": "5.1",
-   "table_no": null,
-   "row_key": null,
-   "page": 3,
-   "effective_from": "2023-09-01",
    "effective_to": null
   },
   {
@@ -57,19 +33,29 @@
    "effective_to": null
   },
   {
-   "chunk_id": "R-12-r3-7.2",
+   "chunk_id": "R-12-r3-6",
    "doc_id": "R-12",
    "revision": 3,
    "amendment": null,
-   "clause": "7.2",
+   "clause": "6",
    "table_no": null,
    "row_key": null,
    "page": 5,
    "effective_from": "2025-03-14",
    "effective_to": null
-  }
- ],
- "context": [
+  },
+  {
+   "chunk_id": "R-20-r2-table1",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "3",
+   "table_no": "1",
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
   {
    "chunk_id": "R-12-r3-4.4.2",
    "doc_id": "R-12",
@@ -81,29 +67,19 @@
    "page": 4,
    "effective_from": "2025-03-14",
    "effective_to": null
-  },
+  }
+ ],
+ "context": [
   {
-   "chunk_id": "R-15-r1-4.3",
-   "doc_id": "R-15",
-   "revision": 1,
+   "chunk_id": "R-12-r3-table3",
+   "doc_id": "R-12",
+   "revision": 3,
    "amendment": null,
-   "clause": "4.3",
-   "table_no": null,
+   "clause": "А",
+   "table_no": "А.1",
    "row_key": null,
-   "page": 3,
-   "effective_from": "2023-09-01",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-15-r1-5.1",
-   "doc_id": "R-15",
-   "revision": 1,
-   "amendment": null,
-   "clause": "5.1",
-   "table_no": null,
-   "row_key": null,
-   "page": 3,
-   "effective_from": "2023-09-01",
+   "page": 6,
+   "effective_from": "2025-03-14",
    "effective_to": null
   },
   {
@@ -191,11 +167,11 @@
    "effective_to": null
   },
   {
-   "chunk_id": "R-12-r3-7.2",
+   "chunk_id": "R-12-r3-6",
    "doc_id": "R-12",
    "revision": 3,
    "amendment": null,
-   "clause": "7.2",
+   "clause": "6",
    "table_no": null,
    "row_key": null,
    "page": 5,
@@ -203,15 +179,63 @@
    "effective_to": null
   },
   {
-   "chunk_id": "R-15-r1-5.2",
-   "doc_id": "R-15",
-   "revision": 1,
+   "chunk_id": "R-20-r2-table1",
+   "doc_id": "R-20",
+   "revision": 2,
    "amendment": null,
-   "clause": "5.2",
+   "clause": "3",
+   "table_no": "1",
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-3.1",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "3.1",
+   "table_no": null,
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-5.1",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "5.1",
    "table_no": null,
    "row_key": null,
    "page": 3,
-   "effective_from": "2023-09-01",
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-12-r3-4.4.2",
+   "doc_id": "R-12",
+   "revision": 3,
+   "amendment": null,
+   "clause": "4.4.2",
+   "table_no": null,
+   "row_key": null,
+   "page": 4,
+   "effective_from": "2025-03-14",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "PS-101-p1",
+   "doc_id": "PS-101",
+   "revision": null,
+   "amendment": null,
+   "clause": null,
+   "table_no": null,
+   "row_key": null,
+   "page": 1,
+   "effective_from": "2019-01-01",
    "effective_to": null
   },
   {
@@ -275,18 +299,6 @@
    "effective_to": null
   },
   {
-   "chunk_id": "R-12-r3-6",
-   "doc_id": "R-12",
-   "revision": 3,
-   "amendment": null,
-   "clause": "6",
-   "table_no": null,
-   "row_key": null,
-   "page": 5,
-   "effective_from": "2025-03-14",
-   "effective_to": null
-  },
-  {
    "chunk_id": "R-12-r3-6.1",
    "doc_id": "R-12",
    "revision": 3,
@@ -323,27 +335,111 @@
    "effective_to": null
   },
   {
-   "chunk_id": "R-15-r1-5",
-   "doc_id": "R-15",
-   "revision": 1,
+   "chunk_id": "R-20-r2-3",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "3",
+   "table_no": null,
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-3.2",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "3.2",
+   "table_no": null,
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-3.3",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "3.3",
+   "table_no": null,
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-3.4",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "3.4",
+   "table_no": null,
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-3.5",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "3.5",
+   "table_no": null,
+   "row_key": null,
+   "page": 2,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-5",
+   "doc_id": "R-20",
+   "revision": 2,
    "amendment": null,
    "clause": "5",
    "table_no": null,
    "row_key": null,
    "page": 3,
-   "effective_from": "2023-09-01",
+   "effective_from": "2023-01-10",
    "effective_to": null
   },
   {
-   "chunk_id": "R-15-r1-5.3",
-   "doc_id": "R-15",
-   "revision": 1,
+   "chunk_id": "R-20-r2-5.2",
+   "doc_id": "R-20",
+   "revision": 2,
+   "amendment": null,
+   "clause": "5.2",
+   "table_no": null,
+   "row_key": null,
+   "page": 3,
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-20-r2-5.3",
+   "doc_id": "R-20",
+   "revision": 2,
    "amendment": null,
    "clause": "5.3",
    "table_no": null,
    "row_key": null,
    "page": 3,
-   "effective_from": "2023-09-01",
+   "effective_from": "2023-01-10",
+   "effective_to": null
+  },
+  {
+   "chunk_id": "R-12-r3-А",
+   "doc_id": "R-12",
+   "revision": 3,
+   "amendment": null,
+   "clause": "А",
+   "table_no": null,
+   "row_key": null,
+   "page": 6,
+   "effective_from": "2025-03-14",
    "effective_to": null
   },
   {
@@ -381,138 +477,55 @@
    "page": 1,
    "effective_from": "2026-09-01",
    "effective_to": null
-  },
-  {
-   "chunk_id": "R-15-r1-4",
-   "doc_id": "R-15",
-   "revision": 1,
-   "amendment": null,
-   "clause": "4",
-   "table_no": null,
-   "row_key": null,
-   "page": 2,
-   "effective_from": "2023-09-01",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-15-r1-4.1",
-   "doc_id": "R-15",
-   "revision": 1,
-   "amendment": null,
-   "clause": "4.1",
-   "table_no": null,
-   "row_key": null,
-   "page": 2,
-   "effective_from": "2023-09-01",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-15-r1-4.2",
-   "doc_id": "R-15",
-   "revision": 1,
-   "amendment": null,
-   "clause": "4.2",
-   "table_no": null,
-   "row_key": null,
-   "page": 3,
-   "effective_from": "2023-09-01",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-12-r3-7",
-   "doc_id": "R-12",
-   "revision": 3,
-   "amendment": null,
-   "clause": "7",
-   "table_no": null,
-   "row_key": null,
-   "page": 5,
-   "effective_from": "2025-03-14",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-12-r3-7.1",
-   "doc_id": "R-12",
-   "revision": 3,
-   "amendment": null,
-   "clause": "7.1",
-   "table_no": null,
-   "row_key": null,
-   "page": 5,
-   "effective_from": "2025-03-14",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-12-r3-7.3",
-   "doc_id": "R-12",
-   "revision": 3,
-   "amendment": null,
-   "clause": "7.3",
-   "table_no": null,
-   "row_key": null,
-   "page": 5,
-   "effective_from": "2025-03-14",
-   "effective_to": null
-  },
-  {
-   "chunk_id": "R-12-r3-7.4",
-   "doc_id": "R-12",
-   "revision": 3,
-   "amendment": null,
-   "clause": "7.4",
-   "table_no": null,
-   "row_key": null,
-   "page": 5,
-   "effective_from": "2025-03-14",
-   "effective_to": null
   }
  ],
  "model": "iairlab/qwen3.8-27b",
- "request_hash": "91a4ec65fac6228c028937f1",
+ "request_hash": "528a0d963da34b5ca8db25b5",
  "answer": {
   "status": "answered",
-  "answer": "The vibration level of 4.8 mm/s exceeds the inspection limit (4.5 mm/s) for a Class II pump but is below the stop limit (7.1 mm/s). Therefore, it is not normal. Actions required: 1) The patrolman must report the exceedance to the shift supervisor within 1 hour. 2) The shift supervisor must create a high-priority inspection request in CMMS. 3) The equipment must be inspected within 24 hours. 4) Vibration measurements must be repeated every shift until the inspection is completed. 5) After inspection, the mechanic must identify the cause (e.g., misalignment, bearing wear) and record it in the CMMS request.",
+  "answer": "The vibration of 4.8 mm/s exceeds the inspection limit (4.5 mm/s) for a Class II pump but is below the stop limit (7.1 mm/s). It is not normal. Actions: 1) The operator must report the exceedance to the shift supervisor within 1 hour. 2) The shift supervisor must create a CMMS work order with 'high' priority, citing clause 4.3.3 of R-12. 3) The equipment must be inspected within 24 hours. 4) Measurements must be repeated every shift until the inspection is completed. 5) The work order must be accepted within 4 hours and completed within 3 days.",
   "value": "4,5",
   "unit": "мм/с",
   "claims": [
    {
-    "text": "Pump P-101 is a Class II machine.",
+    "text": "P-101 is a Class II pump.",
     "sources": [
-     "S4"
+     "S1",
+     "S14"
     ]
    },
    {
-    "text": "The inspection limit for Class II pumps is 4.5 mm/s and the stop limit is 7.1 mm/s.",
+    "text": "For Class II pumps, the inspection limit is 4.5 mm/s and the stop limit is 7.1 mm/s.",
     "sources": [
-     "S4"
+     "S2"
     ]
    },
    {
-    "text": "The measured vibration of 4.8 mm/s exceeds the inspection limit of 4.5 mm/s.",
+    "text": "The measured value of 4.8 mm/s exceeds the inspection limit of 4.5 mm/s.",
     "sources": [
-     "S4"
+     "S2"
     ]
    },
    {
-    "text": "If the inspection limit is exceeded, the equipment must be inspected within 24 hours and measurements repeated every shift until inspection.",
+    "text": "Upon exceeding the inspection limit, the equipment must be inspected within 24 hours, and measurements repeated every shift until inspection.",
     "sources": [
-     "S8"
+     "S6"
     ]
    },
    {
-    "text": "The patrolman must report the exceedance to the shift supervisor within 1 hour.",
+    "text": "The shift supervisor must create a CMMS work order with 'high' priority.",
     "sources": [
-     "S19"
+     "S7"
     ]
    },
    {
-    "text": "The shift supervisor must create a high-priority CMMS request for inspection.",
+    "text": "A 'high' priority work order must be accepted within 4 hours and completed within 3 days.",
     "sources": [
-     "S9"
+     "S10"
     ]
    },
    {
-    "text": "The mechanic must specify the cause of the exceedance in the CMMS request after inspection.",
+    "text": "The operator must report the exceedance to the shift supervisor within 1 hour.",
     "sources": [
      "S20"
     ]
@@ -520,7 +533,17 @@
   ],
   "citations": [
    {
-    "source": "S4",
+    "source": "S1",
+    "doc_id": "R-12",
+    "revision": 3,
+    "amendment": null,
+    "clause": null,
+    "table_no": "А.1",
+    "row_key": "P-101",
+    "page": 6
+   },
+   {
+    "source": "S2",
     "doc_id": "R-12",
     "revision": 3,
     "amendment": null,
@@ -530,7 +553,7 @@
     "page": 4
    },
    {
-    "source": "S8",
+    "source": "S6",
     "doc_id": "R-12",
     "revision": 3,
     "amendment": null,
@@ -540,17 +563,7 @@
     "page": 3
    },
    {
-    "source": "S19",
-    "doc_id": "R-12",
-    "revision": 3,
-    "amendment": null,
-    "clause": "6.1",
-    "table_no": null,
-    "row_key": null,
-    "page": 5
-   },
-   {
-    "source": "S9",
+    "source": "S7",
     "doc_id": "R-12",
     "revision": 3,
     "amendment": null,
@@ -560,11 +573,31 @@
     "page": 5
    },
    {
+    "source": "S10",
+    "doc_id": "R-20",
+    "revision": 2,
+    "amendment": null,
+    "clause": null,
+    "table_no": "1",
+    "row_key": "высокий",
+    "page": 2
+   },
+   {
+    "source": "S14",
+    "doc_id": "PS-101",
+    "revision": null,
+    "amendment": null,
+    "clause": null,
+    "table_no": null,
+    "row_key": "P-101",
+    "page": 1
+   },
+   {
     "source": "S20",
     "doc_id": "R-12",
     "revision": 3,
     "amendment": null,
-    "clause": "6.3",
+    "clause": "6.1",
     "table_no": null,
     "row_key": null,
     "page": 5
@@ -579,36 +612,50 @@
   "supports": true,
   "citations": [
    {
-    "source": "S4",
+    "source": "S1",
+    "chunk_id": "R-12-r3-table3",
+    "exists": true,
+    "in_force": true,
+    "supports": false
+   },
+   {
+    "source": "S2",
     "chunk_id": "R-12-r3-table1",
     "exists": true,
     "in_force": true,
     "supports": true
    },
    {
-    "source": "S8",
+    "source": "S6",
     "chunk_id": "R-12-r3-4.3.3",
     "exists": true,
     "in_force": true,
     "supports": true
    },
    {
-    "source": "S19",
-    "chunk_id": "R-12-r3-6.1",
-    "exists": true,
-    "in_force": true,
-    "supports": false
-   },
-   {
-    "source": "S9",
+    "source": "S7",
     "chunk_id": "R-12-r3-6.2",
     "exists": true,
     "in_force": true,
     "supports": false
    },
    {
+    "source": "S10",
+    "chunk_id": "R-20-r2-table1",
+    "exists": true,
+    "in_force": true,
+    "supports": false
+   },
+   {
+    "source": "S14",
+    "chunk_id": "PS-101-p1",
+    "exists": true,
+    "in_force": true,
+    "supports": false
+   },
+   {
     "source": "S20",
-    "chunk_id": "R-12-r3-6.3",
+    "chunk_id": "R-12-r3-6.1",
     "exists": true,
     "in_force": true,
     "supports": false

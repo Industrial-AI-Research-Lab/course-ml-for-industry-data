@@ -252,7 +252,7 @@ NEW = [
     ("k03", "cross_doc", "Заявку на осмотр насоса P-310 создали по п. 6.2 R-14. В какой срок её принимают в работу?",
      "A request to inspect pump P-310 was created under clause 6.2 of R-14. Within what time is it taken into "
      "work?", None, ("4", "h"), [("answer", ["R-20 r2 t 1"]), ("support", ["R-14 r1 cl 6.2"])], ""),
-    # --- conflict: R-12 against the manufacturer's manual of P-205 ---------------------------------------
+    # --- conflict: R-12 against the manufacturer's manual of P-205 (another language) ---------------------
     ("f01", "conflict", "Какая граница вибрации для осмотра или сигнализации установлена для насоса P-205?",
      "What vibration limit for an inspection or an alarm applies to pump P-205?", None, ("status", "conflict"),
      [("answer", [T3]), ("answer", ["OM-P-205 r2 t 2"])], "R-12 class II: 4.5; manual: alarm 7.1"),
@@ -265,6 +265,23 @@ NEW = [
     ("f04", "conflict", "Насос P-205 вибрирует 9 мм/с. Его нужно останавливать?",
      "Pump P-205 vibrates at 9 mm/s. Must it be stopped?", None, ("status", "conflict"),
      [("answer", [T3]), ("answer", ["OM-P-205 r2 t 2"])], "R-12: above 7.1, stop; manual: alarm, trip at 11.2"),
+    # same language: the maintenance regulation R-15 against the vibration regulations R-12 and R-14 (all in force)
+    ("f05", "conflict", "Как часто нужно смазывать подшипники качения насоса P-101?",
+     "How often must the rolling bearings of pump P-101 be lubricated?", None, ("status", "conflict"),
+     [("answer", ["R-12 r3 cl 7.1"]), ("answer", ["R-15 r1 cl 4.1"])], "R-12: 2000 h; R-15: 3000 h"),
+    ("f06", "conflict", "Через сколько часов наработки смазывают подшипники насоса P-310?",
+     "After how many operating hours are the bearings of pump P-310 lubricated?", None, ("status", "conflict"),
+     [("answer", ["R-14 r1 cl 7.1"]), ("answer", ["R-15 r1 cl 4.1"])], "R-14: 2000 h; R-15: 3000 h"),
+    ("f07", "conflict", "Какое радиальное смещение валов допустимо после центровки насоса P-102?",
+     "What radial offset of the shafts is permitted after aligning pump P-102?", None, ("status", "conflict"),
+     [("answer", ["R-12 r3 cl 7.2"]), ("answer", ["R-15 r1 cl 5.2"])], "R-12: 0.05 mm; R-15: 0.08 mm"),
+    ("f08", "conflict", "Какое радиальное смещение валов допустимо для насоса P-205 после монтажа или ремонта?",
+     "What radial offset of the shafts is permitted for pump P-205 after installation or repair?", None,
+     ("status", "conflict"), [("answer", ["R-12 r3 cl 7.2"]), ("answer", ["OM-P-205 r2 cl 3.2", "R-15 r1 cl 5.2"])],
+     "R-12: 0.05 mm; the manual and R-15: 0.08 mm"),
+    ("f09", "conflict", "Через сколько часов наработки нужно заменить подшипники насоса P-205?",
+     "After how many operating hours must the bearings of pump P-205 be replaced?", None, ("status", "conflict"),
+     [("answer", ["R-12 r3 cl 7.4"]), ("answer", ["OM-P-205 r2 cl 6.4"])], "R-12: 25 000 h; the manual: 20 000 h"),
     # --- table rows: the valve list of station 2 -------------------------------------------------------------
     ("r01", "table_row", "Какое допустимое давление для задвижки V-12?", "What is the allowed pressure for valve V-12?",
      None, ("1,6", "MPa"), [("answer", ["VL-2 r4 t А.2 row V-12"]), ("support", ["VL-2 r4 cl 1.3"])],

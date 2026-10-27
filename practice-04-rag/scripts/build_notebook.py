@@ -57,17 +57,17 @@ question ─► fields (tags, date) ─► registry: station, class ─► filte
 | 0 | The final table | the ablation table S0-S6 and the mechanism rows |
 | 1 | Setup | the course model answers; otherwise replay |
 | 2 | Archive v2 | 16 documents, 440 chunks, new fields, `index_version` |
-| 3 | Retrieval set | 138 questions in 12 slices, gold chunks computed by code |
+| 3 | Retrieval set | 143 questions in 12 slices, gold chunks computed by code; a holdout of 27 written by role |
 | 4 | Baseline S0 | about half of the answers right; most losses in search |
-| 5 | Ladder S1-S5 | tags, table rows, applicability, dates, evidence pack: one row each |
-| 6 | Mechanisms | a reranker and query translation as rows of the same table |
+| 5 | Ladder S1-S5 | tags, table rows (mixed or separate), applicability, dates, evidence pack: one row each |
+| 6 | Mechanisms | a reranker and query translation as rows of the same table, with their cost |
 | 7 | Answer and checks | P-101 answered with checked citations; a neighbour clause caught; conflict; abstention |
-| 8 | Audit and regression | an audit record with the index version; the regression gate S6 vs S5 |
+| 8 | Audit, regression, holdout | an audit record; the regression gate S6 vs S5; the ladder on questions written by role |
 | 9 | Reproduce | the mandatory path, success criteria, optional tasks |
 
 ## Live or replay
 
-Search, filters and evidence packs run **live** (milliseconds, no model). Model answers for all 138 questions
+Search, filters and evidence packs run **live** (milliseconds, no model). Model answers for all 143 questions
 in every configuration come from the **replay** of the lecturer's run: identical requests get identical saved
 answers. Single questions in steps 5 and 7 go to the course model live if it answers. Dense vectors and
 reranker answers are replayed too (when present).
@@ -212,7 +212,7 @@ pd.crosstab(pd.Series([c.doc_id for c in chunks], name="document"), pd.Series([c
 md(r"""
 ## 3. The retrieval set
 
-138 questions in the format of the practice 2 harness. The 50 questions of practice 3 (known page) are the
+143 questions in the format of the practice 2 harness. The 50 questions of practice 3 (known page) are the
 `base` slice; 20 of them also go to search **in English as they are** (the `language` slice); the rest are new.
 Every question has a Russian wording (it goes to search and to the prompt: the engineer of a Russian plant asks in
 Russian) and an English translation for us. Evidence is written as **locators**; the gold chunk ids are computed
@@ -245,7 +245,7 @@ md(r"""
 
 > **Predict, then run.** Where will most answers be lost: reading, search, context assembly or the model?
 
-Search runs live; the answers of the course model for 138 questions come from replay.
+Search runs live; the answers of the course model for 143 questions come from replay.
 """)
 code(r"""
 from plant_assistant import reval
@@ -317,14 +317,40 @@ for name in ("S1", "S2"):
     display(Markdown(f"**{name}** · {case_by_id['r01'].question_ru}"), hits_frame(rec, case_by_id["r01"], by_id, 3))
 """)
 md(r"""
-**S3: applicability through the registry.** The tag goes to the equipment registry: station, type, class. The
-filter keeps only documents whose scope fits, **before** search; the class goes into the prompt. P-310 is at
-station No. 3, so R-14 applies, not R-12.
+**S2b: rows in a separate collection.** 110 short row chunks mixed with the clauses win BM25 for every question
+that names a pump (the rows say "нагнетание P-101"), and push datasheets out of the top-5. Instead: rows are
+searched in their own index and get a small quota (top-5 chunks + at most 2 rows that share a term with the
+question). The questions that mixed rows broke in the lecturer's first run:
+""")
+code(r"""
+from plant_assistant.pipeline import PREVIOUS
+
+previous = dict(PREVIOUS)
+broken = ["d01", "d02", "d04", "z01", "z02", "z04", "z05", "i02", "g01"]
+for name in ("S1", "S2", "S2b"):
+    run(name)
+pd.DataFrame({name: scores[name].set_index("case_id").loc[broken, "correct"] for name in ("S1", "S2", "S2b")}).T
+""")
+md(r"""
+**S3: applicability through the registry.** The tag goes to the equipment registry: station, type, class and the
+**documents of the unit** (datasheet, manufacturer's manual). The filter keeps only documents whose scope fits,
+**before** search; the class goes into the prompt; the tables of the linked documents go into the context. P-310
+is at station No. 3, so R-14 applies, not R-12. The manual of P-205 does not name the plant tag (the manufacturer
+does not know it): only the registry links it.
+""")
+code(r"""
+from plant_assistant.applicability import load_registry
+
+print(load_registry()["P-205"].describe())
+rec = system.run_case(case_by_id["f01"], CONFIGS["S3"], with_answer=False)
+print("linked by the registry:", [where(by_id[c]) for c in rec["linked"]])
 """)
 code(r"""
 from plant_assistant.applicability import equipment_context
 
-system_live = System(chunks, answer_client=live)  # single questions: live if the course model answers
+# single questions: live if the course model answers (the reranker too), replay otherwise
+system_live = System(chunks, answer_client=live, rerank_client=live if LIVE else replay["rerank"],
+                     translate_client=live if LIVE else replay["translate"])
 for name in ("S2", "S3"):
     rec = system_live.run_case(case_by_id["p01"], CONFIGS[name])
     display(Markdown(f"**{name}** · {case_by_id['p01'].question_ru} · scope: {rec['scope'] or 'none'}"),
@@ -383,10 +409,8 @@ md(r"""
 The rows of the table, each against the previous one:
 """)
 code(r"""
-for name in ("S1", "S2", "S3", "S4", "S5"):
+for name in ("S3", "S4", "S5"):
     run(name)
-previous = {"S1": "S0", "S2": "S1", "S3": "S2", "S4": "S3", "S5": "S4", "S6": "S5", "M1t": "S0", "M3@S0": "S0",
-            "M3@S6": "S6"}
 cols = ["config", "vs", "recall@5", "evidence recall", "end-to-end", "e2e: fixed / broke", "e2e verdict",
         "evidence verdict"]
 reval.ablation(scores, previous)[cols].fillna("")
@@ -396,8 +420,10 @@ display(Markdown("**End-to-end by slice** (counts)"))
 reval.by_slice(scores, "correct")
 """)
 md(r"""
-Read the table by slices, not only by the total: S2 **breaks** some base questions (110 short row chunks with
-pump tags compete with the datasheets) and S3 fixes them; S4 is where `point_in_time` and `incident` move.
+Read the table by slices, not only by the total: S2 fixes table rows and **breaks** base questions, S2b keeps
+the fix without the damage; S3 moves `applicability` and `base`, S4 `point_in_time` and `incident`, S5
+`multi_evidence` and `cross_doc`. The `conflict` slice stays at 0 until S6: without the contract the model has no
+way to say "the documents disagree".
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -421,6 +447,13 @@ table[table.config.isin(["S0", "M1t", "M3@S0", "S6", "M3@S6"])][cols].fillna("")
 """)
 code(r"""
 reval.by_slice({k: scores[k] for k in ("S0", "M3@S0", "S6", "M3@S6")}, "correct")
+""")
+md(r"""
+**What each row costs.** Median seconds per question (search here + model latency saved with the answers), model
+calls and tokens per question. A row that is better must also be affordable: the reranker doubles the calls.
+""")
+code(r"""
+reval.cost_table(records)
 """)
 code(r"""
 lang = scores["M1t"].case_id
@@ -461,12 +494,17 @@ its unit, claims with their sources, and citations as fields that code can check
 2. **in force**: it is valid on the date of the question;
 3. **supports**: the number and the unit of the answer are in its text (or in a table it refers to).
 
-The P-101 question, live on the course model if it answers:
+The P-101 question. With the archive v2, BM25 puts Table 3 at rank 6 for this wording (a lubrication clause of
+R-15 shares "подшипник" and "насос"), so S6 has nothing to build the evidence pack from. The reranker over the
+top-20 brings Table 3 back, and the pack does the rest:
 """)
 code(r"""
-rec = system_live.run_case(P101, CONFIGS["S6"])
+for name in ("S6", "M3@S6"):
+    rec = system_live.run_case(P101, CONFIGS[name])
+    print(f"{name}: top-5 {[where(by_id[c]) for c in rec['top']]}")
+    print(f"     status {rec['answer']['status']}, correct {reval.grade(P101, rec['answer'])[0]}, "
+          f"verified {rec['checks']['verified']}")
 answer, checks = answer_frame(rec)
-print("from replay" if rec["from_replay"] else f"live, {rec['latency_s']} s", "| verified:", rec["checks"]["verified"])
 display(answer)
 checks
 """)
@@ -492,25 +530,15 @@ pd.DataFrame(rows)
 """)
 md(r"""
 **Conflict.** P-205 is a class II pump at station No. 2: R-12 says inspect above 4.5 mm/s; the manufacturer's
-manual says "alarm 7.1 mm/s". The system must show both, not choose. First, what S6 does with the question as asked:
+manual says "alarm 7.1 mm/s". BM25 never finds the English manual from a Russian question, but the registry links
+it (S3), so both sides are in the context. In the same language: R-15 (maintenance) says lubricate every 3000 h,
+R-12 says 2000 h, both in force for station No. 2. The system must show both, not choose:
 """)
 code(r"""
-rec = system_live.run_case(case_by_id["f01"], CONFIGS["S6"])
-print("S6 status:", rec["answer"]["status"], "|", rec["answer"]["answer"])
-print("manual of P-205 in the context:", any(c.startswith("OM-P-205") for c in rec["context"]))
-""")
-md(r"""
-The Russian question does not find the English manual with BM25 (no shared words except numbers written
-differently, and the tables of the manual do not even name the tag). A conflict that search does not bring is a
-conflict the system cannot show. When both sides are in the context, the contract does its job:
-""")
-code(r"""
-from plant_assistant.pipeline import CONFLICT_DEMO
-
-demo = System(chunks, answer_client=live).answer_from_context(case_by_id[CONFLICT_DEMO[0]], CONFLICT_DEMO[1],
-                                                               CONFIGS["S6"])
-print("status:", demo["answer"]["status"])
-print(demo["answer"]["answer"])
+for cid in ("f01", "f05"):
+    rec = system_live.run_case(case_by_id[cid], CONFIGS["S6"])
+    cited = sorted({by_id[c["chunk_id"]].doc_id for c in rec["checks"]["citations"] if c["chunk_id"]})
+    print(f"{cid}: {rec['answer']['status']} | cited {cited} | {rec['answer']['answer'][:220]}")
 """)
 md(r"""
 **Not in the documents.** V-912 is in no document (V-112 is in the registry but in no document either):
@@ -540,7 +568,7 @@ import json
 
 from plant_assistant.audit import audit_record
 
-rec = next(r for r in records["S6"] if r["case_id"] == "m01")
+rec = next(r for r in records["M3@S6"] if r["case_id"] == "m01")
 print(json.dumps(audit_record(rec, system.index_version, by_id), ensure_ascii=False, indent=1)[:1800])
 """)
 md(r"""
@@ -551,6 +579,27 @@ code(r"""
 g = reval.gate(scores["S5"], scores["S6"])
 print(f"S6 vs S5: {g['A right']} -> {g['B right']} of {g['n']}, fixed {g['B fixed']}, broke {g['B broke']} "
       f"{g['broken_cases']}, p = {g['p_value']}  ->  GATE {'PASS' if g['passed'] else 'FAIL'} {g['reasons']}")
+""")
+
+md(r"""
+**Holdout: are the fixes fitted to our own slices?** The retrieval set was written together with the fixes. The
+holdout has 27 questions written by a model (gpt-oss-120b on the course server) from the documents and four role
+descriptions only: an operator, a mechanic, a reliability engineer, an auditor. It never saw the ladder or the
+slices. Code kept the gradable ones (the review list: `reference/holdout_review.md`).
+""")
+code(r"""
+holdout = load_cases(REPLAY_DIR.parent / "holdout.jsonl")
+h_scores = {}
+for name in [c.name for c in LADDER] + ["M3@S0", "M3@S6"]:
+    h_scores[name] = reval.score(holdout, system.run(holdout, CONFIGS[name], progress=False), by_id)
+reval.ablation(h_scores, previous)[["config", "vs", "recall@5", "evidence recall", "end-to-end", "e2e: fixed / broke",
+                                    "e2e verdict"]].fillna("")
+""")
+md(r"""
+On the holdout the plant-side ladder still helps (S3 is the big step), but the reranker alone on raw BM25 (M3@S0)
+is at least as good as S6, and 27 questions cannot tell them apart. The honest reading: plant data are what fix versions,
+applicability and conflicts, and those questions are rare in a sample of everyday questions; a reranker fixes
+wording. Measure both on your own questions, and look at the cost columns before you choose.
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -572,9 +621,9 @@ md(r"""
 **Success criteria**
 
 - the retrieval columns of your ablation table equal `reference/ablation.csv`;
-- the P-101 question at S6: "not normal, inspect within 24 hours", citations R-12 rev. 3 cl. 4.3.3, Table 3,
-  cl. 6.1-6.2, all three checks pass;
-- V-912: `not_in_documents`; P-205 with both sources in the context: `conflict`.
+- the P-101 question at M3@S6: "not normal, inspect within 24 hours", citations R-12 rev. 3 cl. 4.3.3, Table 3,
+  cl. 6.1-6.2, all three checks pass (at S6 with BM25 alone it is lost in search: see step 7);
+- V-912: `not_in_documents`; P-205 and the lubrication interval of P-101: `conflict` with both documents cited.
 
 **What you built:** a retrieval set with evidence from the structure of the documents, loss attribution by link,
 tag normalization, table rows, applicability through the registry, a date filter that understands amendments,

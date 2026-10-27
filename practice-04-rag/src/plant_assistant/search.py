@@ -4,7 +4,9 @@ The mechanisms (BM25, dense vectors, hybrid with RRF, an LLM reranker) are taugh
 here they are ready tools that become rows of the ablation table. Two plant-side switches change what is
 indexed, not how it is searched:
 - `normalize`: equipment tags in one form in the chunks and in the query (normalize.py);
-- `table_rows`: rows of long tables are chunks; the page chunks of those tables leave the index.
+- `rows`: how a long table is indexed: "pages" (a page of the table is a chunk), "mixed" (every row is a chunk,
+  in the same index as the clauses), or two collections, "main" (clauses and short tables) and "rows" (rows
+  only), searched separately with a small quota for rows.
 
 `allowed` is a pre-filter: search ranks only the allowed chunks, so the top-k is never filled with chunks
 that a filter would throw away later (post-filtering, a typical mistake).
@@ -66,11 +68,22 @@ def tokenize(text: str) -> list[str]:
 # ---------------------------------------------------------------------------------------------
 # Index views
 # ---------------------------------------------------------------------------------------------
-def view(chunks: list[Chunk], table_rows: bool) -> list[Chunk]:
-    """Which chunks are in the index: page chunks of long tables, or their rows instead."""
-    if table_rows:
-        return [c for c in chunks if not (c.chunk_type == "table" and c.split_into_rows)]
-    return [c for c in chunks if c.chunk_type != "table_row"]
+ROW_MODES = ("pages", "mixed", "main", "rows")
+
+
+def view(chunks: list[Chunk], rows: str | bool) -> list[Chunk]:
+    """Which chunks are in an index: see `rows` in the module docstring (True / False mean mixed / pages)."""
+    rows = {True: "mixed", False: "pages"}.get(rows, rows)
+    long_page = [c.chunk_type == "table" and c.split_into_rows for c in chunks]
+    if rows == "pages":
+        return [c for c in chunks if c.chunk_type != "table_row"]
+    if rows == "mixed":
+        return [c for c, lp in zip(chunks, long_page) if not lp]
+    if rows == "main":
+        return [c for c, lp in zip(chunks, long_page) if not lp and c.chunk_type != "table_row"]
+    if rows == "rows":
+        return [c for c in chunks if c.chunk_type == "table_row"]
+    raise ValueError(f"unknown rows mode {rows!r}, use one of {ROW_MODES}")
 
 
 def index_text(c: Chunk, normalize: bool) -> str:
@@ -86,9 +99,9 @@ def prepare_query(query: str, normalize: bool) -> str:
 class BM25Index:
     """BM25 over a view of the store. Scores of all chunks are computed, then the filter, then the top-k."""
 
-    def __init__(self, chunks: list[Chunk], normalize: bool = False, table_rows: bool = False):
-        self.normalize, self.table_rows = normalize, table_rows
-        self.chunks = view(chunks, table_rows)
+    def __init__(self, chunks: list[Chunk], normalize: bool = False, rows: str | bool = "pages"):
+        self.normalize, self.rows = normalize, rows
+        self.chunks = view(chunks, rows)
         self.ids = [c.chunk_id for c in self.chunks]
         self._bm25 = BM25Okapi([tokenize(index_text(c, normalize)) for c in self.chunks])
 
@@ -152,9 +165,9 @@ def _unit(x: np.ndarray) -> np.ndarray:
 class DenseIndex:
     """Cosine similarity in numpy: at a thousand chunks no vector database is needed."""
 
-    def __init__(self, chunks: list[Chunk], vectors: VectorStore, table_rows: bool = False,
+    def __init__(self, chunks: list[Chunk], vectors: VectorStore, rows: str | bool = "pages",
                  embed_query: Callable[[str], np.ndarray] | None = None):
-        self.chunks = view(chunks, table_rows)
+        self.chunks = view(chunks, rows)
         self.ids = [c.chunk_id for c in self.chunks]
         pos = {cid: i for i, cid in enumerate(vectors.chunk_ids)}
         missing = [cid for cid in self.ids if cid not in pos]
@@ -229,5 +242,6 @@ def rerank(client, query: str, hits: list[Hit], chunks_by_id: dict[str, Chunk], 
         ok = False
     order += [i for i in range(len(hits)) if i not in order]
     out = [Hit(hits[i].chunk_id, hits[i].score, r + 1, "rerank") for r, i in enumerate(order[:k])]
-    return out, {"ok": ok and resp.ok, "error": resp.error, "latency_s": resp.latency_s}
+    return out, {"ok": ok and resp.ok, "error": resp.error, "latency_s": resp.latency_s,
+                 "prompt_tokens": resp.prompt_tokens, "completion_tokens": resp.completion_tokens}
 

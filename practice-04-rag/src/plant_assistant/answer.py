@@ -85,7 +85,8 @@ Return JSON by the schema:
 - citations: one entry per source you rely on, with the fields copied from its header (doc_id, revision,
   amendment, clause, table_no, row_key, page; null if the header has no such field) and its label in "source".
 Rules: cite the clause or the table row that states the value, not a neighbouring one. If the sources show dates
-of validity, use only sources in force on the date the question is about."""
+of validity, use only sources in force on the date the question is about. Decide first, then write: the "answer"
+field holds the result for the engineer, never your reasoning."""
 
 CITATION_SCHEMA = {
     "type": "object",

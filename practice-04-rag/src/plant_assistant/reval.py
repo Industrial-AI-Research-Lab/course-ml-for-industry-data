@@ -1,7 +1,8 @@
 """Retrieval eval: metrics, end-to-end grading by code, loss attribution, the ablation table.
 
 Metrics of one question (questions with the status "not in documents" have no evidence: no retrieval metrics):
-- recall@k: every "answer" evidence item has a chunk in the top-k of search;
+- recall@k: every "answer" evidence item has a chunk in the top-k of search (with separate rows: top-5 + 2 rows);
+  documents linked by the registry are not search, they count only in evidence recall;
 - evidence recall: every evidence item (answer, support, action) has a chunk in the context that the model saw;
 - MRR: 1 / rank of the first chunk of the first answer item in the search list (0 if not in the top-`depth`);
 - end-to-end: code checks the value and the unit, all values of a "what changed" answer, or the status;
@@ -50,7 +51,7 @@ def grade(case: TestCase, ans: dict | None) -> tuple[bool, str]:
         return (True, "ok") if not missing else (False, f"missing {missing}")
     if not same_value(ans.get("value"), exp["value"]):
         return False, "wrong value" if ans.get("value") not in (None, "") else "said not in documents"
-    if exp.get("unit") and canonical_unit(ans.get("unit")) != exp["unit"]:
+    if exp.get("unit") and canonical_unit(ans.get("unit")) != canonical_unit(exp["unit"]):
         return False, "wrong unit"
     return True, "ok"
 
@@ -61,7 +62,7 @@ def grade(case: TestCase, ans: dict | None) -> tuple[bool, str]:
 def retrieval_metrics(case: TestCase, rec: dict, k: int = 5) -> dict:
     if not case.evidence:
         return {"recall@k": None, "evidence_recall": None, "mrr": None}
-    top = set(rec["retrieved"][:k])
+    top = set(rec.get("top") or rec["retrieved"][:k])  # S2b+: top-5 chunks and up to 2 rows of the row collection
     context = set(rec["context"])
     answers = case.gold("answer")
     recall = all(g & top for g in answers)
@@ -192,3 +193,21 @@ def gate(baseline: pd.DataFrame, candidate: pd.DataFrame, metric: str = "correct
         reasons.append(f"breaks {r['B broke']} questions that the baseline answered (limit {max_broken})")
     broken = [c for c, x, y in zip(common, xa, xb) if x and not y]
     return {**r, "metric": metric, "passed": not reasons, "reasons": reasons, "broken_cases": broken}
+
+
+def cost(records: list[dict]) -> dict:
+    """Latency and cost per question: median seconds (search measured here + model latency as measured when the
+    answer was made), model calls, tokens. A replayed answer keeps the latency of the live call."""
+    c = [r["cost"] for r in records if r.get("cost")]
+    if not c:
+        return {}
+    secs = pd.Series([x["search_s"] + x["model_s"] for x in c])
+    return {"median s / question": round(float(secs.median()), 2), "p90 s": round(float(secs.quantile(0.9)), 2),
+            "search ms (median)": round(1000 * float(pd.Series([x["search_s"] for x in c]).median()), 1),
+            "model calls / question": round(sum(x["calls"] for x in c) / len(c), 2),
+            "prompt tokens / question": round(sum(x["prompt_tokens"] for x in c) / len(c)),
+            "completion tokens / question": round(sum(x["completion_tokens"] for x in c) / len(c))}
+
+
+def cost_table(records: dict[str, list[dict]]) -> pd.DataFrame:
+    return pd.DataFrame({name: cost(recs) for name, recs in records.items()}).T.rename_axis("config")

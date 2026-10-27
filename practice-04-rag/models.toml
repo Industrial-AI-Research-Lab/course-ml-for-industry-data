@@ -23,6 +23,8 @@ base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
 api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
 model = "${COURSE_LLM_MODEL:-iairlab/qwen3.8-27b}"
 concurrency = 8
+# room for a long answer contract (claims and citations); thinking stays off
+max_tokens = 3000
 extra_body = { chat_template_kwargs = { enable_thinking = false } }
 
 [profiles.course-thinking]
@@ -65,3 +67,14 @@ description = "Embeddings on the course server, if the lab deploys a model (vari
 base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
 api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
 model = "${COURSE_EMBED_MODEL:-iairlab/bge-m3}"
+
+# ---------- drafting the holdout questions (scripts/draft_holdout.py) ----------
+
+[profiles.drafter]
+description = "Model that drafts holdout questions: gpt-oss-120b on the course server (a frontier profile is better)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|COURSE_LLM_API_KEY}"
+model = "${DRAFTER_MODEL:-iairlab/gpt-oss-120b}"
+max_tokens = 16000
+timeout_s = 600
+extra_body = { reasoning_effort = "medium" }

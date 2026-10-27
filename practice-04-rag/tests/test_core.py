@@ -12,7 +12,7 @@ import pytest
 
 from plant_assistant import REFERENCE_DIR, REPLAY_DIR
 from plant_assistant.answer import Answer, Citation, parse
-from plant_assistant.applicability import in_scope, load_registry, scope_for
+from plant_assistant.applicability import in_scope, linked_chunks, load_registry, scope_for
 from plant_assistant.assemble import evidence_pack, header, render
 from plant_assistant.cases import SLICES, load_cases, parse_locator, resolve
 from plant_assistant.corpus import build_corpus, find_references, index_version, markdown_rows
@@ -149,6 +149,33 @@ def test_applicability_near_duplicates(by_id):
     assert not in_scope(by_id["OM-P-205-r2-table2"], scope)  # the manual of P-205 is not about P-310
 
 
+def test_registry_links_the_manual(chunks, by_id):
+    reg = load_registry()
+    assert reg["P-205"].documents == ["DS-P-205", "OM-P-205"]
+    assert not by_id["OM-P-205-r2-table2"].equipment_tags  # the manufacturer does not know the plant tag
+    q = "Какая граница вибрации у насоса P-205?"
+    linked = linked_chunks(scope_for(extract_rules(q, TODAY), q, reg), chunks)
+    assert {"DS-P-205-p1", "OM-P-205-r2-table2"} <= set(linked)
+    assert all(by_id[c].doc_id in ("DS-P-205", "OM-P-205") for c in linked)
+
+
+def test_same_language_conflict_in_force(by_id):
+    r12, r15 = by_id["R-12-r3-7.1"], by_id["R-15-r1-4.1"]
+    assert "2000" in r12.text and "3000" in r15.text
+    assert in_force(r12, TODAY) and in_force(r15, TODAY) and set(r12.scope_stations) & set(r15.scope_stations)
+
+
+def test_separate_rows_collection(system, cases):
+    case = next(c for c in cases if c.case_id == "r01")
+    r = system.retrieve(case, CONFIGS["S2b"])
+    rows = [c for c in r["top"] if system.by_id[c].chunk_type == "table_row"]
+    assert 1 <= len(rows) <= 2 and "VL-2-r4-tА.2-V-12" in rows
+    assert len(r["top"]) - len(rows) == 5
+    z01 = next(c for c in cases if c.case_id == "z01")
+    assert "DS-P-205-p1" in system.retrieve(z01, CONFIGS["S2b"])["top"]
+    assert "DS-P-205-p1" not in system.retrieve(z01, CONFIGS["S2"])["top"]  # mixed rows push the datasheet out
+
+
 def test_post_filter_loses_what_pre_filter_keeps(chunks, by_id):
     idx = BM25Index(chunks, normalize=True)
     q = "Какая граница осмотра действовала для насоса P-101 на 01.12.2024?"
@@ -198,7 +225,7 @@ def test_rrf_and_dense_from_saved_vectors(tmp_path, chunks):
 
 def test_evidence_pack_for_p101(system, cases):
     case = next(c for c in cases if c.case_id == "m01")
-    r = system.retrieve(case, CONFIGS["S5"])
+    r = system.retrieve(case, CONFIGS["M3@S6"])  # the reranker brings Table 3 into the top-5, the pack the rest
     assert {"R-12-r3-4.3.3", "R-12-r3-table1", "R-12-r3-6.1", "R-12-r3-6.2"} <= set(r["context"])
     assert "R-12-r2-4.3.3" not in r["context"]  # the date filter holds in the pack too
     r0 = system.retrieve(case, CONFIGS["S0"])
@@ -216,7 +243,7 @@ def test_header_has_citation_fields(by_id):
 # Retrieval set, grading, checks
 # ---------------------------------------------------------------------------------------------
 def test_retrieval_set(cases, chunks):
-    assert len(cases) == 138 and {c.slice for c in cases} == set(SLICES)
+    assert len(cases) == 143 and {c.slice for c in cases} == set(SLICES)
     ids = {c.chunk_id for c in chunks}
     for c in cases:
         for e in c.evidence:
@@ -283,7 +310,7 @@ def test_stats_from_practice_2():
 # ---------------------------------------------------------------------------------------------
 def test_replay_reproduces_reference(system, cases):
     ref = pd.read_csv(REFERENCE_DIR / "per_question.csv")
-    for name in ("S0", "S6"):
+    for name in ("S0", "S2b", "S6"):
         records = system.run(cases, CONFIGS[name], progress=False)
         df = score(cases, records, system.by_id)
         mine = df.set_index("case_id")[["correct", "verified", "recall@k"]]
@@ -294,9 +321,26 @@ def test_replay_reproduces_reference(system, cases):
         assert text(mine).equals(text(theirs.loc[mine.index])), name
 
 
-def test_p101_answer_at_s6(system, cases):
+def test_p101_answer(system, cases):
     case = next(c for c in cases if c.case_id == "m01")
-    rec = system.run_case(case, CONFIGS["S6"])
+    lost = system.run_case(case, CONFIGS["S6"])  # BM25 puts Table 3 at rank 6: lost in search
+    assert not grade(case, lost["answer"])[0] and "R-12-r3-table1" not in lost["top"]
+    rec = system.run_case(case, CONFIGS["M3@S6"])
     assert grade(case, rec["answer"])[0] and rec["checks"]["verified"]
     cited = {c["chunk_id"] for c in rec["checks"]["citations"]}
     assert {"R-12-r3-4.3.3", "R-12-r3-table1"} <= cited and cited & {"R-12-r3-6.1", "R-12-r3-6.2"}
+
+
+def test_holdout_is_separate_and_graded(cases):
+    holdout = load_cases(REPLAY_DIR.parent / "holdout.jsonl")
+    assert 25 <= len(holdout) <= 30 and {c.slice for c in holdout} == {"holdout"}
+    assert not {c.case_id for c in holdout} & {c.case_id for c in cases}
+    assert all(c.note.startswith("role: ") for c in holdout)
+
+
+def test_cost_columns(system, cases):
+    from plant_assistant.reval import cost
+
+    recs = system.run([c for c in cases if c.slice == "conflict"], CONFIGS["M3@S6"], progress=False)
+    c = cost(recs)
+    assert c["model calls / question"] == 2 and c["prompt tokens / question"] > 1000
