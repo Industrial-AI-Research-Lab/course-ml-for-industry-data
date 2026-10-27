@@ -1,0 +1,1263 @@
+case_id,slice,config,recall@k,evidence_recall,mrr,correct,reason,verified,link,status,value
+t01,base,S0,True,True,0.5,True,ok,True,,answered,"2,8"
+t02,base,S0,True,True,0.5,True,ok,True,,answered,"4,5"
+t03,base,S0,True,True,0.5,True,ok,True,,answered,"4,5"
+t04,base,S0,True,True,0.5,True,ok,True,,answered,"7,1"
+t05,base,S0,True,True,0.5,True,ok,True,,answered,"7,1"
+t06,base,S0,True,True,0.5,True,ok,True,,answered,"11,2"
+t07,base,S0,True,True,0.5,True,ok,True,,answered,"11,2"
+t08,base,S0,True,True,0.5,True,ok,True,,answered,"18,0"
+t09,base,S0,True,True,0.5,True,ok,False,,answered,"5,6"
+t10,base,S0,True,True,0.5,True,ok,False,,answered,"9,0"
+a01,base,S0,True,True,0.2,True,ok,False,,answered,250
+a02,base,S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+a03,base,S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+a04,base,S0,True,True,0.2,True,ok,False,,answered,400
+c01,base,S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+c02,base,S0,True,True,0.5,True,ok,False,,answered,5
+c03,base,S0,True,True,0.5,True,ok,False,,answered,12
+c04,base,S0,True,True,0.5,True,ok,False,,answered,30
+c05,base,S0,True,True,0.5,True,ok,False,,answered,24
+c06,base,S0,True,True,0.25,True,ok,True,,answered,500
+c07,base,S0,True,True,0.5,True,ok,False,,answered,8
+c08,base,S0,True,True,0.5,True,ok,False,,answered,15
+c09,base,S0,True,True,0.5,True,ok,True,,answered,80
+c10,base,S0,True,True,0.5,True,ok,False,,answered,5
+c11,base,S0,True,True,0.5,True,ok,False,,answered,1
+c12,base,S0,True,True,0.5,True,ok,False,,answered,2000
+c13,base,S0,True,True,0.5,True,ok,False,,answered,"0,05"
+c14,base,S0,True,True,0.5,True,ok,False,,answered,25 000
+c15,base,S0,True,True,0.5,True,ok,True,,answered,5
+c16,base,S0,True,True,0.5,True,ok,False,,answered,600
+c17,base,S0,True,True,0.5,True,ok,False,,answered,1000
+d01,base,S0,True,True,0.2,True,ok,True,,answered,65
+d02,base,S0,True,True,0.2,True,ok,True,,answered,125
+d03,base,S0,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+d04,base,S0,False,False,0.16666666666666666,True,ok,False,,answered,55
+d05,base,S0,True,True,1.0,True,ok,True,,answered,640
+d06,base,S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+z01,base,S0,True,True,0.25,True,ok,True,,answered,50
+z02,base,S0,True,True,0.25,True,ok,True,,answered,80
+z03,base,S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+z04,base,S0,False,False,0.16666666666666666,True,ok,False,,answered,37
+z05,base,S0,True,True,0.3333333333333333,True,ok,True,,answered,520
+n01,base,S0,,,,True,ok,False,,not_in_documents,
+n02,base,S0,,,,True,ok,False,,not_in_documents,
+n03,base,S0,,,,True,ok,False,,not_in_documents,
+n04,base,S0,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,S0,,,,True,ok,True,,not_in_documents,
+n06,base,S0,,,,True,ok,True,,not_in_documents,
+n07,base,S0,,,,True,ok,True,,not_in_documents,
+n08,base,S0,,,,True,ok,True,,not_in_documents,
+en-t03,language,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,S0,False,False,0.0,False,wrong value,False,search,answered,11.2
+en-t09,language,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-a01,language,S0,False,False,0.07692307692307693,False,status not_in_documents,False,search,not_in_documents,
+en-a03,language,S0,True,True,1.0,True,ok,True,,answered,11
+en-c01,language,S0,False,False,0.0,False,wrong value,False,search,answered,1000
+en-c02,language,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,S0,False,False,0.0,False,wrong value,False,search,answered,7
+en-c06,language,S0,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+en-c08,language,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c09,language,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,S0,False,False,0.0,False,wrong value,False,search,answered,3000
+en-c14,language,S0,False,False,0.0,False,wrong value,False,search,answered,20 000
+en-d01,language,S0,False,False,0.07142857142857142,False,wrong value,False,search,answered,50
+en-d04,language,S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,37
+en-z01,language,S0,True,True,0.5,True,ok,True,,answered,50
+en-z04,language,S0,True,True,0.3333333333333333,True,ok,True,,answered,37
+en-n01,language,S0,,,,True,ok,True,,not_in_documents,
+en-n05,language,S0,,,,True,ok,True,,not_in_documents,
+p01,applicability,S0,True,True,0.25,True,ok,True,,answered,"3,5"
+p02,applicability,S0,True,False,0.25,True,ok,False,,answered,"2,8"
+p03,applicability,S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p04,applicability,S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p05,applicability,S0,False,False,0.05555555555555555,False,status not_in_documents,False,search,not_in_documents,
+p06,applicability,S0,False,False,0.05555555555555555,False,status not_in_documents,False,search,not_in_documents,
+p07,applicability,S0,True,True,0.2,False,"missing ['3,5']",False,model,answered,"4,5"
+p08,applicability,S0,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+p09,applicability,S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p10,applicability,S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p11,applicability,S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+p12,applicability,S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+v01,point_in_time,S0,True,True,1.0,False,wrong value,False,model,answered,720
+v02,point_in_time,S0,True,True,0.5,True,ok,True,,answered,720
+v03,point_in_time,S0,False,False,0.0625,False,wrong value,False,search,answered,1000
+v04,point_in_time,S0,True,True,0.5,True,ok,True,,answered,720
+v05,point_in_time,S0,True,False,0.25,False,wrong value,False,assembly,answered,"4,5"
+v06,point_in_time,S0,True,False,0.2,True,ok,True,,answered,"4,5"
+v07,point_in_time,S0,True,True,0.25,False,wrong value,False,model,answered,80
+v08,point_in_time,S0,True,True,0.2,True,ok,True,,answered,80
+v09,point_in_time,S0,False,False,0.1111111111111111,False,wrong value,False,search,answered,1000
+v10,point_in_time,S0,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+i01,incident,S0,True,True,0.25,False,"missing ['5,0']",False,model,answered,"4,5"
+i02,incident,S0,True,True,0.2,True,ok,True,,answered,"4,5"
+i03,incident,S0,False,False,0.14285714285714285,False,invalid answer,False,search,,
+w01,what_changed,S0,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+w02,what_changed,S0,False,False,0.16666666666666666,False,"missing ['1000', '720']",False,search,answered,500
+w03,what_changed,S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+w04,what_changed,S0,False,False,0.0,False,missing ['720'],False,search,answered,500
+m01,multi_evidence,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+m02,multi_evidence,S0,True,False,0.3333333333333333,True,ok,False,,answered,"7,1"
+m03,multi_evidence,S0,False,False,0.0,False,missing ['24'],False,search,answered,"2,8"
+m04,multi_evidence,S0,False,False,0.0,False,missing ['24'],False,search,answered,"11,2"
+m05,multi_evidence,S0,True,False,0.5,True,ok,False,,answered,1
+m06,multi_evidence,S0,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8
+m07,multi_evidence,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+m08,multi_evidence,S0,True,False,0.5,True,ok,True,,answered,"4,5"
+k01,cross_doc,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k02,cross_doc,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k03,cross_doc,S0,False,False,0.05,False,status not_in_documents,False,search,not_in_documents,
+f01,conflict,S0,False,False,0.125,False,"status not_in_documents, expected conflict",False,search,not_in_documents,
+f02,conflict,S0,False,False,0.125,False,"status not_in_documents, expected conflict",False,search,not_in_documents,
+f03,conflict,S0,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,S0,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"11,2"
+r01,table_row,S0,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+r02,table_row,S0,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+r03,table_row,S0,True,True,0.25,True,ok,True,,answered,"4,0"
+r04,table_row,S0,True,True,0.3333333333333333,True,ok,True,,answered,250
+r05,table_row,S0,True,True,0.2,True,ok,True,,answered,"2,5"
+r06,table_row,S0,True,True,0.5,True,ok,True,,answered,50
+r07,table_row,S0,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,S0,True,True,0.5,True,ok,True,,answered,80
+g01,tag_variant,S0,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+g02,tag_variant,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+g03,tag_variant,S0,False,False,0.07142857142857142,False,status not_in_documents,False,search,not_in_documents,
+g04,tag_variant,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+g05,tag_variant,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+x01,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,S0,,,,True,ok,False,,not_in_documents,
+x09,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,S0,,,,True,ok,True,,not_in_documents,
+t01,base,S1,True,True,0.5,True,ok,True,,answered,"2,8"
+t02,base,S1,True,True,0.5,True,ok,True,,answered,"4,5"
+t03,base,S1,True,True,0.5,True,ok,True,,answered,"4,5"
+t04,base,S1,True,True,0.5,True,ok,True,,answered,"7,1"
+t05,base,S1,True,True,0.5,True,ok,True,,answered,"7,1"
+t06,base,S1,True,True,0.5,True,ok,True,,answered,"11,2"
+t07,base,S1,True,True,0.5,True,ok,True,,answered,"11,2"
+t08,base,S1,True,True,0.5,True,ok,True,,answered,"18,0"
+t09,base,S1,True,True,0.5,True,ok,False,,answered,"5,6"
+t10,base,S1,True,True,0.5,True,ok,False,,answered,"9,0"
+a01,base,S1,True,True,0.2,True,ok,False,,answered,250
+a02,base,S1,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+a03,base,S1,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+a04,base,S1,True,True,0.2,True,ok,False,,answered,400
+c01,base,S1,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+c02,base,S1,True,True,0.5,True,ok,False,,answered,5
+c03,base,S1,True,True,0.5,True,ok,False,,answered,12
+c04,base,S1,True,True,0.5,True,ok,False,,answered,30
+c05,base,S1,True,True,0.5,True,ok,False,,answered,24
+c06,base,S1,True,True,0.25,True,ok,True,,answered,500
+c07,base,S1,True,True,0.5,True,ok,False,,answered,8
+c08,base,S1,True,True,0.5,True,ok,False,,answered,15
+c09,base,S1,True,True,0.5,True,ok,True,,answered,80
+c10,base,S1,True,True,0.5,True,ok,False,,answered,5
+c11,base,S1,True,True,0.5,True,ok,False,,answered,1
+c12,base,S1,True,True,0.5,True,ok,False,,answered,2000
+c13,base,S1,True,True,0.5,True,ok,False,,answered,"0,05"
+c14,base,S1,True,True,0.5,True,ok,False,,answered,25 000
+c15,base,S1,True,True,0.5,True,ok,True,,answered,5
+c16,base,S1,True,True,0.5,True,ok,False,,answered,600
+c17,base,S1,True,True,0.5,True,ok,False,,answered,1000
+d01,base,S1,True,True,0.2,True,ok,True,,answered,65
+d02,base,S1,True,True,0.2,True,ok,True,,answered,125
+d03,base,S1,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+d04,base,S1,False,False,0.16666666666666666,True,ok,False,,answered,55
+d05,base,S1,True,True,1.0,True,ok,True,,answered,640
+d06,base,S1,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+z01,base,S1,True,True,0.25,True,ok,True,,answered,50
+z02,base,S1,True,True,0.25,True,ok,True,,answered,80
+z03,base,S1,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+z04,base,S1,False,False,0.16666666666666666,True,ok,False,,answered,37
+z05,base,S1,True,True,0.3333333333333333,True,ok,True,,answered,520
+n01,base,S1,,,,True,ok,False,,not_in_documents,
+n02,base,S1,,,,True,ok,False,,not_in_documents,
+n03,base,S1,,,,True,ok,False,,not_in_documents,
+n04,base,S1,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,S1,,,,True,ok,True,,not_in_documents,
+n06,base,S1,,,,True,ok,True,,not_in_documents,
+n07,base,S1,,,,True,ok,True,,not_in_documents,
+n08,base,S1,,,,True,ok,True,,not_in_documents,
+en-t03,language,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,S1,False,False,0.0,False,wrong value,False,search,answered,11.2
+en-t09,language,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-a01,language,S1,False,False,0.07692307692307693,False,status not_in_documents,False,search,not_in_documents,
+en-a03,language,S1,True,True,1.0,True,ok,True,,answered,11
+en-c01,language,S1,False,False,0.0,False,wrong value,False,search,answered,1000
+en-c02,language,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,S1,False,False,0.0,False,wrong value,False,search,answered,7
+en-c06,language,S1,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+en-c08,language,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c09,language,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,S1,False,False,0.0,False,wrong value,False,search,answered,3000
+en-c14,language,S1,False,False,0.0,False,wrong value,False,search,answered,20 000
+en-d01,language,S1,False,False,0.07142857142857142,False,wrong value,False,search,answered,50
+en-d04,language,S1,False,False,0.16666666666666666,False,wrong value,False,search,answered,37
+en-z01,language,S1,True,True,0.5,True,ok,True,,answered,50
+en-z04,language,S1,True,True,0.3333333333333333,True,ok,True,,answered,37
+en-n01,language,S1,,,,True,ok,True,,not_in_documents,
+en-n05,language,S1,,,,True,ok,True,,not_in_documents,
+p01,applicability,S1,True,True,0.25,True,ok,True,,answered,"3,5"
+p02,applicability,S1,True,False,0.25,True,ok,False,,answered,"2,8"
+p03,applicability,S1,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p04,applicability,S1,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p05,applicability,S1,False,False,0.05555555555555555,False,status not_in_documents,False,search,not_in_documents,
+p06,applicability,S1,False,False,0.05555555555555555,False,status not_in_documents,False,search,not_in_documents,
+p07,applicability,S1,True,True,0.2,False,"missing ['3,5']",False,model,answered,"4,5"
+p08,applicability,S1,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+p09,applicability,S1,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p10,applicability,S1,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p11,applicability,S1,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+p12,applicability,S1,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+v01,point_in_time,S1,True,True,1.0,False,wrong value,False,model,answered,720
+v02,point_in_time,S1,True,True,0.5,True,ok,True,,answered,720
+v03,point_in_time,S1,False,False,0.0625,False,wrong value,False,search,answered,1000
+v04,point_in_time,S1,True,True,0.5,True,ok,True,,answered,720
+v05,point_in_time,S1,True,False,0.25,False,wrong value,False,assembly,answered,"4,5"
+v06,point_in_time,S1,True,False,0.2,True,ok,True,,answered,"4,5"
+v07,point_in_time,S1,True,True,0.25,False,wrong value,False,model,answered,80
+v08,point_in_time,S1,True,True,0.2,True,ok,True,,answered,80
+v09,point_in_time,S1,False,False,0.1111111111111111,False,wrong value,False,search,answered,1000
+v10,point_in_time,S1,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+i01,incident,S1,True,True,0.25,False,"missing ['5,0']",False,model,answered,"4,5"
+i02,incident,S1,True,True,0.2,True,ok,True,,answered,"4,5"
+i03,incident,S1,False,False,0.14285714285714285,False,invalid answer,False,search,,
+w01,what_changed,S1,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+w02,what_changed,S1,False,False,0.16666666666666666,False,"missing ['1000', '720']",False,search,answered,500
+w03,what_changed,S1,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+w04,what_changed,S1,False,False,0.0,False,missing ['720'],False,search,answered,500
+m01,multi_evidence,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+m02,multi_evidence,S1,True,False,0.3333333333333333,True,ok,False,,answered,"7,1"
+m03,multi_evidence,S1,False,False,0.0,False,missing ['24'],False,search,answered,"2,8"
+m04,multi_evidence,S1,False,False,0.0,False,missing ['24'],False,search,answered,"11,2"
+m05,multi_evidence,S1,True,False,0.5,True,ok,False,,answered,1
+m06,multi_evidence,S1,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8
+m07,multi_evidence,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+m08,multi_evidence,S1,True,False,0.5,True,ok,True,,answered,"4,5"
+k01,cross_doc,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k02,cross_doc,S1,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k03,cross_doc,S1,False,False,0.05,False,status not_in_documents,False,search,not_in_documents,
+f01,conflict,S1,False,False,0.125,False,"status not_in_documents, expected conflict",False,search,not_in_documents,
+f02,conflict,S1,False,False,0.125,False,"status not_in_documents, expected conflict",False,search,not_in_documents,
+f03,conflict,S1,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,S1,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"11,2"
+r01,table_row,S1,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+r02,table_row,S1,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+r03,table_row,S1,True,True,0.25,True,ok,True,,answered,"4,0"
+r04,table_row,S1,True,True,0.3333333333333333,True,ok,True,,answered,250
+r05,table_row,S1,True,True,0.2,True,ok,True,,answered,"2,5"
+r06,table_row,S1,True,True,0.5,True,ok,True,,answered,50
+r07,table_row,S1,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,S1,True,True,0.5,True,ok,True,,answered,80
+g01,tag_variant,S1,False,False,0.16666666666666666,True,ok,False,,answered,55
+g02,tag_variant,S1,True,True,0.25,True,ok,True,,answered,65
+g03,tag_variant,S1,True,True,0.25,True,ok,True,,answered,45
+g04,tag_variant,S1,True,True,0.3333333333333333,True,ok,True,,answered,"2,5"
+g05,tag_variant,S1,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,S1,True,True,0.25,True,ok,True,,answered,32
+x01,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,S1,,,,True,ok,False,,not_in_documents,
+x09,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,S1,,,,True,ok,True,,not_in_documents,
+t01,base,S2,True,True,0.5,True,ok,True,,answered,"2,8"
+t02,base,S2,True,True,0.5,True,ok,True,,answered,"4,5"
+t03,base,S2,True,True,0.5,True,ok,True,,answered,"4,5"
+t04,base,S2,True,True,0.5,True,ok,True,,answered,"7,1"
+t05,base,S2,True,True,0.5,True,ok,True,,answered,"7,1"
+t06,base,S2,True,True,0.5,True,ok,True,,answered,"11,2"
+t07,base,S2,True,True,0.5,True,ok,True,,answered,"11,2"
+t08,base,S2,True,True,0.5,True,ok,True,,answered,"18,0"
+t09,base,S2,True,True,0.5,True,ok,False,,answered,"5,6"
+t10,base,S2,True,True,0.5,True,ok,False,,answered,"9,0"
+a01,base,S2,True,True,0.5,True,ok,False,,answered,250
+a02,base,S2,True,True,0.5,True,ok,False,,answered,30
+a03,base,S2,False,False,0.16666666666666666,True,ok,False,,answered,11
+a04,base,S2,True,True,0.5,True,ok,False,,answered,400
+c01,base,S2,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+c02,base,S2,True,True,0.5,True,ok,False,,answered,5
+c03,base,S2,True,True,0.5,True,ok,False,,answered,12
+c04,base,S2,True,True,0.5,True,ok,False,,answered,30
+c05,base,S2,True,True,0.5,True,ok,False,,answered,24
+c06,base,S2,True,True,0.25,True,ok,True,,answered,500
+c07,base,S2,True,True,0.5,True,ok,False,,answered,8
+c08,base,S2,True,True,0.5,True,ok,False,,answered,15
+c09,base,S2,True,True,0.5,True,ok,True,,answered,80
+c10,base,S2,True,True,0.5,True,ok,False,,answered,5
+c11,base,S2,True,True,0.5,True,ok,False,,answered,1
+c12,base,S2,True,True,0.5,True,ok,False,,answered,2000
+c13,base,S2,True,True,0.5,True,ok,False,,answered,"0,05"
+c14,base,S2,True,True,0.5,True,ok,False,,answered,25 000
+c15,base,S2,True,True,0.5,True,ok,True,,answered,5
+c16,base,S2,True,True,0.5,True,ok,False,,answered,600
+c17,base,S2,True,True,0.5,True,ok,False,,answered,1000
+d01,base,S2,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+d02,base,S2,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+d03,base,S2,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+d04,base,S2,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+d05,base,S2,True,True,1.0,True,ok,True,,answered,640
+d06,base,S2,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,
+z01,base,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+z02,base,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+z03,base,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+z04,base,S2,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,
+z05,base,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+n01,base,S2,,,,True,ok,False,,not_in_documents,
+n02,base,S2,,,,True,ok,False,,not_in_documents,
+n03,base,S2,,,,True,ok,False,,not_in_documents,
+n04,base,S2,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,S2,,,,True,ok,True,,not_in_documents,
+n06,base,S2,,,,True,ok,True,,not_in_documents,
+n07,base,S2,,,,True,ok,True,,not_in_documents,
+n08,base,S2,,,,True,ok,True,,not_in_documents,
+en-t03,language,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,S2,False,False,0.0,False,wrong value,False,search,answered,11.2
+en-t09,language,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-a01,language,S2,False,False,0.07142857142857142,False,status not_in_documents,False,search,not_in_documents,
+en-a03,language,S2,True,True,1.0,True,ok,True,,answered,11
+en-c01,language,S2,False,False,0.0,False,wrong value,False,search,answered,1000
+en-c02,language,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,S2,False,False,0.0,False,wrong value,False,search,answered,7
+en-c06,language,S2,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+en-c08,language,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c09,language,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,S2,False,False,0.0,False,wrong value,False,search,answered,3000
+en-c14,language,S2,False,False,0.0,False,wrong value,False,search,answered,20 000
+en-d01,language,S2,False,False,0.07142857142857142,False,wrong value,False,search,answered,50
+en-d04,language,S2,False,False,0.16666666666666666,False,wrong value,False,search,answered,37
+en-z01,language,S2,True,True,0.5,True,ok,True,,answered,50
+en-z04,language,S2,True,True,0.3333333333333333,True,ok,True,,answered,37
+en-n01,language,S2,,,,True,ok,True,,not_in_documents,
+en-n05,language,S2,,,,True,ok,True,,not_in_documents,
+p01,applicability,S2,True,True,0.25,True,ok,True,,answered,"3,5"
+p02,applicability,S2,True,False,0.5,True,ok,True,,answered,"2,8"
+p03,applicability,S2,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+p04,applicability,S2,False,False,0.16666666666666666,False,wrong value,False,search,answered,"4,5"
+p05,applicability,S2,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+p06,applicability,S2,False,False,0.07142857142857142,False,status not_in_documents,False,search,not_in_documents,
+p07,applicability,S2,True,True,0.2,False,"missing ['3,5']",False,model,answered,"4,5"
+p08,applicability,S2,True,False,0.2,True,ok,True,,answered,"7,1"
+p09,applicability,S2,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+p10,applicability,S2,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+p11,applicability,S2,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+p12,applicability,S2,True,False,0.25,True,ok,True,,answered,"3,5"
+v01,point_in_time,S2,True,True,1.0,False,wrong value,False,model,answered,720
+v02,point_in_time,S2,True,True,0.5,True,ok,True,,answered,720
+v03,point_in_time,S2,False,False,0.0625,False,wrong value,False,search,answered,1000
+v04,point_in_time,S2,True,True,0.5,True,ok,True,,answered,720
+v05,point_in_time,S2,True,False,0.25,False,wrong value,False,assembly,answered,"4,5"
+v06,point_in_time,S2,True,False,0.2,True,ok,True,,answered,"4,5"
+v07,point_in_time,S2,True,True,0.25,False,wrong value,False,model,answered,80
+v08,point_in_time,S2,True,True,0.2,True,ok,True,,answered,80
+v09,point_in_time,S2,False,False,0.1111111111111111,False,wrong value,False,search,answered,1000
+v10,point_in_time,S2,True,False,0.2,False,status not_in_documents,False,assembly,not_in_documents,
+i01,incident,S2,True,True,1.0,False,"missing ['5,0']",False,model,answered,"4,5"
+i02,incident,S2,True,True,0.5,False,"missing ['4,5']",False,model,answered,24
+i03,incident,S2,False,False,0.14285714285714285,False,invalid answer,False,search,,
+w01,what_changed,S2,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+w02,what_changed,S2,False,False,0.2,False,missing ['720'],False,search,answered,500
+w03,what_changed,S2,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+w04,what_changed,S2,False,False,0.0,False,missing ['720'],False,search,answered,500
+m01,multi_evidence,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+m02,multi_evidence,S2,True,False,0.3333333333333333,True,ok,False,,answered,"7,1"
+m03,multi_evidence,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+m04,multi_evidence,S2,False,False,0.0,False,missing ['24'],False,search,answered,"11,2"
+m05,multi_evidence,S2,True,False,0.5,True,ok,False,,answered,1
+m06,multi_evidence,S2,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8
+m07,multi_evidence,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+m08,multi_evidence,S2,True,False,0.5,True,ok,True,,answered,"4,5"
+k01,cross_doc,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k02,cross_doc,S2,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k03,cross_doc,S2,False,False,0.05,False,status not_in_documents,False,search,not_in_documents,
+f01,conflict,S2,False,False,0.2,False,"status not_in_documents, expected conflict",False,search,not_in_documents,
+f02,conflict,S2,False,False,0.16666666666666666,False,"status answered, expected conflict",False,search,answered,"4,5"
+f03,conflict,S2,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,S2,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"11,2"
+r01,table_row,S2,True,True,0.5,True,ok,True,,answered,"1,6"
+r02,table_row,S2,True,True,0.5,True,ok,True,,answered,100
+r03,table_row,S2,True,True,0.5,True,ok,True,,answered,"4,0"
+r04,table_row,S2,True,True,1.0,True,ok,True,,answered,250
+r05,table_row,S2,True,True,0.5,True,ok,True,,answered,"2,5"
+r06,table_row,S2,True,True,1.0,True,ok,True,,answered,50
+r07,table_row,S2,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,S2,True,True,1.0,True,ok,True,,answered,80
+g01,tag_variant,S2,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+g02,tag_variant,S2,True,True,0.2,True,ok,True,,answered,65
+g03,tag_variant,S2,True,True,0.25,True,ok,True,,answered,45
+g04,tag_variant,S2,True,True,0.5,True,ok,True,,answered,"2,5"
+g05,tag_variant,S2,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,S2,True,True,0.2,True,ok,True,,answered,32
+x01,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,S2,,,,True,ok,False,,not_in_documents,
+x09,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,S2,,,,True,ok,True,,not_in_documents,
+t01,base,S3,True,True,0.5,True,ok,False,,answered,"2,8"
+t02,base,S3,True,True,0.5,True,ok,False,,answered,"4,5"
+t03,base,S3,True,True,0.5,True,ok,True,,answered,"4,5"
+t04,base,S3,True,True,0.5,True,ok,False,,answered,"7,1"
+t05,base,S3,True,True,0.5,True,ok,False,,answered,"7,1"
+t06,base,S3,True,True,0.5,True,ok,False,,answered,"11,2"
+t07,base,S3,True,True,0.5,True,ok,False,,answered,"11,2"
+t08,base,S3,True,True,0.5,True,ok,False,,answered,"18,0"
+t09,base,S3,True,True,0.5,True,ok,False,,answered,"5,6"
+t10,base,S3,True,True,0.5,True,ok,False,,answered,"9,0"
+a01,base,S3,True,True,0.5,True,ok,False,,answered,250
+a02,base,S3,True,True,0.5,True,ok,False,,answered,30
+a03,base,S3,True,True,0.25,True,ok,False,,answered,11
+a04,base,S3,True,True,0.5,True,ok,False,,answered,400
+c01,base,S3,False,False,0.16666666666666666,True,ok,False,,answered,100
+c02,base,S3,True,True,0.5,True,ok,False,,answered,5
+c03,base,S3,True,True,0.5,True,ok,False,,answered,12
+c04,base,S3,True,True,0.5,True,ok,False,,answered,30
+c05,base,S3,True,True,0.5,True,ok,False,,answered,24
+c06,base,S3,True,True,0.3333333333333333,True,ok,True,,answered,500
+c07,base,S3,True,True,0.5,True,ok,False,,answered,8
+c08,base,S3,True,True,0.5,True,ok,False,,answered,15
+c09,base,S3,True,True,0.5,True,ok,True,,answered,80
+c10,base,S3,True,True,0.5,True,ok,False,,answered,5
+c11,base,S3,True,True,0.5,True,ok,False,,answered,1
+c12,base,S3,True,True,0.5,True,ok,False,,answered,2000
+c13,base,S3,True,True,0.5,True,ok,False,,answered,"0,05"
+c14,base,S3,True,True,0.5,True,ok,False,,answered,25 000
+c15,base,S3,True,True,0.5,True,ok,True,,answered,5
+c16,base,S3,True,True,0.5,True,ok,False,,answered,600
+c17,base,S3,True,True,0.5,True,ok,False,,answered,1000
+d01,base,S3,True,True,0.2,True,ok,True,,answered,65
+d02,base,S3,True,True,0.2,True,ok,True,,answered,125
+d03,base,S3,True,True,0.2,True,ok,True,,answered,2950
+d04,base,S3,False,False,0.14285714285714285,True,ok,False,,answered,55
+d05,base,S3,True,True,1.0,True,ok,True,,answered,640
+d06,base,S3,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+z01,base,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+z02,base,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+z03,base,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+z04,base,S3,False,False,0.1111111111111111,True,ok,False,,answered,37
+z05,base,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+n01,base,S3,,,,True,ok,False,,not_in_documents,
+n02,base,S3,,,,True,ok,False,,not_in_documents,
+n03,base,S3,,,,True,ok,True,,not_in_documents,
+n04,base,S3,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,S3,,,,True,ok,True,,not_in_documents,
+n06,base,S3,,,,True,ok,True,,not_in_documents,
+n07,base,S3,,,,True,ok,True,,not_in_documents,
+n08,base,S3,,,,True,ok,True,,not_in_documents,
+en-t03,language,S3,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,S3,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,
+en-t09,language,S3,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-a01,language,S3,False,False,0.16666666666666666,True,ok,False,,answered,250
+en-a03,language,S3,False,False,0.16666666666666666,True,ok,False,,answered,11
+en-c01,language,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c02,language,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c06,language,S3,True,True,0.3333333333333333,True,ok,True,,answered,500
+en-c08,language,S3,True,True,0.3333333333333333,True,ok,True,,answered,15
+en-c09,language,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c14,language,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-d01,language,S3,True,True,1.0,True,ok,True,,answered,65
+en-d04,language,S3,True,True,1.0,True,ok,False,,answered,55
+en-z01,language,S3,True,True,0.5,True,ok,True,,answered,50
+en-z04,language,S3,True,True,0.3333333333333333,True,ok,True,,answered,37
+en-n01,language,S3,,,,True,ok,True,,not_in_documents,
+en-n05,language,S3,,,,True,ok,True,,not_in_documents,
+p01,applicability,S3,True,True,0.5,True,ok,True,,answered,"3,5"
+p02,applicability,S3,True,False,0.5,True,ok,False,,answered,"4,5"
+p03,applicability,S3,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p04,applicability,S3,True,False,0.2,True,ok,True,,answered,"7,1"
+p05,applicability,S3,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+p06,applicability,S3,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,
+p07,applicability,S3,True,True,0.5,True,ok,True,,answered,"3,5"
+p08,applicability,S3,True,False,0.25,True,ok,False,,answered,"7,1"
+p09,applicability,S3,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p10,applicability,S3,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+p11,applicability,S3,True,True,0.25,True,ok,True,,answered,II
+p12,applicability,S3,True,True,0.5,True,ok,True,,answered,"3,5"
+v01,point_in_time,S3,True,True,1.0,False,wrong value,False,model,answered,720
+v02,point_in_time,S3,True,True,0.5,True,ok,True,,answered,720
+v03,point_in_time,S3,False,False,0.08333333333333333,False,wrong value,False,search,answered,1000
+v04,point_in_time,S3,True,True,0.5,True,ok,True,,answered,720
+v05,point_in_time,S3,True,False,0.3333333333333333,False,wrong value,False,assembly,answered,"4,5"
+v06,point_in_time,S3,True,False,0.25,False,wrong value,False,assembly,answered,"5,0"
+v07,point_in_time,S3,True,True,0.3333333333333333,False,wrong value,False,model,answered,80
+v08,point_in_time,S3,True,True,0.25,True,ok,True,,answered,80
+v09,point_in_time,S3,True,True,0.3333333333333333,True,ok,True,,answered,720
+v10,point_in_time,S3,True,False,0.25,True,ok,False,,answered,"7,1"
+i01,incident,S3,True,True,1.0,False,"missing ['5,0']",False,model,answered,"4,5"
+i02,incident,S3,True,True,0.5,True,ok,True,,answered,"4,5"
+i03,incident,S3,True,True,0.2,True,ok,True,,answered,500
+w01,what_changed,S3,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+w02,what_changed,S3,False,False,0.2,False,missing ['720'],False,search,answered,500
+w03,what_changed,S3,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+w04,what_changed,S3,False,False,0.0,False,missing ['720'],False,search,answered,500
+m01,multi_evidence,S3,False,False,0.0,False,"missing ['4,5', '24']",False,search,answered,"5,0"
+m02,multi_evidence,S3,True,False,0.5,True,ok,True,,answered,"7,1"
+m03,multi_evidence,S3,False,False,0.0,False,missing ['24'],False,search,answered,10
+m04,multi_evidence,S3,False,False,0.0,False,missing ['24'],False,search,answered,"11,2"
+m05,multi_evidence,S3,True,False,0.5,True,ok,False,,answered,1
+m06,multi_evidence,S3,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8
+m07,multi_evidence,S3,False,False,0.0,False,missing ['24'],False,search,answered,10
+m08,multi_evidence,S3,True,False,0.5,True,ok,False,,answered,"4,5"
+k01,cross_doc,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k02,cross_doc,S3,False,False,0.05263157894736842,False,status not_in_documents,False,search,not_in_documents,
+k03,cross_doc,S3,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+f01,conflict,S3,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"4,5"
+f02,conflict,S3,False,False,0.2,False,"status answered, expected conflict",False,search,answered,"7,1"
+f03,conflict,S3,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,S3,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"7,1"
+r01,table_row,S3,True,True,0.5,True,ok,True,,answered,"1,6"
+r02,table_row,S3,True,True,0.5,True,ok,True,,answered,100
+r03,table_row,S3,True,True,0.5,True,ok,True,,answered,"4,0"
+r04,table_row,S3,True,True,1.0,True,ok,True,,answered,250
+r05,table_row,S3,True,True,0.5,True,ok,True,,answered,"2,5"
+r06,table_row,S3,True,True,1.0,True,ok,True,,answered,50
+r07,table_row,S3,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,S3,True,True,1.0,True,ok,True,,answered,80
+g01,tag_variant,S3,False,False,0.14285714285714285,True,ok,False,,answered,55
+g02,tag_variant,S3,True,True,0.2,True,ok,True,,answered,65
+g03,tag_variant,S3,True,True,0.5,True,ok,True,,answered,45
+g04,tag_variant,S3,True,True,0.5,True,ok,True,,answered,"2,5"
+g05,tag_variant,S3,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,S3,True,True,0.2,True,ok,True,,answered,32
+x01,not_in_documents,S3,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,S3,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,S3,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,S3,,,,True,ok,False,,not_in_documents,
+x05,not_in_documents,S3,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,S3,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,S3,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,S3,,,,True,ok,False,,not_in_documents,
+x09,not_in_documents,S3,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,S3,,,,True,ok,False,,not_in_documents,
+t01,base,S4,True,True,1.0,True,ok,True,,answered,"2,8"
+t02,base,S4,True,True,1.0,True,ok,True,,answered,"4,5"
+t03,base,S4,True,True,1.0,True,ok,True,,answered,"4,5"
+t04,base,S4,True,True,1.0,True,ok,True,,answered,"7,1"
+t05,base,S4,True,True,1.0,True,ok,True,,answered,"7,1"
+t06,base,S4,True,True,1.0,True,ok,True,,answered,"11,2"
+t07,base,S4,True,True,1.0,True,ok,True,,answered,"11,2"
+t08,base,S4,True,True,1.0,True,ok,True,,answered,"18,0"
+t09,base,S4,True,True,1.0,True,ok,True,,answered,"5,6"
+t10,base,S4,True,True,1.0,True,ok,True,,answered,"9,0"
+a01,base,S4,True,True,1.0,True,ok,True,,answered,250
+a02,base,S4,True,True,1.0,True,ok,True,,answered,30
+a03,base,S4,True,True,0.5,True,ok,True,,answered,11
+a04,base,S4,True,True,1.0,True,ok,True,,answered,400
+c01,base,S4,True,True,0.3333333333333333,True,ok,True,,answered,100
+c02,base,S4,True,True,1.0,True,ok,True,,answered,5
+c03,base,S4,True,True,1.0,True,ok,True,,answered,12
+c04,base,S4,True,True,1.0,True,ok,True,,answered,30
+c05,base,S4,True,True,1.0,True,ok,True,,answered,24
+c06,base,S4,True,True,1.0,True,ok,True,,answered,500
+c07,base,S4,True,True,1.0,True,ok,True,,answered,8
+c08,base,S4,True,True,1.0,True,ok,True,,answered,15
+c09,base,S4,True,True,1.0,True,ok,True,,answered,80
+c10,base,S4,True,True,1.0,True,ok,True,,answered,5
+c11,base,S4,True,True,1.0,True,ok,True,,answered,1
+c12,base,S4,True,True,1.0,True,ok,True,,answered,2000
+c13,base,S4,True,True,1.0,True,ok,True,,answered,"0,05"
+c14,base,S4,True,True,1.0,True,ok,True,,answered,25 000
+c15,base,S4,True,True,1.0,True,ok,True,,answered,5
+c16,base,S4,True,True,1.0,True,ok,True,,answered,600
+c17,base,S4,True,True,1.0,True,ok,True,,answered,1000
+d01,base,S4,True,True,0.25,True,ok,True,,answered,65
+d02,base,S4,True,True,0.25,True,ok,True,,answered,125
+d03,base,S4,True,True,0.3333333333333333,True,ok,True,,answered,2950
+d04,base,S4,True,True,0.25,True,ok,True,,answered,55
+d05,base,S4,True,True,1.0,True,ok,True,,answered,640
+d06,base,S4,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+z01,base,S4,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+z02,base,S4,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+z03,base,S4,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+z04,base,S4,True,True,0.2,True,ok,True,,answered,37
+z05,base,S4,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+n01,base,S4,,,,True,ok,True,,not_in_documents,
+n02,base,S4,,,,True,ok,True,,not_in_documents,
+n03,base,S4,,,,True,ok,True,,not_in_documents,
+n04,base,S4,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,S4,,,,True,ok,True,,not_in_documents,
+n06,base,S4,,,,True,ok,True,,not_in_documents,
+n07,base,S4,,,,True,ok,True,,not_in_documents,
+n08,base,S4,,,,True,ok,True,,not_in_documents,
+en-t03,language,S4,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,S4,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-t09,language,S4,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+en-a01,language,S4,True,True,0.2,True,ok,True,,answered,250
+en-a03,language,S4,True,True,0.2,True,ok,True,,answered,11
+en-c01,language,S4,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c02,language,S4,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,S4,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c06,language,S4,True,True,0.3333333333333333,True,ok,True,,answered,500
+en-c08,language,S4,True,True,0.5,True,ok,True,,answered,15
+en-c09,language,S4,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,S4,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,S4,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c14,language,S4,False,False,0.0,False,wrong value,False,search,answered,500
+en-d01,language,S4,True,True,1.0,True,ok,True,,answered,65
+en-d04,language,S4,True,True,1.0,True,ok,True,,answered,55
+en-z01,language,S4,True,True,0.5,True,ok,True,,answered,50
+en-z04,language,S4,True,True,0.3333333333333333,True,ok,True,,answered,37
+en-n01,language,S4,,,,True,ok,True,,not_in_documents,
+en-n05,language,S4,,,,True,ok,True,,not_in_documents,
+p01,applicability,S4,True,True,0.5,True,ok,True,,answered,"3,5"
+p02,applicability,S4,True,True,1.0,True,ok,True,,answered,"4,5"
+p03,applicability,S4,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p04,applicability,S4,True,True,0.3333333333333333,True,ok,True,,answered,"7,1"
+p05,applicability,S4,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,
+p06,applicability,S4,True,False,0.2,True,ok,True,,answered,"2,8"
+p07,applicability,S4,True,True,0.5,True,ok,True,,answered,"3,5"
+p08,applicability,S4,True,True,0.5,True,ok,True,,answered,"7,1"
+p09,applicability,S4,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p10,applicability,S4,True,True,0.2,True,ok,True,,answered,"5,6"
+p11,applicability,S4,True,True,0.25,True,ok,True,,answered,II
+p12,applicability,S4,True,True,0.5,True,ok,True,,answered,"3,5"
+v01,point_in_time,S4,True,True,1.0,True,ok,True,,answered,1000
+v02,point_in_time,S4,True,True,1.0,True,ok,True,,answered,720
+v03,point_in_time,S4,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+v04,point_in_time,S4,True,True,1.0,True,ok,True,,answered,720
+v05,point_in_time,S4,True,False,0.5,True,ok,True,,answered,"5,0"
+v06,point_in_time,S4,True,False,0.5,True,ok,True,,answered,"4,5"
+v07,point_in_time,S4,True,True,0.5,True,ok,True,,answered,85
+v08,point_in_time,S4,True,True,0.5,True,ok,True,,answered,80
+v09,point_in_time,S4,True,True,0.3333333333333333,True,ok,True,,answered,720
+v10,point_in_time,S4,True,True,0.3333333333333333,True,ok,True,,answered,"7,1"
+i01,incident,S4,True,True,1.0,True,ok,True,,answered,"5,0"
+i02,incident,S4,True,True,1.0,True,ok,True,,answered,"4,5"
+i03,incident,S4,True,True,0.5,True,ok,True,,answered,500
+w01,what_changed,S4,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+w02,what_changed,S4,False,False,0.2,False,missing ['720'],False,search,answered,500
+w03,what_changed,S4,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+w04,what_changed,S4,False,False,0.0,False,missing ['720'],False,search,answered,500
+m01,multi_evidence,S4,False,False,0.0,False,missing ['24'],False,search,answered,"4,5"
+m02,multi_evidence,S4,True,False,1.0,True,ok,True,,answered,"7,1"
+m03,multi_evidence,S4,False,False,0.0,False,missing ['24'],False,search,answered,10
+m04,multi_evidence,S4,False,False,0.0,False,missing ['24'],False,search,answered,"11,2"
+m05,multi_evidence,S4,True,False,1.0,True,ok,True,,answered,1
+m06,multi_evidence,S4,True,False,1.0,False,"missing ['4,5']",False,assembly,answered,8
+m07,multi_evidence,S4,False,False,0.0,False,missing ['24'],False,search,answered,10
+m08,multi_evidence,S4,True,False,1.0,True,ok,True,,answered,"4,5"
+k01,cross_doc,S4,False,False,0.0,False,wrong value,False,search,answered,24
+k02,cross_doc,S4,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+k03,cross_doc,S4,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+f01,conflict,S4,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"4,5"
+f02,conflict,S4,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"7,1"
+f03,conflict,S4,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"7,1"
+f04,conflict,S4,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"7,1"
+r01,table_row,S4,True,True,0.5,True,ok,True,,answered,"1,6"
+r02,table_row,S4,True,True,0.5,True,ok,True,,answered,100
+r03,table_row,S4,True,True,0.5,True,ok,True,,answered,"4,0"
+r04,table_row,S4,True,True,1.0,True,ok,True,,answered,250
+r05,table_row,S4,True,True,0.5,True,ok,True,,answered,"2,5"
+r06,table_row,S4,True,True,1.0,True,ok,True,,answered,50
+r07,table_row,S4,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,S4,True,True,1.0,True,ok,True,,answered,80
+g01,tag_variant,S4,True,True,0.25,True,ok,True,,answered,55
+g02,tag_variant,S4,True,True,0.25,True,ok,True,,answered,65
+g03,tag_variant,S4,True,True,0.5,True,ok,True,,answered,45
+g04,tag_variant,S4,True,True,0.5,True,ok,True,,answered,"2,5"
+g05,tag_variant,S4,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,S4,True,True,0.25,True,ok,True,,answered,32
+x01,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x09,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,S4,,,,True,ok,True,,not_in_documents,
+t01,base,S5,True,True,1.0,True,ok,True,,answered,"2,8"
+t02,base,S5,True,True,1.0,True,ok,True,,answered,"4,5"
+t03,base,S5,True,True,1.0,True,ok,True,,answered,"4,5"
+t04,base,S5,True,True,1.0,True,ok,True,,answered,"7,1"
+t05,base,S5,True,True,1.0,True,ok,True,,answered,"7,1"
+t06,base,S5,True,True,1.0,True,ok,True,,answered,"11,2"
+t07,base,S5,True,True,1.0,True,ok,True,,answered,"11,2"
+t08,base,S5,True,True,1.0,True,ok,True,,answered,"18,0"
+t09,base,S5,True,True,1.0,True,ok,True,,answered,"5,6"
+t10,base,S5,True,True,1.0,True,ok,True,,answered,"9,0"
+a01,base,S5,True,True,1.0,True,ok,True,,answered,250
+a02,base,S5,True,True,1.0,True,ok,True,,answered,30
+a03,base,S5,True,True,0.5,True,ok,True,,answered,11
+a04,base,S5,True,True,1.0,True,ok,True,,answered,400
+c01,base,S5,True,True,0.3333333333333333,True,ok,True,,answered,100
+c02,base,S5,True,True,1.0,True,ok,True,,answered,5
+c03,base,S5,True,True,1.0,True,ok,True,,answered,12
+c04,base,S5,True,True,1.0,True,ok,True,,answered,30
+c05,base,S5,True,True,1.0,True,ok,True,,answered,24
+c06,base,S5,True,True,1.0,True,ok,True,,answered,500
+c07,base,S5,True,True,1.0,True,ok,True,,answered,8
+c08,base,S5,True,True,1.0,True,ok,True,,answered,15
+c09,base,S5,True,True,1.0,True,ok,True,,answered,80
+c10,base,S5,True,True,1.0,True,ok,True,,answered,5
+c11,base,S5,True,True,1.0,True,ok,True,,answered,1
+c12,base,S5,True,True,1.0,True,ok,True,,answered,2000
+c13,base,S5,True,True,1.0,True,ok,True,,answered,"0,05"
+c14,base,S5,True,True,1.0,True,ok,True,,answered,25 000
+c15,base,S5,True,True,1.0,True,ok,True,,answered,5
+c16,base,S5,True,True,1.0,True,ok,True,,answered,600
+c17,base,S5,True,True,1.0,True,ok,True,,answered,1000
+d01,base,S5,True,True,0.25,True,ok,True,,answered,65
+d02,base,S5,True,True,0.25,True,ok,True,,answered,125
+d03,base,S5,True,True,0.3333333333333333,True,ok,True,,answered,2950
+d04,base,S5,True,True,0.25,True,ok,True,,answered,55
+d05,base,S5,True,True,1.0,True,ok,True,,answered,640
+d06,base,S5,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+z01,base,S5,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+z02,base,S5,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+z03,base,S5,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+z04,base,S5,True,True,0.2,True,ok,True,,answered,37
+z05,base,S5,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+n01,base,S5,,,,True,ok,True,,not_in_documents,
+n02,base,S5,,,,True,ok,True,,not_in_documents,
+n03,base,S5,,,,True,ok,True,,not_in_documents,
+n04,base,S5,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,S5,,,,True,ok,True,,not_in_documents,
+n06,base,S5,,,,True,ok,True,,not_in_documents,
+n07,base,S5,,,,True,ok,True,,not_in_documents,
+n08,base,S5,,,,True,ok,True,,not_in_documents,
+en-t03,language,S5,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,S5,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-t09,language,S5,False,True,0.16666666666666666,True,ok,True,,answered,"5,6"
+en-a01,language,S5,True,True,0.2,True,ok,True,,answered,250
+en-a03,language,S5,True,True,0.2,True,ok,True,,answered,11
+en-c01,language,S5,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c02,language,S5,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,S5,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c06,language,S5,True,True,0.3333333333333333,True,ok,True,,answered,500
+en-c08,language,S5,True,True,0.5,True,ok,True,,answered,15
+en-c09,language,S5,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,S5,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,S5,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c14,language,S5,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-d01,language,S5,True,True,1.0,True,ok,True,,answered,65
+en-d04,language,S5,True,True,1.0,True,ok,True,,answered,55
+en-z01,language,S5,True,True,0.5,True,ok,True,,answered,50
+en-z04,language,S5,True,True,0.3333333333333333,True,ok,True,,answered,37
+en-n01,language,S5,,,,True,ok,True,,not_in_documents,
+en-n05,language,S5,,,,True,ok,True,,not_in_documents,
+p01,applicability,S5,True,True,0.5,True,ok,True,,answered,"3,5"
+p02,applicability,S5,True,True,1.0,True,ok,True,,answered,"4,5"
+p03,applicability,S5,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p04,applicability,S5,True,True,0.3333333333333333,True,ok,True,,answered,"7,1"
+p05,applicability,S5,False,True,0.16666666666666666,True,ok,True,,answered,"2,2"
+p06,applicability,S5,True,False,0.2,True,ok,True,,answered,"2,8"
+p07,applicability,S5,True,True,0.5,True,ok,True,,answered,"3,5"
+p08,applicability,S5,True,True,0.5,True,ok,True,,answered,"7,1"
+p09,applicability,S5,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p10,applicability,S5,True,True,0.2,True,ok,True,,answered,"5,6"
+p11,applicability,S5,True,True,0.25,True,ok,True,,answered,II
+p12,applicability,S5,True,True,0.5,True,ok,True,,answered,"3,5"
+v01,point_in_time,S5,True,True,1.0,True,ok,True,,answered,1000
+v02,point_in_time,S5,True,True,1.0,True,ok,True,,answered,720
+v03,point_in_time,S5,False,True,0.14285714285714285,True,ok,True,,answered,500
+v04,point_in_time,S5,True,True,1.0,True,ok,True,,answered,720
+v05,point_in_time,S5,True,False,0.5,True,ok,True,,answered,"5,0"
+v06,point_in_time,S5,True,False,0.5,True,ok,True,,answered,"4,5"
+v07,point_in_time,S5,True,True,0.5,True,ok,True,,answered,85
+v08,point_in_time,S5,True,True,0.5,True,ok,True,,answered,80
+v09,point_in_time,S5,True,True,0.3333333333333333,True,ok,True,,answered,720
+v10,point_in_time,S5,True,True,0.3333333333333333,True,ok,True,,answered,"7,1"
+i01,incident,S5,True,True,1.0,True,ok,True,,answered,"5,0"
+i02,incident,S5,True,True,1.0,True,ok,True,,answered,"4,5"
+i03,incident,S5,True,True,0.5,True,ok,True,,answered,500
+w01,what_changed,S5,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+w02,what_changed,S5,False,True,0.2,True,ok,True,,answered,500
+w03,what_changed,S5,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+w04,what_changed,S5,False,True,0.0,True,ok,True,,answered,500
+m01,multi_evidence,S5,False,True,0.0,True,ok,True,,answered,"4,5"
+m02,multi_evidence,S5,True,True,1.0,True,ok,True,,answered,"7,1"
+m03,multi_evidence,S5,False,True,0.0,True,ok,True,,answered,24
+m04,multi_evidence,S5,False,True,0.0,True,ok,True,,answered,"11,2"
+m05,multi_evidence,S5,True,False,1.0,True,ok,True,,answered,1
+m06,multi_evidence,S5,True,True,1.0,True,ok,True,,answered,"4,5"
+m07,multi_evidence,S5,False,True,0.0,True,ok,True,,answered,24
+m08,multi_evidence,S5,True,True,1.0,True,ok,True,,answered,"4,5"
+k01,cross_doc,S5,False,True,0.0,True,ok,True,,answered,4
+k02,cross_doc,S5,False,False,0.06666666666666667,True,ok,True,,answered,3
+k03,cross_doc,S5,False,True,0.0,True,ok,True,,answered,4
+f01,conflict,S5,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"4,5"
+f02,conflict,S5,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"7,1"
+f03,conflict,S5,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,S5,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"7,1"
+r01,table_row,S5,True,True,0.5,True,ok,True,,answered,"1,6"
+r02,table_row,S5,True,True,0.5,True,ok,True,,answered,100
+r03,table_row,S5,True,True,0.5,True,ok,True,,answered,"4,0"
+r04,table_row,S5,True,True,1.0,True,ok,True,,answered,250
+r05,table_row,S5,True,True,0.5,True,ok,True,,answered,"2,5"
+r06,table_row,S5,True,True,1.0,True,ok,True,,answered,50
+r07,table_row,S5,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,S5,True,True,1.0,True,ok,True,,answered,80
+g01,tag_variant,S5,True,True,0.25,True,ok,True,,answered,55
+g02,tag_variant,S5,True,True,0.25,True,ok,True,,answered,65
+g03,tag_variant,S5,True,True,0.5,True,ok,True,,answered,45
+g04,tag_variant,S5,True,True,0.5,True,ok,True,,answered,"2,5"
+g05,tag_variant,S5,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,S5,True,True,0.25,True,ok,True,,answered,32
+x01,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x09,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,S5,,,,True,ok,True,,not_in_documents,
+t01,base,S6,True,True,1.0,True,ok,True,,answered,"2,8"
+t02,base,S6,True,True,1.0,True,ok,True,,answered,"4,5"
+t03,base,S6,True,True,1.0,True,ok,True,,answered,"4,5"
+t04,base,S6,True,True,1.0,True,ok,True,,answered,"7,1"
+t05,base,S6,True,True,1.0,True,ok,True,,answered,"7,1"
+t06,base,S6,True,True,1.0,True,ok,True,,answered,"11,2"
+t07,base,S6,True,True,1.0,True,ok,True,,answered,"11,2"
+t08,base,S6,True,True,1.0,True,ok,True,,answered,"18,0"
+t09,base,S6,True,True,1.0,True,ok,True,,answered,"5,6"
+t10,base,S6,True,True,1.0,True,ok,True,,answered,"9,0"
+a01,base,S6,True,True,1.0,True,ok,True,,answered,250
+a02,base,S6,True,True,1.0,True,ok,True,,answered,30
+a03,base,S6,True,True,0.5,True,ok,True,,answered,11
+a04,base,S6,True,True,1.0,True,ok,True,,answered,400
+c01,base,S6,True,True,0.3333333333333333,True,ok,True,,answered,100
+c02,base,S6,True,True,1.0,True,ok,True,,answered,5
+c03,base,S6,True,True,1.0,True,ok,True,,answered,12
+c04,base,S6,True,True,1.0,True,ok,True,,answered,30
+c05,base,S6,True,True,1.0,True,ok,True,,answered,24
+c06,base,S6,True,True,1.0,True,ok,True,,answered,500
+c07,base,S6,True,True,1.0,True,ok,True,,answered,8
+c08,base,S6,True,True,1.0,True,ok,True,,answered,15
+c09,base,S6,True,True,1.0,True,ok,True,,answered,80
+c10,base,S6,True,True,1.0,True,ok,True,,answered,5
+c11,base,S6,True,True,1.0,True,ok,True,,answered,1
+c12,base,S6,True,True,1.0,True,ok,True,,answered,2000
+c13,base,S6,True,True,1.0,True,ok,True,,answered,"0,05"
+c14,base,S6,True,True,1.0,True,ok,True,,answered,25 000
+c15,base,S6,True,True,1.0,True,ok,True,,answered,5
+c16,base,S6,True,True,1.0,True,ok,True,,answered,600
+c17,base,S6,True,True,1.0,True,ok,True,,answered,1000
+d01,base,S6,True,True,0.25,True,ok,True,,answered,65
+d02,base,S6,True,True,0.25,True,ok,True,,answered,125
+d03,base,S6,True,True,0.3333333333333333,True,ok,True,,answered,2950
+d04,base,S6,True,True,0.25,True,ok,True,,answered,55
+d05,base,S6,True,True,1.0,True,ok,True,,answered,640
+d06,base,S6,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+z01,base,S6,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+z02,base,S6,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+z03,base,S6,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,
+z04,base,S6,True,True,0.2,True,ok,True,,answered,37
+z05,base,S6,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,
+n01,base,S6,,,,True,ok,True,,not_in_documents,
+n02,base,S6,,,,True,ok,True,,not_in_documents,
+n03,base,S6,,,,True,ok,True,,not_in_documents,
+n04,base,S6,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,S6,,,,True,ok,True,,not_in_documents,
+n06,base,S6,,,,True,ok,True,,not_in_documents,
+n07,base,S6,,,,True,ok,True,,not_in_documents,
+n08,base,S6,,,,True,ok,True,,not_in_documents,
+en-t03,language,S6,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,S6,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-t09,language,S6,False,True,0.16666666666666666,True,ok,True,,answered,"5,6"
+en-a01,language,S6,True,True,0.2,True,ok,True,,answered,250
+en-a03,language,S6,True,True,0.2,True,ok,True,,answered,11
+en-c01,language,S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c02,language,S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c06,language,S6,True,True,0.3333333333333333,True,ok,True,,answered,500
+en-c08,language,S6,True,True,0.5,True,ok,True,,answered,15
+en-c09,language,S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c14,language,S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-d01,language,S6,True,True,1.0,True,ok,True,,answered,65
+en-d04,language,S6,True,True,1.0,True,ok,True,,answered,55
+en-z01,language,S6,True,True,0.5,True,ok,True,,answered,50
+en-z04,language,S6,True,True,0.3333333333333333,True,ok,True,,answered,37
+en-n01,language,S6,,,,True,ok,True,,not_in_documents,
+en-n05,language,S6,,,,True,ok,True,,not_in_documents,
+p01,applicability,S6,True,True,0.5,True,ok,True,,answered,"3,5"
+p02,applicability,S6,True,True,1.0,True,ok,True,,answered,4.5
+p03,applicability,S6,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p04,applicability,S6,True,True,0.3333333333333333,True,ok,True,,answered,"7,1"
+p05,applicability,S6,False,True,0.16666666666666666,True,ok,True,,answered,"2,2"
+p06,applicability,S6,True,False,0.2,True,ok,True,,answered,"2,8"
+p07,applicability,S6,True,True,0.5,True,ok,True,,answered,"3,5"
+p08,applicability,S6,True,True,0.5,True,ok,True,,answered,"7,1"
+p09,applicability,S6,True,True,0.3333333333333333,True,ok,True,,answered,"5,6"
+p10,applicability,S6,True,True,0.2,True,ok,True,,answered,"5,6"
+p11,applicability,S6,True,True,0.25,True,ok,True,,answered,II
+p12,applicability,S6,True,True,0.5,True,ok,True,,answered,"3,5"
+v01,point_in_time,S6,True,True,1.0,True,ok,True,,answered,1000
+v02,point_in_time,S6,True,True,1.0,True,ok,True,,answered,720
+v03,point_in_time,S6,False,True,0.14285714285714285,True,ok,True,,answered,500
+v04,point_in_time,S6,True,True,1.0,True,ok,True,,answered,720
+v05,point_in_time,S6,True,False,0.5,True,ok,True,,answered,"5,0"
+v06,point_in_time,S6,True,False,0.5,True,ok,True,,answered,"4,5"
+v07,point_in_time,S6,True,True,0.5,True,ok,True,,answered,85
+v08,point_in_time,S6,True,True,0.5,True,ok,True,,answered,80
+v09,point_in_time,S6,True,True,0.3333333333333333,True,ok,True,,answered,720
+v10,point_in_time,S6,True,True,0.3333333333333333,True,ok,True,,answered,"7,1"
+i01,incident,S6,True,True,1.0,False,invalid answer,False,model,,
+i02,incident,S6,True,True,1.0,True,ok,True,,answered,"4,5"
+i03,incident,S6,True,True,0.5,True,ok,True,,answered,500
+w01,what_changed,S6,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+w02,what_changed,S6,False,True,0.2,True,ok,True,,answered,720
+w03,what_changed,S6,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,
+w04,what_changed,S6,False,True,0.0,True,ok,True,,answered,500
+m01,multi_evidence,S6,False,True,0.0,True,ok,True,,answered,"4,5"
+m02,multi_evidence,S6,True,True,1.0,True,ok,True,,answered,"7,1"
+m03,multi_evidence,S6,False,True,0.0,True,ok,True,,answered,24
+m04,multi_evidence,S6,False,True,0.0,True,ok,True,,answered,"11,2"
+m05,multi_evidence,S6,True,False,1.0,True,ok,True,,answered,1
+m06,multi_evidence,S6,True,True,1.0,True,ok,True,,answered,8
+m07,multi_evidence,S6,False,True,0.0,True,ok,False,,answered,"4,0"
+m08,multi_evidence,S6,True,True,1.0,True,ok,True,,answered,"2,8"
+k01,cross_doc,S6,False,True,0.0,True,ok,True,,answered,4
+k02,cross_doc,S6,False,False,0.06666666666666667,False,status needs_human,False,assembly,needs_human,
+k03,cross_doc,S6,False,True,0.0,True,ok,True,,answered,4
+f01,conflict,S6,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"4,5"
+f02,conflict,S6,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"7,1"
+f03,conflict,S6,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,S6,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"7,1"
+r01,table_row,S6,True,True,0.5,True,ok,True,,answered,"1,6"
+r02,table_row,S6,True,True,0.5,True,ok,True,,answered,100
+r03,table_row,S6,True,True,0.5,True,ok,True,,answered,"4,0"
+r04,table_row,S6,True,True,1.0,True,ok,True,,answered,250
+r05,table_row,S6,True,True,0.5,True,ok,True,,answered,"2,5"
+r06,table_row,S6,True,True,1.0,True,ok,True,,answered,50
+r07,table_row,S6,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,S6,True,True,1.0,True,ok,True,,answered,80
+g01,tag_variant,S6,True,True,0.25,True,ok,True,,answered,55
+g02,tag_variant,S6,True,True,0.25,True,ok,True,,answered,65
+g03,tag_variant,S6,True,True,0.5,True,ok,True,,answered,45
+g04,tag_variant,S6,True,True,0.5,True,ok,True,,answered,"2,5"
+g05,tag_variant,S6,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,S6,True,True,0.25,True,ok,True,,answered,32
+x01,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x09,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,S6,,,,True,ok,True,,not_in_documents,
+en-t03,language,M1t,True,True,0.2,True,ok,True,,answered,"4,5"
+en-t04,language,M1t,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-t09,language,M1t,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-a01,language,M1t,True,True,0.2,True,ok,False,,answered,250
+en-a03,language,M1t,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-c01,language,M1t,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,
+en-c02,language,M1t,True,True,0.5,True,ok,False,,answered,5
+en-c05,language,M1t,False,False,0.0,False,wrong value,False,search,answered,8
+en-c06,language,M1t,False,False,0.14285714285714285,False,wrong value,False,search,answered,720
+en-c08,language,M1t,True,True,0.5,True,ok,False,,answered,15
+en-c09,language,M1t,True,True,0.5,True,ok,True,,answered,80
+en-c11,language,M1t,True,True,0.5,True,ok,False,,answered,1
+en-c12,language,M1t,False,False,0.07142857142857142,False,status not_in_documents,False,search,not_in_documents,
+en-c14,language,M1t,True,True,0.5,True,ok,False,,answered,25 000
+en-d01,language,M1t,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-d04,language,M1t,False,False,0.16666666666666666,True,ok,False,,answered,55
+en-z01,language,M1t,True,True,0.25,True,ok,True,,answered,50
+en-z04,language,M1t,False,False,0.16666666666666666,True,ok,False,,answered,37
+en-n01,language,M1t,,,,True,ok,False,,not_in_documents,
+en-n05,language,M1t,,,,True,ok,True,,not_in_documents,
+t01,base,M3@S0,True,True,0.5,True,ok,False,,answered,"2,8"
+t02,base,M3@S0,True,True,0.5,True,ok,False,,answered,"4,5"
+t03,base,M3@S0,True,True,0.5,True,ok,True,,answered,"4,5"
+t04,base,M3@S0,True,True,0.5,True,ok,True,,answered,"7,1"
+t05,base,M3@S0,True,True,0.5,True,ok,False,,answered,"7,1"
+t06,base,M3@S0,True,True,0.5,True,ok,False,,answered,"11,2"
+t07,base,M3@S0,True,True,0.5,True,ok,True,,answered,"11,2"
+t08,base,M3@S0,True,True,0.5,True,ok,False,,answered,"18,0"
+t09,base,M3@S0,True,True,0.5,True,ok,False,,answered,"5,6"
+t10,base,M3@S0,True,True,0.5,True,ok,False,,answered,"9,0"
+a01,base,M3@S0,True,True,0.5,True,ok,False,,answered,250
+a02,base,M3@S0,True,True,0.5,True,ok,False,,answered,30
+a03,base,M3@S0,True,True,0.5,True,ok,False,,answered,11
+a04,base,M3@S0,True,True,0.5,True,ok,False,,answered,400
+c01,base,M3@S0,True,True,0.5,True,ok,False,,answered,100
+c02,base,M3@S0,True,True,0.5,True,ok,False,,answered,5
+c03,base,M3@S0,True,True,0.5,True,ok,False,,answered,12
+c04,base,M3@S0,True,True,0.5,True,ok,False,,answered,30
+c05,base,M3@S0,True,True,0.5,True,ok,False,,answered,24
+c06,base,M3@S0,True,True,1.0,True,ok,True,,answered,500
+c07,base,M3@S0,True,True,0.5,True,ok,False,,answered,8
+c08,base,M3@S0,True,True,0.5,True,ok,False,,answered,15
+c09,base,M3@S0,True,True,0.5,True,ok,True,,answered,80
+c10,base,M3@S0,True,True,0.5,True,ok,False,,answered,5
+c11,base,M3@S0,True,True,0.5,True,ok,False,,answered,1
+c12,base,M3@S0,True,True,0.5,True,ok,False,,answered,2000
+c13,base,M3@S0,True,True,0.5,True,ok,False,,answered,"0,05"
+c14,base,M3@S0,True,True,0.5,True,ok,False,,answered,25 000
+c15,base,M3@S0,True,True,0.5,True,ok,True,,answered,5
+c16,base,M3@S0,True,True,0.5,True,ok,False,,answered,600
+c17,base,M3@S0,True,True,0.5,True,ok,False,,answered,1000
+d01,base,M3@S0,True,True,1.0,True,ok,True,,answered,65
+d02,base,M3@S0,True,True,1.0,True,ok,True,,answered,125
+d03,base,M3@S0,True,True,1.0,True,ok,True,,answered,2950
+d04,base,M3@S0,True,True,0.5,True,ok,False,,answered,55
+d05,base,M3@S0,True,True,1.0,True,ok,True,,answered,640
+d06,base,M3@S0,True,True,1.0,True,ok,True,,answered,2019
+z01,base,M3@S0,True,True,1.0,True,ok,True,,answered,50
+z02,base,M3@S0,True,True,1.0,True,ok,True,,answered,80
+z03,base,M3@S0,True,True,1.0,True,ok,True,,answered,2900
+z04,base,M3@S0,True,True,1.0,True,ok,False,,answered,37
+z05,base,M3@S0,True,True,1.0,True,ok,True,,answered,520
+n01,base,M3@S0,,,,True,ok,False,,not_in_documents,
+n02,base,M3@S0,,,,True,ok,False,,not_in_documents,
+n03,base,M3@S0,,,,False,invented a value,False,model,answered,500
+n04,base,M3@S0,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,M3@S0,,,,True,ok,False,,not_in_documents,
+n06,base,M3@S0,,,,True,ok,True,,not_in_documents,
+n07,base,M3@S0,,,,False,invented a value,False,model,answered,"4,0"
+n08,base,M3@S0,,,,True,ok,False,,not_in_documents,
+en-t03,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-t04,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-t09,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-a01,language,M3@S0,True,True,0.5,True,ok,False,,answered,250
+en-a03,language,M3@S0,True,True,1.0,True,ok,True,,answered,11
+en-c01,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c02,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c06,language,M3@S0,True,True,1.0,True,ok,True,,answered,500
+en-c08,language,M3@S0,False,False,0.0,True,ok,False,,answered,15
+en-c09,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c12,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c14,language,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-d01,language,M3@S0,True,True,1.0,True,ok,True,,answered,65
+en-d04,language,M3@S0,True,True,1.0,True,ok,True,,answered,55
+en-z01,language,M3@S0,True,True,1.0,True,ok,True,,answered,50
+en-z04,language,M3@S0,True,True,1.0,True,ok,True,,answered,37
+en-n01,language,M3@S0,,,,True,ok,False,,not_in_documents,
+en-n05,language,M3@S0,,,,True,ok,True,,not_in_documents,
+p01,applicability,M3@S0,True,True,0.25,True,ok,False,,answered,"3,5"
+p02,applicability,M3@S0,True,True,0.3333333333333333,True,ok,False,,answered,"4,5"
+p03,applicability,M3@S0,True,True,0.5,True,ok,True,,answered,"5,6"
+p04,applicability,M3@S0,True,True,0.5,True,ok,True,,answered,"7,1"
+p05,applicability,M3@S0,True,True,0.5,False,wrong value,False,model,answered,"2,8"
+p06,applicability,M3@S0,True,True,0.25,True,ok,True,,answered,"2,8"
+p07,applicability,M3@S0,True,True,0.25,False,"missing ['3,5']",False,model,answered,"4,5"
+p08,applicability,M3@S0,True,True,0.5,True,ok,False,,answered,"7,1"
+p09,applicability,M3@S0,True,True,0.25,False,wrong value,False,model,answered,"7,1"
+p10,applicability,M3@S0,True,True,0.5,True,ok,False,,answered,"5,6"
+p11,applicability,M3@S0,True,True,1.0,True,ok,True,,answered,II
+p12,applicability,M3@S0,True,True,1.0,True,ok,True,,answered,"3,5"
+v01,point_in_time,M3@S0,True,True,0.5,False,wrong value,False,model,answered,720
+v02,point_in_time,M3@S0,True,True,0.3333333333333333,False,wrong value,False,model,answered,500
+v03,point_in_time,M3@S0,True,True,1.0,True,ok,True,,answered,500
+v04,point_in_time,M3@S0,True,True,0.3333333333333333,False,wrong value,False,model,answered,500
+v05,point_in_time,M3@S0,True,True,0.3333333333333333,False,wrong value,False,model,answered,"4,5"
+v06,point_in_time,M3@S0,True,True,0.3333333333333333,True,ok,True,,answered,"4,5"
+v07,point_in_time,M3@S0,True,True,0.3333333333333333,True,ok,False,,answered,85
+v08,point_in_time,M3@S0,True,True,0.3333333333333333,True,ok,True,,answered,80
+v09,point_in_time,M3@S0,True,True,0.25,True,ok,True,,answered,720
+v10,point_in_time,M3@S0,True,True,1.0,True,ok,True,,answered,"7,1"
+i01,incident,M3@S0,False,False,0.16666666666666666,False,"missing ['5,0']",False,search,answered,"4,5"
+i02,incident,M3@S0,True,False,0.5,True,ok,False,,answered,"4,5"
+i03,incident,M3@S0,True,True,1.0,True,ok,True,,answered,500
+w01,what_changed,M3@S0,True,True,1.0,True,ok,True,,answered,"4,5"
+w02,what_changed,M3@S0,True,True,0.5,True,ok,True,,answered,500
+w03,what_changed,M3@S0,True,True,1.0,True,ok,True,,answered,80
+w04,what_changed,M3@S0,False,False,0.0,False,missing ['720'],False,search,answered,500
+m01,multi_evidence,M3@S0,False,False,0.0,False,missing ['24'],False,search,answered,"4,5"
+m02,multi_evidence,M3@S0,True,False,0.25,True,ok,True,,answered,"7,1"
+m03,multi_evidence,M3@S0,False,False,0.0,False,missing ['24'],False,search,answered,"2,8"
+m04,multi_evidence,M3@S0,False,False,0.0,False,missing ['24'],False,search,answered,"11,2"
+m05,multi_evidence,M3@S0,True,True,0.5,True,ok,True,,answered,1
+m06,multi_evidence,M3@S0,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8
+m07,multi_evidence,M3@S0,False,False,0.0,False,"missing ['3,5', '24']",False,search,answered,"4,5"
+m08,multi_evidence,M3@S0,False,False,0.14285714285714285,True,ok,False,,answered,"2,8"
+k01,cross_doc,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k02,cross_doc,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+k03,cross_doc,M3@S0,True,True,1.0,True,ok,True,,answered,4
+f01,conflict,M3@S0,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"2,8"
+f02,conflict,M3@S0,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"7,1"
+f03,conflict,M3@S0,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,M3@S0,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"7,1"
+r01,table_row,M3@S0,True,True,1.0,True,ok,True,,answered,"1,6"
+r02,table_row,M3@S0,True,True,1.0,True,ok,True,,answered,100
+r03,table_row,M3@S0,True,True,1.0,True,ok,True,,answered,"4,0"
+r04,table_row,M3@S0,True,True,1.0,True,ok,True,,answered,250
+r05,table_row,M3@S0,True,True,0.5,True,ok,True,,answered,"2,5"
+r06,table_row,M3@S0,True,True,1.0,True,ok,True,,answered,50
+r07,table_row,M3@S0,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,M3@S0,True,True,0.5,True,ok,True,,answered,80
+g01,tag_variant,M3@S0,True,True,0.5,True,ok,False,,answered,55
+g02,tag_variant,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+g03,tag_variant,M3@S0,True,True,1.0,True,ok,True,,answered,45
+g04,tag_variant,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+g05,tag_variant,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+g06,tag_variant,M3@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+x01,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,
+x02,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,M3@S0,,,,True,ok,False,,not_in_documents,
+x09,not_in_documents,M3@S0,,,,True,ok,False,,not_in_documents,
+x10,not_in_documents,M3@S0,,,,True,ok,False,,not_in_documents,
+t01,base,M3@S6,True,True,1.0,True,ok,True,,answered,"2,8"
+t02,base,M3@S6,True,True,1.0,True,ok,True,,answered,"4,5"
+t03,base,M3@S6,True,True,1.0,True,ok,True,,answered,"4,5"
+t04,base,M3@S6,True,True,1.0,True,ok,True,,answered,"7,1"
+t05,base,M3@S6,True,True,1.0,True,ok,True,,answered,"7,1"
+t06,base,M3@S6,True,True,1.0,True,ok,True,,answered,"11,2"
+t07,base,M3@S6,True,True,1.0,True,ok,True,,answered,"11,2"
+t08,base,M3@S6,True,True,1.0,True,ok,True,,answered,"18,0"
+t09,base,M3@S6,True,True,1.0,True,ok,True,,answered,"5,6"
+t10,base,M3@S6,True,True,1.0,True,ok,True,,answered,"9,0"
+a01,base,M3@S6,True,True,1.0,True,ok,True,,answered,250
+a02,base,M3@S6,True,True,1.0,True,ok,True,,answered,30
+a03,base,M3@S6,True,True,1.0,True,ok,True,,answered,11
+a04,base,M3@S6,True,True,1.0,True,ok,True,,answered,400
+c01,base,M3@S6,True,True,1.0,True,ok,True,,answered,100
+c02,base,M3@S6,True,True,1.0,True,ok,True,,answered,5
+c03,base,M3@S6,True,True,1.0,True,ok,True,,answered,12
+c04,base,M3@S6,True,True,1.0,True,ok,True,,answered,30
+c05,base,M3@S6,True,True,1.0,True,ok,True,,answered,24
+c06,base,M3@S6,True,True,1.0,True,ok,True,,answered,500
+c07,base,M3@S6,True,True,1.0,True,ok,True,,answered,8
+c08,base,M3@S6,True,True,1.0,True,ok,True,,answered,15
+c09,base,M3@S6,True,True,1.0,True,ok,True,,answered,80
+c10,base,M3@S6,True,True,1.0,True,ok,True,,answered,5
+c11,base,M3@S6,True,True,1.0,True,ok,True,,answered,1
+c12,base,M3@S6,True,True,1.0,True,ok,True,,answered,2000
+c13,base,M3@S6,True,True,1.0,True,ok,True,,answered,"0,05"
+c14,base,M3@S6,True,True,1.0,True,ok,True,,answered,25 000
+c15,base,M3@S6,True,True,1.0,True,ok,True,,answered,5
+c16,base,M3@S6,True,True,1.0,True,ok,True,,answered,600
+c17,base,M3@S6,True,True,1.0,True,ok,True,,answered,1000
+d01,base,M3@S6,True,True,1.0,True,ok,True,,answered,65
+d02,base,M3@S6,True,True,1.0,True,ok,True,,answered,125
+d03,base,M3@S6,True,True,1.0,True,ok,True,,answered,2950
+d04,base,M3@S6,True,True,1.0,True,ok,True,,answered,55
+d05,base,M3@S6,True,True,1.0,True,ok,True,,answered,640
+d06,base,M3@S6,True,True,1.0,True,ok,True,,answered,2019
+z01,base,M3@S6,True,True,1.0,True,ok,True,,answered,50
+z02,base,M3@S6,True,True,1.0,True,ok,True,,answered,80
+z03,base,M3@S6,True,True,1.0,True,ok,True,,answered,2900
+z04,base,M3@S6,True,True,1.0,True,ok,True,,answered,37
+z05,base,M3@S6,True,True,1.0,True,ok,True,,answered,520
+n01,base,M3@S6,,,,True,ok,True,,not_in_documents,
+n02,base,M3@S6,,,,True,ok,True,,not_in_documents,
+n03,base,M3@S6,,,,True,ok,True,,not_in_documents,
+n04,base,M3@S6,,,,False,invented a value,False,model,answered,"0,05"
+n05,base,M3@S6,,,,True,ok,True,,not_in_documents,
+n06,base,M3@S6,,,,True,ok,True,,not_in_documents,
+n07,base,M3@S6,,,,True,ok,True,,not_in_documents,
+n08,base,M3@S6,,,,True,ok,True,,not_in_documents,
+en-t03,language,M3@S6,True,True,1.0,True,ok,True,,answered,"4,5"
+en-t04,language,M3@S6,True,True,1.0,True,ok,True,,answered,"7,1"
+en-t09,language,M3@S6,True,True,1.0,True,ok,True,,answered,"5,6"
+en-a01,language,M3@S6,True,True,1.0,True,ok,True,,answered,250
+en-a03,language,M3@S6,True,True,1.0,True,ok,True,,answered,11
+en-c01,language,M3@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c02,language,M3@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c05,language,M3@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c06,language,M3@S6,True,True,1.0,True,ok,True,,answered,500
+en-c08,language,M3@S6,True,True,1.0,True,ok,True,,answered,15
+en-c09,language,M3@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c11,language,M3@S6,False,False,0.0,False,invalid answer,False,search,,
+en-c12,language,M3@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-c14,language,M3@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,
+en-d01,language,M3@S6,True,True,1.0,True,ok,True,,answered,65
+en-d04,language,M3@S6,True,True,1.0,True,ok,True,,answered,55
+en-z01,language,M3@S6,True,True,1.0,True,ok,True,,answered,50
+en-z04,language,M3@S6,True,True,1.0,True,ok,True,,answered,37
+en-n01,language,M3@S6,,,,True,ok,True,,not_in_documents,
+en-n05,language,M3@S6,,,,True,ok,True,,not_in_documents,
+p01,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"3,5"
+p02,applicability,M3@S6,True,True,0.5,False,invalid answer,False,model,,
+p03,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"5,6"
+p04,applicability,M3@S6,True,True,0.5,True,ok,True,,answered,"7,1"
+p05,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"2,2"
+p06,applicability,M3@S6,True,True,0.5,True,ok,True,,answered,"2,8"
+p07,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"3,5"
+p08,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"7,1"
+p09,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"5,6"
+p10,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"5,6"
+p11,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,II
+p12,applicability,M3@S6,True,True,1.0,True,ok,True,,answered,"3,5"
+v01,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,1000
+v02,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,720
+v03,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,500
+v04,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,720
+v05,point_in_time,M3@S6,True,True,0.5,True,ok,True,,answered,"5,0"
+v06,point_in_time,M3@S6,True,True,0.5,True,ok,True,,answered,"4,5"
+v07,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,85
+v08,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,80
+v09,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,720
+v10,point_in_time,M3@S6,True,True,1.0,True,ok,True,,answered,"7,1"
+i01,incident,M3@S6,True,True,0.5,True,ok,True,,answered,"5,0"
+i02,incident,M3@S6,True,True,0.5,True,ok,True,,answered,"4,5"
+i03,incident,M3@S6,True,True,1.0,True,ok,True,,answered,500
+w01,what_changed,M3@S6,True,True,1.0,True,ok,True,,answered,"4,5"
+w02,what_changed,M3@S6,True,True,0.5,False,missing ['720'],False,model,answered,500
+w03,what_changed,M3@S6,True,True,1.0,True,ok,True,,answered,80
+w04,what_changed,M3@S6,False,True,0.0,True,ok,True,,answered,500
+m01,multi_evidence,M3@S6,False,True,0.0,True,ok,True,,answered,"4,5"
+m02,multi_evidence,M3@S6,True,True,1.0,True,ok,True,,answered,"7,1"
+m03,multi_evidence,M3@S6,False,True,0.0,True,ok,True,,answered,24
+m04,multi_evidence,M3@S6,False,True,0.0,True,ok,True,,answered,"11,2"
+m05,multi_evidence,M3@S6,True,True,1.0,True,ok,True,,answered,1
+m06,multi_evidence,M3@S6,True,True,1.0,True,ok,True,,answered,8
+m07,multi_evidence,M3@S6,False,True,0.0,True,ok,False,,answered,"4,0"
+m08,multi_evidence,M3@S6,True,True,0.5,True,ok,True,,answered,"2,8"
+k01,cross_doc,M3@S6,False,True,0.0,True,ok,True,,answered,4
+k02,cross_doc,M3@S6,True,True,1.0,True,ok,True,,answered,3
+k03,cross_doc,M3@S6,False,True,0.0,True,ok,True,,answered,4
+f01,conflict,M3@S6,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"4,5"
+f02,conflict,M3@S6,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"7,1"
+f03,conflict,M3@S6,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"4,5"
+f04,conflict,M3@S6,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"7,1"
+r01,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,"1,6"
+r02,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,100
+r03,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,"4,0"
+r04,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,250
+r05,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,"2,5"
+r06,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,50
+r07,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,300
+r08,table_row,M3@S6,True,True,1.0,True,ok,True,,answered,80
+g01,tag_variant,M3@S6,True,True,1.0,True,ok,True,,answered,55
+g02,tag_variant,M3@S6,True,True,1.0,True,ok,True,,answered,65
+g03,tag_variant,M3@S6,True,True,1.0,True,ok,True,,answered,45
+g04,tag_variant,M3@S6,True,True,1.0,True,ok,True,,answered,"2,5"
+g05,tag_variant,M3@S6,True,True,1.0,True,ok,True,,answered,2019
+g06,tag_variant,M3@S6,True,True,1.0,True,ok,True,,answered,32
+x01,not_in_documents,M3@S6,,,,True,ok,True,,needs_human,
+x02,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x03,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x04,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x05,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x06,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x07,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x08,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x09,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,
+x10,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,

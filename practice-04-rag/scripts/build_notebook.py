@@ -1,0 +1,619 @@
+"""Build notebooks/practice_04_rag.ipynb from the cells below.
+
+The notebook is generated so that its source stays readable in code review.
+Edit the cells here, then run:  uv run python scripts/build_notebook.py
+"""
+
+from pathlib import Path
+
+import nbformat as nbf
+
+OUT = Path(__file__).resolve().parents[1] / "notebooks" / "practice_04_rag.ipynb"
+
+cells: list[tuple[str, str]] = []
+
+
+def md(text: str) -> None:
+    cells.append(("md", text.strip("\n")))
+
+
+def code(text: str) -> None:
+    cells.append(("code", text.strip("\n")))
+
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+# Practice 4. Finding the right clause: diagnose and fix
+
+**ML in Industry 2026 · Topic 4: Retrieval-augmented generation**
+
+## Goal
+
+The engineer asks again: *"After a bearing change, pump P-101 vibrates at 4.8 mm/s. Is this normal?"*
+The answer is in regulation R-12, but the plant archive now has 16 documents: two revisions of R-12 and an
+amendment, a near-copy of R-12 for another pump station, a maintenance regulation, a CMMS procedure, datasheets,
+an English manual of an imported pump, a valve list with 110 rows and some unrelated instructions.
+
+Search mechanisms (embeddings, hybrid search, rerankers) are taught in the Advanced NLP course. Here search is a
+ready module, and we do the engineering around it:
+
+1. a **retrieval set** built from the structure of the documents, with known evidence for every question;
+2. measure the baseline and **attribute every lost answer** to a link: reading / search / context assembly / model;
+3. **fix one link at a time** with plant knowledge, each fix is a row of an **ablation table** with a paired
+   comparison (practice 2);
+4. mechanisms from Advanced NLP are added as **rows of the same table**;
+5. the answer follows a **contract**; code checks the citations; "not in the documents" and "conflict" are answers.
+
+```
+question ─► fields (tags, date) ─► registry: station, class ─► filter: scope, date ─► BM25 ─► evidence pack
+                                                                                               │
+                         audit log ◄── 3 citation checks ◄── answer contract (course Qwen) ◄───┘
+```
+
+## Steps and what you should see
+
+| Step | What we do | Expected result |
+|------|------------|-----------------|
+| 0 | The final table | the ablation table S0-S6 and the mechanism rows |
+| 1 | Setup | the course model answers; otherwise replay |
+| 2 | Archive v2 | 16 documents, 440 chunks, new fields, `index_version` |
+| 3 | Retrieval set | 138 questions in 12 slices, gold chunks computed by code |
+| 4 | Baseline S0 | about half of the answers right; most losses in search |
+| 5 | Ladder S1-S5 | tags, table rows, applicability, dates, evidence pack: one row each |
+| 6 | Mechanisms | a reranker and query translation as rows of the same table |
+| 7 | Answer and checks | P-101 answered with checked citations; a neighbour clause caught; conflict; abstention |
+| 8 | Audit and regression | an audit record with the index version; the regression gate S6 vs S5 |
+| 9 | Reproduce | the mandatory path, success criteria, optional tasks |
+
+## Live or replay
+
+Search, filters and evidence packs run **live** (milliseconds, no model). Model answers for all 138 questions
+in every configuration come from the **replay** of the lecturer's run: identical requests get identical saved
+answers. Single questions in steps 5 and 7 go to the course model live if it answers. Dense vectors and
+reranker answers are replayed too (when present).
+
+## Common problems
+
+| Problem | What to do |
+|---------|-----------|
+| `Mode: REPLAY` but you have the course token | check `COURSE_LLM_BASE_URL` and `COURSE_LLM_API_KEY` in `.env`; run `uv run python -m plant_assistant.smoke_test course` |
+| `ReplayMiss` | you changed a prompt, the chunking, a filter or the questions: replay works only for unchanged requests. Run live, or undo the change |
+| your table differs from `reference/ablation.csv` in retrieval columns | the store differs: compare `index_version` with `reference/store/manifest.json` |
+| the answer is empty, `finish_reason = length` | thinking mode is on: keep `course` (thinking off) for the answer contract |
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 0. Where we are going
+
+The final table of this practice, measured by the lecturer. At the end you will know where every number comes from.
+Every row adds one change to the row in `vs` and is compared with it **in pairs, on the same questions**.
+""")
+code(r"""
+import warnings
+
+import pandas as pd
+from IPython.display import Markdown, display
+
+from plant_assistant import REFERENCE_DIR
+
+warnings.filterwarnings("ignore")
+pd.set_option("display.max_colwidth", 120)
+pd.set_option("display.width", 250)
+reference = pd.read_csv(REFERENCE_DIR / "ablation.csv").fillna("")
+reference[["config", "vs", "recall@5", "evidence recall", "end-to-end", "correct + verified", "e2e verdict"]]
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 1. Setup
+
+Profiles are in `models.toml`, secrets in `.env` (as in practices 1-3). The answers use the course model
+Qwen 3.8 27B with thinking off. Embedding profiles (`embed-*`) are optional: on 27.10.2026 the course server has
+no embedding or reranking model, so dense vectors come from `data/replay/vectors/` when the lecturer adds them.
+""")
+code(r"""
+import os
+
+from plant_assistant import REPLAY_DIR, RUNS_DIR, STORE_DIR
+from plant_assistant.config import get_profile, list_profiles, load_env
+from plant_assistant.llm import CallLogger, LLMClient, ReplayClient
+
+load_env()
+PROFILE = os.environ.get("PRACTICE_PROFILE", "course")
+pd.DataFrame(list_profiles().items(), columns=["profile", "description"])
+""")
+code(r"""
+def model_answers(profile_name: str) -> bool:
+    # One call without network retries: if the model is not there, we want to know now.
+    try:
+        client = LLMClient(get_profile(profile_name), max_network_retries=0)
+    except ValueError as exc:  # profile not configured (no URL or key)
+        print(f"{profile_name}: {exc}")
+        return False
+    r = client.chat([{"role": "user", "content": "Reply with one word: OK"}])
+    print(f"{profile_name}: {r.content.strip()[:20]!r} ({r.latency_s:.1f}s)" if r.ok else r.error[:200])
+    return r.ok
+
+
+LIVE = os.environ.get("PRACTICE_MODE") != "replay" and model_answers(PROFILE)
+replay = {task: ReplayClient(REPLAY_DIR / f"{task}_course.jsonl") for task in ("answers", "rerank", "translate")}
+live = LLMClient(get_profile(PROFILE), logger=CallLogger(RUNS_DIR / f"my-{PROFILE}" / "calls.jsonl")) if LIVE \
+    else replay["answers"]
+print("Mode:", f"LIVE single questions on {PROFILE}, the full set from replay" if LIVE else
+      "REPLAY of the lecturer's saved answers (course model)")
+vectors = sorted((REPLAY_DIR / "vectors").glob("*.npz"))
+print("Embedding vectors:", [v.stem for v in vectors] or "none yet: dense rows (M1, M2) are not measured")
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 2. The plant archive, version 2
+
+The store of practice 3 (R-12 rev. 2 and rev. 3, two datasheets) plus 12 new **synthetic** documents. They are
+born-digital: reading was topic 3 and must not get in the way. This is a teaching scale (tens of pages, hundreds
+of chunks), not "thousands of pages": the process is the same, the numbers are illustrative.
+
+`build_corpus` reads the new PDFs, takes dates and scope from the document registry (`data/documents.csv`, as from
+a document management system), adds the new fields and writes `store/`.
+""")
+code(r"""
+from plant_assistant.corpus import build_corpus, load_registry
+from plant_assistant.store import load_store
+
+summary = build_corpus(STORE_DIR)
+print(summary)
+_, chunks = load_store(STORE_DIR)
+by_id = {c.chunk_id: c for c in chunks}
+docs = pd.DataFrame(load_registry())
+docs[["doc_id", "revision", "amendment", "kind", "language", "effective_from", "effective_to", "scope_stations",
+      "scope_equipment_types", "scope_tags", "pages", "source"]]
+""")
+md(r"""
+**What is new, and why.** An **amendment** to R-12 rev. 3 changes one clause (4.4.1: 720 h → 500 h from
+01.09.2026). **R-14** is a near-copy of R-12 for pump station No. 3, with the same title and clause numbers and a
+stricter Table 3. The **manual of P-205** is in English and gives milder limits than R-12: a conflict.
+The **valve list** has a table of 110 rows over four pages. R-20 defines what "priority high" in clause 6.2 of
+R-12 means.
+
+> **Chat:** "R-12 and R-14 have the same title. Name one field that tells them apart."
+""")
+code(r"""
+from plant_assistant.display import where
+
+for cid in ("R-12-r3-table1", "R-14-r1-table1"):
+    c = by_id[cid]
+    print(f"{where(c)}  scope_stations={c.scope_stations}  valid {c.effective_from} → {c.effective_to or 'now'}")
+    print("   ", c.text.splitlines()[0], "|", [line for line in c.text.splitlines() if "|II|" in line][0])
+""")
+md(r"""
+New fields of a chunk (the practice 3 schema is kept, the fields are added):
+`effective_from` / `effective_to` (validity), `amended_by`, `scope_stations` / `scope_equipment_types` /
+`scope_tags`, `references` / `referenced_by` (links in both directions), `table_no`, `row_key`, `doc_language`.
+""")
+code(r"""
+fields = ["chunk_id", "clause", "table_no", "row_key", "effective_from", "effective_to", "amended_by", "references",
+          "referenced_by"]
+pd.DataFrame([{f: getattr(by_id[cid], f) for f in fields} for cid in
+              ("R-12-r3-4.4.1", "R-12-r3-a1-4.4.1", "R-12-r3-4.3.3", "R-12-r3-6.2", "R-20-r2-3.3",
+               "VL-2-r4-tА.2-V-12")])
+""")
+md(r"""
+The index has a version: a fingerprint of the chunks, the parser and the embedding model. It goes into every
+answer log (step 8). If any of the three changes, the index is rebuilt and the retrieval set runs again (topic 6).
+""")
+code(r"""
+print("index_version:", summary["index_version"])
+pd.crosstab(pd.Series([c.doc_id for c in chunks], name="document"), pd.Series([c.chunk_type for c in chunks],
+                                                                              name="chunk type"), margins=True)
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 3. The retrieval set
+
+138 questions in the format of the practice 2 harness. The 50 questions of practice 3 (known page) are the
+`base` slice; 20 of them also go to search **in English as they are** (the `language` slice); the rest are new.
+Every question has a Russian wording (it goes to search and to the prompt: the engineer of a Russian plant asks in
+Russian) and an English translation for us. Evidence is written as **locators**; the gold chunk ids are computed
+by code. Slices are reported as **counts**: 3 of 4 is not "75%".
+""")
+code(r"""
+from plant_assistant.cases import counts_by_slice, load_cases
+
+cases = load_cases()
+case_by_id = {c.case_id: c for c in cases}
+pd.DataFrame([counts_by_slice(cases)], index=["questions"])
+""")
+code(r"""
+from plant_assistant.display import gold_frame
+
+P101 = case_by_id["m01"]
+print("Question (asked in Russian):", P101.question_ru)
+print("Translation:                ", P101.question_en)
+print("Expected:", P101.expected, "| asked on", P101.asked_on)
+gold_frame(P101)
+""")
+md(r"""
+Four evidence chunks for one answer: the clause with the deadline (4.3.3), the table with the limit (Table 3),
+and the actions (6.1, 6.2). recall@k counts only the answer; **evidence recall** asks for all four in the context.
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 4. Baseline S0: BM25 over raw chunks, top-5, no filters
+
+> **Predict, then run.** Where will most answers be lost: reading, search, context assembly or the model?
+
+Search runs live; the answers of the course model for 138 questions come from replay.
+""")
+code(r"""
+from plant_assistant import reval
+from plant_assistant.display import answer_frame, context_frame, hits_frame
+from plant_assistant.pipeline import CONFIGS, LADDER, System
+
+system = System(chunks, answer_client=replay["answers"], rerank_client=replay["rerank"],
+                translate_client=replay["translate"])
+records, scores = {}, {}
+
+
+def run(name: str) -> pd.DataFrame:
+    records[name] = system.run(cases, CONFIGS[name], progress=False)
+    scores[name] = reval.score(cases, records[name], by_id)
+    return scores[name]
+
+
+run("S0")
+reval.ablation({"S0": scores["S0"]}, {})[["config", "recall@5", "evidence recall", "MRR", "end-to-end",
+                                          "correct + verified", "abstain ok", "conflict ok"]]
+""")
+code(r"""
+display(Markdown("**Wrong answers of S0 by link**"))
+pd.DataFrame([reval.losses(scores["S0"])], index=["S0"])
+""")
+md(r"""
+Most answers are lost **in search**: the chunk with the answer never reached the model. Nothing is lost in
+reading (the documents are born-digital and the practice 3 store was read well). In practice 3 the model answered
+98% of these questions when it was given the page: everything below that is lost by search and assembly here.
+
+The same view for the P-101 question: the top-5 of BM25.
+""")
+code(r"""
+rec = next(r for r in records["S0"] if r["case_id"] == "m01")
+hits_frame(rec, P101, by_id)
+""")
+md(r"""
+No word of the question is in clause 4.3.3 ("при превышении границы осмотра ... осматривают в течение 24 часов"):
+lexical search cannot find it from "вибрирует 4,8 мм/с, это норма?". Only Table 3 comes up, by "мм/с".
+
+**Task 1 of the lecture** used five failures of exactly this run:
+""")
+code(r"""
+display(Markdown((REFERENCE_DIR / "s0_failures.md").read_text(encoding="utf-8")))
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 5. The ladder: one fix per row
+
+Every row adds one change to the previous one and is compared with it in pairs. We look at one question before and
+after, then at the row of the table.
+
+**S1: tag normalization.** "Р-101" with a Cyrillic Р, "P101", "P 102": one form in the chunks **and** in the query.
+""")
+code(r"""
+for name in ("S0", "S1"):
+    rec = system.run_case(case_by_id["g02"], CONFIGS[name], with_answer=False)
+    display(Markdown(f"**{name}** · {case_by_id['g02'].question_ru}"), hits_frame(rec, case_by_id["g02"], by_id))
+""")
+md(r"""
+**S2: rows of long tables are chunks.** The valve list has 110 rows on 4 pages. A page of 33 rows is one chunk in
+S0-S1; in S2 every row is a chunk with the caption, the column names and the units:
+""")
+code(r"""
+print(by_id["VL-2-r4-tА.2-V-12"].text)
+for name in ("S1", "S2"):
+    rec = system.run_case(case_by_id["r01"], CONFIGS[name], with_answer=False)
+    display(Markdown(f"**{name}** · {case_by_id['r01'].question_ru}"), hits_frame(rec, case_by_id["r01"], by_id, 3))
+""")
+md(r"""
+**S3: applicability through the registry.** The tag goes to the equipment registry: station, type, class. The
+filter keeps only documents whose scope fits, **before** search; the class goes into the prompt. P-310 is at
+station No. 3, so R-14 applies, not R-12.
+""")
+code(r"""
+from plant_assistant.applicability import equipment_context
+
+system_live = System(chunks, answer_client=live)  # single questions: live if the course model answers
+for name in ("S2", "S3"):
+    rec = system_live.run_case(case_by_id["p01"], CONFIGS[name])
+    display(Markdown(f"**{name}** · {case_by_id['p01'].question_ru} · scope: {rec['scope'] or 'none'}"),
+            hits_frame(rec, case_by_id["p01"], by_id, 3))
+    print("answer:", (rec["answer"] or {}).get("answer"))
+""")
+md(r"""
+**S4: a revision filter by the date of the question.** `effective_from <= date < effective_to`, not
+`status = in force`. The same question on three dates: 1000 h (rev. 2), 720 h (rev. 3), 500 h (amendment No. 1).
+At S4 the old wordings are gone, but the amendment is not in the top-5 for "now" (its text differs from the
+question): the model says "not in the documents". The evidence pack of S5 brings it as a part of section 4.4.
+""")
+code(r"""
+for cid in ("v01", "v02", "v03"):
+    for name in ("S3", "S4", "S5"):
+        rec = system_live.run_case(case_by_id[cid], CONFIGS[name])
+        a = rec["answer"] or {}
+        print(f"{cid} {name}: as_of {rec['as_of']}  expected {case_by_id[cid].expected['value']} h  "
+              f"answer {a.get('value')} {a.get('unit')}  top-1 {where(by_id[rec['retrieved'][0]])}")
+""")
+md(r"""
+**Typical mistakes, measured.** A filter *after* search empties the top-k; the flag `status = in force` answers a
+question about an incident in February 2025 with rev. 3.
+""")
+code(r"""
+from plant_assistant.filters import make_filter, post_filter, status_in_force
+from plant_assistant.query import extract_rules
+
+q = case_by_id["i01"]
+fields = extract_rules(q.query, q.asked_on)
+idx = system.bm25(CONFIGS["S4"])
+by_date = make_filter(fields, None, use_scope=False, use_date=True)
+pre = [where(by_id[h.chunk_id]) for h in idx.search(q.query, 5, by_date)]
+post = [where(by_id[h.chunk_id]) for h in post_filter(idx.search(q.query, 5), by_id, by_date)]
+flag = [where(by_id[h.chunk_id]) for h in idx.search(q.query, 5, status_in_force)]
+print("question:", q.question_en)
+pd.DataFrame({"pre-filter by date": pd.Series(pre), "post-filter by date": pd.Series(post),
+              "status = in force": pd.Series(flag)})
+""")
+md(r"""
+**S5: the evidence pack.** For every hit: the chunks it refers to and the chunks that refer to it (6.2 refers to
+4.3.3, not the other way round), one more step back, then the whole sections, within 2500 tokens.
+""")
+code(r"""
+for name in ("S4", "S5"):
+    rec = system.run_case(P101, CONFIGS[name], with_answer=False)
+    ctx = context_frame(rec, P101, by_id)
+    print(f"{name}: {len(ctx)} chunks, {ctx.tokens.sum()} tokens; gold in the context: "
+          f"{sorted(set(ctx.gold) - {''})}, evidence recall = {reval.retrieval_metrics(P101, rec)['evidence_recall']}")
+ctx[ctx.gold != ""]
+""")
+md(r"""
+> **Poll:** "Which fix will give the biggest gain on the whole set? Tag normalization / Table rows /
+> Applicability / Revision filter / Evidence pack"
+
+The rows of the table, each against the previous one:
+""")
+code(r"""
+for name in ("S1", "S2", "S3", "S4", "S5"):
+    run(name)
+previous = {"S1": "S0", "S2": "S1", "S3": "S2", "S4": "S3", "S5": "S4", "S6": "S5", "M1t": "S0", "M3@S0": "S0",
+            "M3@S6": "S6"}
+cols = ["config", "vs", "recall@5", "evidence recall", "end-to-end", "e2e: fixed / broke", "e2e verdict",
+        "evidence verdict"]
+reval.ablation(scores, previous)[cols].fillna("")
+""")
+code(r"""
+display(Markdown("**End-to-end by slice** (counts)"))
+reval.by_slice(scores, "correct")
+""")
+md(r"""
+Read the table by slices, not only by the total: S2 **breaks** some base questions (110 short row chunks with
+pump tags compete with the datasheets) and S3 fixes them; S4 is where `point_in_time` and `incident` move.
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 6. Mechanisms from Advanced NLP: rows of the same table
+
+Two points of attachment: **instead of** plant knowledge (on S0) and **on top of** it (on S6). We do not explain
+how they work; we look at where they help.
+
+- **M3** an LLM reranker (listwise, course Qwen) over the top-20 of the current search;
+- **M1t** translation of an English question into Russian before search (the `language` slice only);
+- **M1 / M2** dense and hybrid search: need embedding vectors (see below).
+
+> **Chat:** "Will a reranker fix the point-in-time slice? yes / no"
+""")
+code(r"""
+for name in ("S6", "M1t", "M3@S0", "M3@S6"):
+    run(name)
+table = reval.ablation(scores, previous)
+table[table.config.isin(["S0", "M1t", "M3@S0", "S6", "M3@S6"])][cols].fillna("")
+""")
+code(r"""
+reval.by_slice({k: scores[k] for k in ("S0", "M3@S0", "S6", "M3@S6")}, "correct")
+""")
+code(r"""
+lang = scores["M1t"].case_id
+display(Markdown("**The `language` slice**: English questions as they are (S0) vs translated to Russian (M1t)"))
+pd.DataFrame({name: [f"{int(scores[name].set_index('case_id').loc[lang, m].astype(bool).sum())}/{len(lang)}"
+                     for m in ("recall@k", "correct")] for name in ("S0", "M1t")}, index=["recall@5", "end-to-end"])
+""")
+md(r"""
+**Dense search (M1, M2).** On 27.10.2026 the course server has no embedding model, and the lecturer's vectors are
+not in `data/replay/vectors/` yet. With Ollama you can make them yourself (optional task 2):
+`ollama pull bge-m3`, then `uv run python scripts/build_vectors.py --profile embed-bge-m3 --name bge-m3`.
+The cell below runs M1 and M2 when vectors are there.
+""")
+code(r"""
+from dataclasses import replace
+
+from plant_assistant.search import VectorStore
+
+if vectors:
+    system.vectors = VectorStore(vectors[0])
+    system.vectors.check(system.index_version)
+    for name in ("M1@S0", "M2@S0", "M1@S6", "M2@S6"):
+        run(name)
+    previous.update({"M1@S0": "S0", "M2@S0": "S0", "M1@S6": "S6", "M2@S6": "S6"})
+    display(reval.ablation(scores, previous)[cols].fillna(""))
+else:
+    print("No vectors: M1 and M2 are TODO in the reference table too.")
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 7. The answer contract and the citation checks
+
+S6 = S5 + the answer contract: a status (`answered`, `not_in_documents`, `conflict`, `needs_human`), the value with
+its unit, claims with their sources, and citations as fields that code can check:
+
+1. **exists**: a chunk with this document, revision, clause / table / row is in the index;
+2. **in force**: it is valid on the date of the question;
+3. **supports**: the number and the unit of the answer are in its text (or in a table it refers to).
+
+The P-101 question, live on the course model if it answers:
+""")
+code(r"""
+rec = system_live.run_case(P101, CONFIGS["S6"])
+answer, checks = answer_frame(rec)
+print("from replay" if rec["from_replay"] else f"live, {rec['latency_s']} s", "| verified:", rec["checks"]["verified"])
+display(answer)
+checks
+""")
+md(r"""
+> **Chat:** "The answer cites R-12 rev. 2. Which check fails?"
+
+Task 3 of the lecture: *"Inspect P-101 within 24 hours (R-12, rev. 3, clause 4.3.4, page 3)"*. The clause exists
+and is in force; its text is about the **stop** limit, "24 hours" is in the neighbouring clause 4.3.3.
+""")
+code(r"""
+from plant_assistant.answer import Answer, Citation
+from plant_assistant.verify import check_answer
+
+claim = Answer(status="answered", answer="Inspect P-101 within 24 hours.", value="24", unit="h",
+               citations=[Citation(source="S1", doc_id="R-12", revision=3, clause="4.3.4", page=3)])
+rows = []
+for rev, clause in ((3, "4.3.4"), (3, "4.3.3"), (2, "4.3.3")):
+    claim.citations[0].revision, claim.citations[0].clause = rev, clause
+    r = check_answer(claim, [], chunks, by_id, P101.asked_on)
+    rows.append({"citation": f"R-12 rev. {rev} cl. {clause}", "exists": r["exists"], "in force": r["in_force"],
+                 "supports 24 h": r["supports"], "verified": r["verified"]})
+pd.DataFrame(rows)
+""")
+md(r"""
+**Conflict.** P-205 is a class II pump at station No. 2: R-12 says inspect above 4.5 mm/s; the manufacturer's
+manual says "alarm 7.1 mm/s". The system must show both, not choose. First, what S6 does with the question as asked:
+""")
+code(r"""
+rec = system_live.run_case(case_by_id["f01"], CONFIGS["S6"])
+print("S6 status:", rec["answer"]["status"], "|", rec["answer"]["answer"])
+print("manual of P-205 in the context:", any(c.startswith("OM-P-205") for c in rec["context"]))
+""")
+md(r"""
+The Russian question does not find the English manual with BM25 (no shared words except numbers written
+differently, and the tables of the manual do not even name the tag). A conflict that search does not bring is a
+conflict the system cannot show. When both sides are in the context, the contract does its job:
+""")
+code(r"""
+from plant_assistant.pipeline import CONFLICT_DEMO
+
+demo = System(chunks, answer_client=live).answer_from_context(case_by_id[CONFLICT_DEMO[0]], CONFLICT_DEMO[1],
+                                                               CONFIGS["S6"])
+print("status:", demo["answer"]["status"])
+print(demo["answer"]["answer"])
+""")
+md(r"""
+**Not in the documents.** V-912 is in no document (V-112 is in the registry but in no document either):
+""")
+code(r"""
+for cid in ("x01", "x03"):
+    rec = system_live.run_case(case_by_id[cid], CONFIGS["S6"])
+    print(cid, rec["answer"]["status"], "|", rec["answer"]["answer"][:160])
+""")
+md(r"""
+The whole ladder with S6:
+""")
+code(r"""
+full = reval.ablation(scores, previous)
+full[full.config.isin([c.name for c in LADDER])][cols + ["correct + verified", "abstain ok", "conflict ok"]].fillna("")
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 8. The audit log and the regression gate
+
+Half a year later, "why did the system say 5,0?" must have an answer. The record keeps the question, its date,
+the index version, the chunks with their revisions, the answer and the checks.
+""")
+code(r"""
+import json
+
+from plant_assistant.audit import audit_record
+
+rec = next(r for r in records["S6"] if r["case_id"] == "m01")
+print(json.dumps(audit_record(rec, system.index_version, by_id), ensure_ascii=False, indent=1)[:1800])
+""")
+md(r"""
+The retrieval set is a regression test: the gate of practice 2 (not significantly worse, at most 2 questions
+broken) on S6 against S5. Topic 6 puts this into CI and runs it after every new revision or index version.
+""")
+code(r"""
+g = reval.gate(scores["S5"], scores["S6"])
+print(f"S6 vs S5: {g['A right']} -> {g['B right']} of {g['n']}, fixed {g['B fixed']}, broke {g['B broke']} "
+      f"{g['broken_cases']}, p = {g['p_value']}  ->  GATE {'PASS' if g['passed'] else 'FAIL'} {g['reasons']}")
+""")
+
+# ---------------------------------------------------------------------------------------------
+md(r"""
+## 9. Check yourself and reproduce
+
+**Your table against the reference.** Retrieval columns must match exactly (BM25 and filters are deterministic);
+end-to-end from replay matches too, a live run may differ by a few questions (look at the intervals).
+""")
+code(r"""
+mine = reval.ablation(scores, previous).set_index("config")
+ref = reference.set_index("config")
+common = [c for c in mine.index if c in ref.index]
+pd.DataFrame({"recall@5 (yours)": mine.loc[common, "recall@5"], "recall@5 (reference)": ref.loc[common, "recall@5"],
+              "end-to-end (yours)": mine.loc[common, "end-to-end"],
+              "end-to-end (reference)": ref.loc[common, "end-to-end"]})
+""")
+md(r"""
+**Success criteria**
+
+- the retrieval columns of your ablation table equal `reference/ablation.csv`;
+- the P-101 question at S6: "not normal, inspect within 24 hours", citations R-12 rev. 3 cl. 4.3.3, Table 3,
+  cl. 6.1-6.2, all three checks pass;
+- V-912: `not_in_documents`; P-205 with both sources in the context: `conflict`.
+
+**What you built:** a retrieval set with evidence from the structure of the documents, loss attribution by link,
+tag normalization, table rows, applicability through the registry, a date filter that understands amendments,
+an evidence pack with references in both directions, an answer contract with three citation checks, an audit
+record with the index version, and the regression gate. In the demo project this becomes the search tool of the
+agent (topic 5), the regression test of the index (topic 6) and the audit log (topics 6 and 7).
+
+**Typical mistakes** (check before you trust a number):
+- the revision filter after search: the top-k is full of the old revision, after the filter nothing is left;
+- `status = in force` instead of the dates: a wrong answer to a question about an incident;
+- amendment No. 1 not applied: clause 4.4.1 of rev. 3 looks valid;
+- the tag normalized in the chunks but not in the question (or the other way round);
+- the date filter on for a "what changed" question: rev. 2 disappears;
+- "dense is better than BM25" from two averages without a paired comparison; a percentage on a slice of 4;
+- a citation check that only looks for the clause: the neighbouring clause 4.3.4 passes;
+- `question_en` sent to search instead of `question_ru`: BM25 finds only tags and numbers;
+- a new embedding profile with the old vectors: the manifest (`index_version`) must catch it;
+- the course model in thinking mode spent the token limit before the JSON of the contract.
+
+**Optional tasks** (see the README for details):
+1. Reading against search: S6 on a store read from the scan by Docling (practice 3). How many losses move to "reading"?
+2. Your own embedder: `bge-m3` against `qwen3-embedding:0.6b` via Ollama, paired comparison on the `language` slice.
+3. LLM extraction of the query fields (`query.extract_llm`) against the rules: where do the rules miss a date or a tag?
+4. Context budget: the evidence pack at 500 / 1000 / 2000 tokens: evidence recall and end-to-end.
+5. Near-duplicates without metadata: remove `scope` and count the P-310 questions answered from R-12.
+6. Document hierarchy: a company standard above R-12 and the rule "the stricter wins" in code; the `conflict` slice.
+7. A vector database: the index in pgvector or Qdrant (installed from PyPI or a mirror); time and result.
+8. Your documents: the process on your project documents: 20 questions from the structure, S0 and one ladder row.
+""")
+
+
+def build() -> None:
+    nb = nbf.v4.new_notebook()
+    nb.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
+    nb.cells = [nbf.v4.new_markdown_cell(t) if kind == "md" else nbf.v4.new_code_cell(t) for kind, t in cells]
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    nbf.write(nb, OUT)
+    print(f"wrote {OUT} ({len(cells)} cells)")
+
+
+if __name__ == "__main__":
+    build()

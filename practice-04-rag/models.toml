@@ -1,0 +1,67 @@
+# Model profiles. The code never hard-codes a model: pick a profile by name.
+# Values like "${A|B}" are read from environment variables (first one that is set).
+# Secrets live only in .env (see .env.example), never in this file.
+#
+# Chat profiles answer, rerank and translate. Embedding profiles (embed-*) give vectors through the
+# OpenAI-compatible /embeddings endpoint. On 27.10.2026 the course LiteLLM has no embedding or rerank model:
+# the mandatory path replays the lecturer's vectors (data/replay/vectors/) and reranker answers.
+
+[defaults]
+timeout_s = 120
+max_tokens = 1500
+temperature = 0.0
+concurrency = 4
+# LiteLLM caches identical requests. A unique "user" field per run bypasses the cache,
+# so latency and randomness are measured honestly.
+bypass_proxy_cache = true
+
+# ---------- chat ----------
+
+[profiles.course]
+description = "Course model Qwen 3.8 27B via LiteLLM + vLLM, thinking off"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
+model = "${COURSE_LLM_MODEL:-iairlab/qwen3.8-27b}"
+concurrency = 8
+extra_body = { chat_template_kwargs = { enable_thinking = false } }
+
+[profiles.course-thinking]
+description = "Course model Qwen 3.8 27B, thinking on (spends tokens before the JSON: raise max_tokens)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
+model = "${COURSE_LLM_MODEL:-iairlab/qwen3.8-27b}"
+concurrency = 8
+max_tokens = 8000
+extra_body = { chat_template_kwargs = { enable_thinking = true } }
+
+[profiles.local]
+description = "Small open-weight model on your laptop via Ollama (Qwen3.5 4B, Q4)"
+base_url = "${LOCAL_LLM_BASE_URL:-http://localhost:11434/v1}"
+api_key = "ollama"
+model = "${LOCAL_LLM_MODEL:-qwen3.5:4b-q4_K_M}"
+concurrency = 1
+timeout_s = 300
+bypass_proxy_cache = false
+extra_body = { reasoning_effort = "none" }
+
+# ---------- embeddings (optional: the notebook replays saved vectors) ----------
+
+[profiles.embed-bge-m3]
+description = "Multilingual embeddings bge-m3 (567M) via Ollama: ollama pull bge-m3"
+base_url = "${LOCAL_LLM_BASE_URL:-http://localhost:11434/v1}"
+api_key = "ollama"
+model = "bge-m3"
+bypass_proxy_cache = false
+
+[profiles.embed-qwen3]
+description = "Multilingual embeddings Qwen3-Embedding 0.6B via Ollama: ollama pull qwen3-embedding:0.6b"
+base_url = "${LOCAL_LLM_BASE_URL:-http://localhost:11434/v1}"
+api_key = "ollama"
+model = "qwen3-embedding:0.6b"
+bypass_proxy_cache = false
+
+[profiles.embed-course]
+description = "Embeddings on the course server, if the lab deploys a model (variant A of the design)"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
+model = "${COURSE_EMBED_MODEL:-iairlab/bge-m3}"

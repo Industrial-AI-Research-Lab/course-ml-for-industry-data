@@ -1,0 +1,17 @@
+file,doc_id,revision,amendment,kind,title,language,approved,effective_from,effective_to,scope_stations,scope_equipment_types,scope_tags,pages,header_left,header_right,source
+DS-P-205_scan.pdf,DS-P-205,,,datasheet,Паспорт насоса,zh,,2023-01-01,,2,pump,P-205,1,,,practice 3
+PS-101_scan.pdf,PS-101,,,datasheet,Паспорт насоса,ru,,2019-01-01,,2,pump,P-101,1,,,practice 3
+R-12_rev2.pdf,R-12,2,,regulation,Вибрационный контроль насосного оборудования,ru,01.06.2022,2022-06-01,2025-03-14,2,pump;compressor;fan,,6,,,practice 3
+R-12_rev3.pdf,R-12,3,,regulation,Вибрационный контроль насосного оборудования,ru,14.03.2025,2025-03-14,,2,pump;compressor;fan,,6,,,practice 3
+FS-07_fire_safety_rev2.pdf,FS-07,2,,instruction,О мерах пожарной безопасности в помещении насосной станции № 2,ru,15.01.2024,2024-01-15,,2,all,,3,FS-07 «О мерах пожарной безопасности в помещении насосной станции № 2»,Редакция 2,practice 4
+LAB-03_lab_access_rev1.pdf,LAB-03,1,,procedure,Допуск персонала к работе в химико-аналитической лаборатории,ru,01.03.2022,2022-03-01,,lab,all,,2,LAB-03 «Допуск персонала к работе в химико-аналитической лаборатории»,Редакция 1,practice 4
+OM-P-205_manual_en.pdf,OM-P-205,2,,manual,Centrifugal pump XB80-200 (plant tag P-205),en,15.05.2023,2023-05-15,,2,pump,P-205,3,OM-P-205 «Centrifugal pump XB80-200 (plant tag P-205)»,Edition B,practice 4
+PS-102.pdf,PS-102,,,datasheet,Паспорт насоса,ru,,2018-01-01,,2,pump,P-102,1,,,practice 4
+PS-310.pdf,PS-310,,,datasheet,Паспорт насоса,ru,,2021-01-01,,3,pump,P-310,1,,,practice 4
+PS-311.pdf,PS-311,,,datasheet,Паспорт насоса,ru,,2021-01-01,,3,pump,P-311,1,,,practice 4
+R-12_rev3_amd1.pdf,R-12,3,1,amendment,Вибрационный контроль насосного оборудования,ru,18.08.2026,2026-09-01,,2,pump;compressor;fan,,1,,,practice 4
+R-14_rev1.pdf,R-14,1,,regulation,Вибрационный контроль насосного оборудования,ru,12.02.2024,2024-03-01,,3,pump;compressor;fan,,6,R-14 «Вибрационный контроль насосного оборудования»,Редакция 1,practice 4
+R-15_rev1.pdf,R-15,1,,regulation,Техническое обслуживание центробежных насосов,ru,01.09.2023,2023-09-01,,2;3,pump,,3,R-15 «Техническое обслуживание центробежных насосов»,Редакция 1,practice 4
+R-20_rev2.pdf,R-20,2,,procedure,Порядок работы с заявками в CMMS,ru,10.01.2023,2023-01-10,,all,all,,3,R-20 «Порядок работы с заявками в CMMS»,Редакция 2,practice 4
+VL-2_valve_list_rev4.pdf,VL-2,4,,list,Запорная арматура насосной станции № 2,ru,20.11.2025,2025-11-20,,2,valve,,7,VL-2 «Запорная арматура насосной станции № 2»,Редакция 4,practice 4
+WH-04_lubricants_rev3.pdf,WH-04,3,,instruction,"Приём, хранение и выдача смазочных материалов на складе ГСМ",ru,01.10.2021,2021-10-01,,warehouse,all,,2,"WH-04 «Приём, хранение и выдача смазочных материалов на складе ГСМ»",Редакция 3,practice 4
