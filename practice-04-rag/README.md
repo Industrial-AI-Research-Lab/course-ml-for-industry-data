@@ -164,6 +164,15 @@ uv run python scripts/build_reference.py --replay            # reference/ from r
 uv run python scripts/build_notebook.py
 ```
 
+### Common problems
+
+| Problem | What to do |
+|---------|-----------|
+| `Mode: REPLAY` but you have the course token | check `COURSE_LLM_BASE_URL` and `COURSE_LLM_API_KEY` in `.env`; run `uv run python -m plant_assistant.smoke_test course` |
+| `ReplayMiss` | you changed a prompt, the chunking, a filter or the questions: replay works only for unchanged requests. Run live, or undo the change |
+| your table differs from `reference/ablation.csv` in the search columns | the store differs: compare `index_version` with `reference/store/manifest.json` |
+| the answer is empty, `finish_reason = length` | thinking mode is on: keep `course` (thinking off) for the answer contract |
+
 ### Dense search and the cross-encoder (M1, M2, M4)
 
 The course server has an embedding model and a cross-encoder. The notebook uses saved vectors and reranker scores; if

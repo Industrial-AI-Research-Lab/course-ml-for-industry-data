@@ -50,3 +50,26 @@ def answer_frame(rec: dict) -> pd.DataFrame:
 def gold_frame(case: TestCase) -> pd.DataFrame:
     return pd.DataFrame([{"role": e["role"], "locator (any of)": " | ".join(e["any_of"]),
                           "gold chunk ids": ", ".join(e["chunk_ids"])} for e in case.evidence])
+
+
+# Readable column labels for the notebook (display only: the CSV files in reference/ keep their headers)
+LABELS = {
+    "config": "row", "vs": "compared with", "e2e: fixed / broke": "fixed / broke", "e2e verdict": "verdict",
+    "abstain ok": "no answer: refused", "conflict ok": "conflicts shown", "right abstentions": "right refusals",
+    "invalid": "invalid answers", "leaks": "reasoning in the answer", "fallbacks": "handed to a person",
+    "median s / question": "seconds per question", "model calls / question": "model calls",
+    "chat calls / question": "chat calls", "prompt tokens / question": "tokens in",
+    "completion tokens / question": "tokens out", "cross-encoder tokens / question": "cross-encoder tokens",
+    "end-to-end old": "end-to-end before", "end-to-end new": "end-to-end after",
+    "new vs old: fixed / broke": "fixed / broke", "s / q": "seconds per question", "tokens out / q": "tokens out",
+    # slices
+    "base": "base (practice 3)", "language": "English wording", "point_in_time": "past date",
+    "what_changed": "what changed", "multi_evidence": "several chunks", "cross_doc": "two documents",
+    "table_row": "table row", "tag_variant": "tag spelling", "not_in_documents": "not in documents",
+}
+
+
+def show(df: pd.DataFrame, cols: list[str] | None = None) -> pd.DataFrame:
+    """The columns the text talks about, with readable labels."""
+    out = df[cols] if cols else df
+    return out.rename(columns=LABELS).fillna("")
