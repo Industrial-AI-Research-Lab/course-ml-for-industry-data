@@ -686,6 +686,35 @@ agent (topic 5), the regression test of the index (topic 6) and the audit log (t
 7. A vector database: the index in pgvector or Qdrant (installed from PyPI or a mirror); time and result.
 8. Your documents: the process on your project documents: 20 questions from the structure, S0 and one ladder row.
 """)
+md(r"""
+**Use it in your project**
+
+The same process works on the documents of your project. Do it step by step:
+
+1. Write 20–50 questions from the roles of your users. For each question, note the answer type (number, short
+   fact, text, not in the documents). Note the gold evidence too (document, revision, clause or page). Take it from
+   the structure of the document, not from search results.
+2. Add slices. Always add "not in the documents" (at least 5 questions). Then add the slices that matter for your
+   data: versions, near-duplicate documents, tables, languages.
+3. Build the baseline: BM25 over your chunks, top 5, the answer contract with citations. Measure recall@5,
+   evidence recall, end-to-end, false refusals and invented values.
+4. Count the losses by link with `reval.py`: reading, search, assembly, model.
+5. Fix the biggest link with one step. Compare the new row in pairs with the row above (practice 2 statistics).
+6. Keep the ablation table. It is your evidence for the search criterion at the defense.
+7. Run the set again after every change of documents, parser or model.
+
+Files to copy (from `src/plant_assistant/`):
+- `cases.py`: the question format, `TestCase` with `expected` and `evidence` locators, turned into chunk ids by
+  `resolve`;
+- `reval.py`, with `units.py`, `evals/stats.py` and `Chunk` from `store.py`: grading, metrics, losses by link,
+  failure modes, the ablation table;
+- `answer.py`: the contract (`Answer`, `CONTRACT_SCHEMA`, `CONTRACT_FORMAT`, `parse`);
+- `verify.py`: the three citation checks (`check_answer`);
+- `applicability.py`, if your answers depend on the equipment: it needs a registry in the format of
+  `data/equipment_registry.csv`, with the `documents` column.
+
+Text answers are not graded by code here: part 2 grades them with a judge.
+""")
 
 
 def build() -> None:

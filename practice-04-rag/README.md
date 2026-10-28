@@ -19,6 +19,9 @@ are ready tools and rows of an ablation table. The practice is about the enginee
 Everything you need is in this folder: synthetic documents, the store of practice 3, the retrieval set, the
 lecturer's saved model answers (replay files) and reference results.
 
+A second part of practice 4 will follow as a separate notebook: dense and hybrid search, text answers graded by a
+judge, and a document-context step.
+
 ## What is inside
 
 | Path | What it is |
@@ -261,6 +264,34 @@ of them applies.
 - the P-101 question at M3@S6: "not normal, inspect within 24 hours", citations R-12 rev. 3 cl. 4.3.3, Table 3,
   cl. 6.1–6.2, all three citation checks pass (at S6 it is lost in search: the reason is the point of step 7);
 - V-912: no value (`not_in_documents` or `needs_human`, both accepted); P-205 and the lubrication interval of P-101 at S6: `conflict` with both documents cited.
+
+## Use it in your project
+
+The same process works on the documents of your project. Do it step by step:
+
+1. Write 20–50 questions from the roles of your users. For each question, note the answer type (number, short
+   fact, text, not in the documents). Note the gold evidence too (document, revision, clause or page). Take it from
+   the structure of the document, not from search results.
+2. Add slices. Always add "not in the documents" (at least 5 questions). Then add the slices that matter for your
+   data: versions, near-duplicate documents, tables, languages.
+3. Build the baseline: BM25 over your chunks, top 5, the answer contract with citations. Measure recall@5,
+   evidence recall, end-to-end, false refusals and invented values.
+4. Count the losses by link with `reval.py`: reading, search, assembly, model.
+5. Fix the biggest link with one step. Compare the new row in pairs with the row above (practice 2 statistics).
+6. Keep the ablation table. It is your evidence for the search criterion at the defense.
+7. Run the set again after every change of documents, parser or model.
+
+Files to copy (from `src/plant_assistant/`):
+- `cases.py`: the question format, `TestCase` with `expected` and `evidence` locators, turned into chunk ids by
+  `resolve`;
+- `reval.py`, with `units.py`, `evals/stats.py` and `Chunk` from `store.py`: grading, metrics, losses by link,
+  failure modes, the ablation table;
+- `answer.py`: the contract (`Answer`, `CONTRACT_SCHEMA`, `CONTRACT_FORMAT`, `parse`);
+- `verify.py`: the three citation checks (`check_answer`);
+- `applicability.py`, if your answers depend on the equipment: it needs a registry in the format of
+  `data/equipment_registry.csv`, with the `documents` column.
+
+Text answers are not graded by code here: part 2 grades them with a judge.
 
 ## Optional tasks (for better understanding)
 
