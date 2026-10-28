@@ -1,5 +1,5 @@
 {
- "ts": "2026-10-28T10:28:25+00:00",
+ "ts": "2026-10-28T13:39:56+00:00",
  "case_id": "m01",
  "question": "После замены подшипника насос P-101 вибрирует 4,8 мм/с. Это норма? Что делать и в какой срок?",
  "asked_on": "2026-10-27",
@@ -480,36 +480,36 @@
   }
  ],
  "model": "iairlab/qwen3.8-27b",
- "request_hash": "0a7cf4a98757ec92e7904175",
+ "request_hash": "085424a36c2a16eaaa567eaf",
  "answer": {
   "status": "answered",
-  "answer": "The vibration of 4.8 mm/s exceeds the inspection limit (4.5 mm/s) for a Class II pump but is below the stop limit (7.1 mm/s). The shift supervisor must create a CMMS request with 'high' priority, and the equipment must be inspected within 24 hours, with measurements repeated every shift until the inspection is completed.",
+  "answer": "No, 4.8 mm/s exceeds the inspection limit of 4.5 mm/s for Class II pumps. You must inspect the equipment within 24 hours and create a 'high' priority CMMS request. The request must be accepted within 4 hours and completed within 3 days.",
   "value": "4,5",
   "unit": "мм/с",
   "claims": [
    {
-    "text": "Pump P-101 is classified as machine class II.",
+    "text": "P-101 is a Class II pump with an inspection vibration limit of 4.5 mm/s.",
     "sources": [
      "R-12-r3-table3",
-     "PS-101-p1"
-    ]
-   },
-   {
-    "text": "The inspection limit for class II pumps is 4.5 mm/s and the stop limit is 7.1 mm/s.",
-    "sources": [
      "R-12-r3-table1"
     ]
    },
    {
-    "text": "Exceeding the inspection limit requires an inspection within 24 hours and repeated measurements every shift.",
+    "text": "Vibration of 4.8 mm/s exceeds the inspection limit, requiring inspection within 24 hours.",
     "sources": [
      "R-12-r3-4.3.3"
     ]
    },
    {
-    "text": "The shift supervisor must create a CMMS request with 'high' priority citing clause 4.3.3.",
+    "text": "A 'high' priority CMMS request must be created for the inspection.",
     "sources": [
      "R-12-r3-6.2"
+    ]
+   },
+   {
+    "text": "The 'high' priority request must be accepted within 4 hours and completed within 3 days.",
+    "sources": [
+     "R-20-r2-table1"
     ]
    }
   ],
@@ -523,16 +523,6 @@
     "table_no": "А.1",
     "row_key": null,
     "page": 6
-   },
-   {
-    "source": "PS-101-p1",
-    "doc_id": "PS-101",
-    "revision": null,
-    "amendment": null,
-    "clause": null,
-    "table_no": null,
-    "row_key": null,
-    "page": 1
    },
    {
     "source": "R-12-r3-table1",
@@ -563,6 +553,16 @@
     "table_no": null,
     "row_key": null,
     "page": 5
+   },
+   {
+    "source": "R-20-r2-table1",
+    "doc_id": "R-20",
+    "revision": 2,
+    "amendment": null,
+    "clause": null,
+    "table_no": "1",
+    "row_key": null,
+    "page": 2
    }
   ],
   "sources": []
@@ -576,13 +576,6 @@
    {
     "source": "R-12-r3-table3",
     "chunk_id": "R-12-r3-table3",
-    "exists": true,
-    "in_force": true,
-    "supports": false
-   },
-   {
-    "source": "PS-101-p1",
-    "chunk_id": "PS-101-p1",
     "exists": true,
     "in_force": true,
     "supports": false
@@ -607,7 +600,15 @@
     "exists": true,
     "in_force": true,
     "supports": false
+   },
+   {
+    "source": "R-20-r2-table1",
+    "chunk_id": "R-20-r2-table1",
+    "exists": true,
+    "in_force": true,
+    "supports": false
    }
   ]
- }
+ },
+ "check (internal, not shown)": "P-101 is Class II (R-12-r3-table3, PS-101). Vibration 4.8 mm/s exceeds the 'inspection' limit of 4.5 mm/s but is below the 'stop' limit of 7.1 mm/s (R-12-r3-table1). Clause 4.3.3 requires inspection within 24 hours. Clause 6.2 requires a 'high' priority CMMS request. R-20-r2-table1 sets the deadline"
 }

@@ -28,6 +28,7 @@ def audit_record(rec: dict, index_version: str, chunks_by_id: dict) -> dict:
         "filters": rec["scope"], "retrieved": [ref(c) for c in rec["retrieved"][:5]],
         "context": [ref(c) for c in rec["context"]], "model": rec.get("model"),
         "request_hash": rec.get("request_hash"), "answer": rec.get("answer"), "checks": rec.get("checks"),
+        "check (internal, not shown)": rec.get("check"),
     }
 
 

@@ -42,7 +42,9 @@ class Config:
     date_filter: bool = False  # S4: chunks valid on the date of the question, dates in the source headers
     evidence_pack: bool = False  # S5: references both ways and parent sections within a budget
     contract: bool = False  # S6: answer contract and citation checks
-    contract_version: int = 2  # 2: chunk ids as an enum, limits, one retry, fallback; 1: citation objects (":v1")
+    contract_version: int = 3  # 3: v2 + internal check field, leak detector; 2: chunk ids as an enum, limits, one
+    # retry, fallback (":v2" rows); 1: citation objects (":v1" rows)
+    thinking: bool = False  # the answer by the course model in thinking mode (reasoning in its own channel)
     retriever: str = "bm25"  # bm25 | dense | hybrid
     rerank: bool = False  # reranker over the top `depth`
     reranker: str = "llm"  # "llm": listwise, course Qwen (M3); "cross": cross-encoder bge-reranker-v2-m3 (M4)
@@ -85,7 +87,13 @@ MECHANISMS = [M1_S0, M1T, M2_S0, M3_S0, M4_S0, M1_S6, M2_S6, M3_S6, M4_S6]
 # The same rows with the first answer contract (citation objects, no limits): "before" for the comparison
 CONTRACT_V1 = [replace(c, name=f"{c.name}:v1", description=f"{c.name} with the answer contract v1", contract_version=1)
                for c in (S6, M1_S6, M2_S6, M3_S6, M4_S6)]
-CONFIGS = {c.name: c for c in LADDER + MECHANISMS + CONTRACT_V1}
+# S6 with contract v2 (before the check field), and v2 with the course model in thinking mode
+CONTRACT_V2 = [replace(c, name=f"{c.name}:v2", description=f"{c.name} with the answer contract v2", contract_version=2)
+               for c in (S6, M1_S6, M2_S6, M3_S6, M4_S6)]
+S6_THINK = replace(S6, name="S6:think", description="S6, contract v2, the answer in thinking mode",
+                   contract_version=2, thinking=True)
+CONTRACT_VARIANTS = CONTRACT_V1 + CONTRACT_V2 + [S6_THINK]
+CONFIGS = {c.name: c for c in LADDER + MECHANISMS + CONTRACT_VARIANTS}
 
 # Demo of the contract: the two sides of the P-205 conflict put into the context by hand
 CONFLICT_DEMO = ("f01", ["R-12-r3-table1", "OM-P-205-r2-table2"])
@@ -99,7 +107,7 @@ class System:
 
     def __init__(self, chunks: list[Chunk], answer_client=None, rerank_client=None, translate_client=None,
                  vectors: VectorStore | None = None, embedder_name: str | None = None, cross_client=None,
-                 embed_query=None):
+                 embed_query=None, think_client=None):
         self.chunks = chunks
         self.by_id = {c.chunk_id: c for c in chunks}
         self.registry = load_registry()
@@ -108,6 +116,7 @@ class System:
         self.translate_client = translate_client
         self.vectors = vectors
         self.cross_client = cross_client
+        self.think_client = think_client  # the course model in thinking mode (row "S6:think")
         self.embed_query = embed_query  # live embedding of a question without a saved vector
         self.index_version = index_version(chunks, embedder_name)
         self._bm25: dict[tuple, BM25Index] = {}
@@ -224,11 +233,12 @@ class System:
                          "prompt_tokens": cost["prompt_tokens"] + resp.prompt_tokens,
                          "completion_tokens": cost["completion_tokens"] + resp.completion_tokens})
         resp, ans = out["responses"][-1], out["answer"]
+        rec["check"] = out["check"]  # internal (contract v3): logged, never shown, never graded
         rec.update({"model": resp.model, "request_hash": out["responses"][0].request_hash, "error": resp.error,
                     "from_replay": resp.from_replay, "latency_s": resp.latency_s,
                     "finish_reason": out["responses"][0].finish_reason,
                     "answer": ans.model_dump() if ans else None, "raw": None if ans else resp.content[:500],
-                    "retried": len(out["responses"]) > 1, "fallback": out["fallback"],
+                    "retried": len(out["responses"]) > 1, "fallback": out["fallback"], "leaks": out["leaks"],
                     "schema_violations": out["violations"], "checks": out["checks"]})
         return rec
 
@@ -239,20 +249,25 @@ class System:
         limit or not of the schema is asked once more with a short instruction; if it fails again, the answer is
         "needs a person" with no value (`fallback`)."""
         v2 = cfg.contract and cfg.contract_version >= 2
+        v3 = cfg.contract and cfg.contract_version >= 3
         context_text, sources = render(context, self.by_id, show_dates=cfg.date_filter, ids_as_labels=v2)
-        fmt = A.contract_v2_format(context) if v2 else A.CONTRACT_FORMAT if cfg.contract else A.SIMPLE_FORMAT
-        responses, ans, fallback = [], None, False
+        fmt = A.contract_v3_format(context) if v3 else A.contract_v2_format(context) if v2 else \
+            A.CONTRACT_FORMAT if cfg.contract else A.SIMPLE_FORMAT
+        client = self.think_client if cfg.thinking else self.answer_client
+        responses, ans, fallback, check, leaks = [], None, False, "", []
         for retry in ((False, True) if v2 else (False,)):
             msgs = A.messages(query, context_text, case.asked_on, as_of, equipment, cfg.contract,
                               cfg.contract_version, retry)
-            resp = self.answer_client.chat(msgs, response_format=fmt,
-                                           meta={"case_id": case.case_id, "config": cfg.name,
-                                                 "task": task + ("-retry" if retry else "")})
+            resp = client.chat(msgs, response_format=fmt, meta={"case_id": case.case_id, "config": cfg.name,
+                                                                "task": task + ("-retry" if retry else "")})
             responses.append(resp)
             if not resp.ok:  # a network error is not a length problem: no retry
                 break
-            ans = A.parse(resp.content, cfg.contract)
-            if not v2 or (ans is not None and resp.finish_reason != "length"):
+            ans, check = A.parse_v3(resp.content) if v3 else (A.parse(resp.content, cfg.contract), "")
+            leaked = A.leak(ans.answer) if v3 and ans is not None else None
+            if leaked:
+                leaks.append(leaked)
+            if not v2 or (ans is not None and resp.finish_reason != "length" and not leaked):
                 break
             ans = None
         violations = []
@@ -266,7 +281,7 @@ class System:
                              for cid in A.cited_ids(ans) if cid in set(context) for c in [self.by_id[cid]]]
         checks = check_answer(ans, sources, self.chunks, self.by_id, as_of) if ans is not None else None
         return {"answer": ans, "responses": responses, "fallback": fallback, "violations": violations,
-                "checks": checks}
+                "checks": checks, "check": check, "leaks": leaks}
 
     def answer_from_context(self, case: TestCase, chunk_ids: list[str], cfg: Config) -> dict:
         """Answer from a given context (a demo: what the contract does when both sides of a conflict are there)."""

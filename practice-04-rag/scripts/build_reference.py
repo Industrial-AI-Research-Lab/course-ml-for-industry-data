@@ -43,24 +43,29 @@ from plant_assistant.corpus import build_corpus  # noqa: E402
 from plant_assistant.jsonl import read_json_records  # noqa: E402
 from plant_assistant.llm import CallLogger, LLMClient, ReplayClient  # noqa: E402
 from plant_assistant.crossencoder import CrossEncoderClient  # noqa: E402
-from plant_assistant.pipeline import CONFIGS, CONFLICT_DEMO, CONTRACT_V1, LADDER, PREVIOUS, System  # noqa: E402
+from plant_assistant.pipeline import CONFIGS, CONFLICT_DEMO, CONTRACT_VARIANTS, LADDER, PREVIOUS, System  # noqa: E402
 from plant_assistant.search import VectorStore  # noqa: E402
 from plant_assistant import reval  # noqa: E402
 from plant_assistant.store import load_store  # noqa: E402
 
-TASKS = ("answers", "rerank", "translate", "crossencoder")
-TASK_PROFILES = {"crossencoder": "rerank-course"}  # the other tasks use the course chat profile
+TASKS = ("answers", "answers_thinking", "rerank", "translate", "crossencoder")
+TASK_PROFILES = {"crossencoder": "rerank-course", "answers_thinking": "course-thinking"}  # others: the course profile
+# measured rows that a live build must not call again: replay only (a request that is not saved fails loudly)
+# unless --live-mechanisms; the embedding vectors are always the saved ones
+REPLAY_ONLY_TASKS = ("rerank", "translate", "crossencoder")
 VECTORS = REPLAY_DIR / "vectors" / "e5-mistral"
 MECHANISM_ROWS = ["M1@S0", "M2@S0", "M3@S0", "M4@S0", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
 # the rows of the first answer contract (citation objects, no limits), kept for "before and after"
-V1_ROWS = [c.name for c in CONTRACT_V1]
-BEFORE_AFTER = {c.removesuffix(":v1"): c for c in V1_ROWS}
-RUN_CONFIGS = [c.name for c in LADDER] + ["M1t"] + MECHANISM_ROWS + V1_ROWS
+VARIANT_ROWS = [c.name for c in CONTRACT_VARIANTS]  # "S6:v1", "M*@S6:v1", "S6:v2", "M*@S6:v2", "S6:think"
+# (new, old): every S6-based row with contract v1 -> v2, then v2 -> v3; thinking mode against v2
+S6_ROWS = ("S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6")
+BEFORE_AFTER = [(f"{c}:v2", f"{c}:v1") for c in S6_ROWS] + [(c, f"{c}:v2") for c in S6_ROWS] + [("S6:think", "S6:v2")]
+RUN_CONFIGS = [c.name for c in LADDER] + ["M1t"] + MECHANISM_ROWS + VARIANT_ROWS
 HOLDOUT_FILE = DATA_DIR / "holdout.jsonl"
-HOLDOUT_CONFIGS = [c.name for c in LADDER] + MECHANISM_ROWS + V1_ROWS
+HOLDOUT_CONFIGS = [c.name for c in LADDER] + MECHANISM_ROWS + VARIANT_ROWS
 NEEDS_HUMAN_FILE = DATA_DIR / "needs_human.jsonl"
 # S5 has no status field (the simple answer gives a value or none): the row shows what the contract adds
-NEEDS_HUMAN_CONFIGS = ["S5", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"] + V1_ROWS
+NEEDS_HUMAN_CONFIGS = ["S5", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"] + VARIANT_ROWS
 CONTRACT_SLICES = ["multi_evidence", "what_changed", "conflict", "language", "point_in_time"]
 # measured times of the rows already in the reference: a rebuild keeps them (search time on a laptop varies by a
 # millisecond between runs, and the rows did not change)
@@ -126,11 +131,14 @@ class ReplayFirst:
         return self.live.chat(messages, response_format=response_format, meta=meta) if r.error == "ReplayMiss" else r
 
 
-def clients(replay: bool, fresh: bool = False) -> dict:
+def clients(replay: bool, fresh: bool = False, live_mechanisms: bool = False) -> dict:
     if replay:
         return {t: ReplayClient(REPLAY_DIR / f"{t}_course.jsonl") for t in TASKS}
     out = {}
     for t in TASKS:
+        if t in REPLAY_ONLY_TASKS and not live_mechanisms:
+            out[t] = ReplayClient(REPLAY_DIR / f"{t}_course.jsonl")
+            continue
         log = RUNS_DIR / "lecturer" / f"{t}.jsonl"
         log.parent.mkdir(parents=True, exist_ok=True)
         log.unlink(missing_ok=True)
@@ -238,16 +246,17 @@ def mechanisms_table(public: pd.DataFrame, h_public: pd.DataFrame, e2e: pd.DataF
 
 
 def before_after(scores: dict[str, pd.DataFrame], costs: pd.DataFrame | None = None) -> pd.DataFrame:
-    """Contract v1 (before) against v2 (after) on the same questions: paired verdict, failure modes, cost."""
+    """One contract against another on the same questions: paired verdict, failure modes, cost."""
     out = []
-    for new, old in BEFORE_AFTER.items():
+    for new, old in BEFORE_AFTER:
         if new not in scores or old not in scores:
             continue
         t = reval.ablation({old: scores[old], new: scores[new]}, {new: old}).set_index("config")
         a, b = t.loc[old], t.loc[new]
-        row = {"row": new, "invalid": f"{a['invalid']} → {b['invalid']}", "fallbacks (v2)": b["fallbacks"],
-               "end-to-end v1": a["end-to-end"].split(" [")[0], "end-to-end v2": b["end-to-end"].split(" [")[0],
-               "v2 vs v1: fixed / broke": b["e2e: fixed / broke"], "verdict": b["e2e verdict"],
+        row = {"new vs old": f"{new} vs {old}", "invalid": f"{a['invalid']} → {b['invalid']}",
+               "leaks": f"{a['leaks']} → {b['leaks']}", "fallbacks": f"{a['fallbacks']} → {b['fallbacks']}",
+               "end-to-end old": a["end-to-end"].split(" [")[0], "end-to-end new": b["end-to-end"].split(" [")[0],
+               "new vs old: fixed / broke": b["e2e: fixed / broke"], "verdict": b["e2e verdict"],
                "false refusals": f"{a['false refusals'].split(' = ')[0]} → {b['false refusals'].split(' = ')[0]}",
                "wrong or invented": f"{a['wrong or invented']} → {b['wrong or invented']}",
                "verified": f"{a['correct + verified'].split(' [')[0]} → {b['correct + verified'].split(' [')[0]}",
@@ -258,26 +267,28 @@ def before_after(scores: dict[str, pd.DataFrame], costs: pd.DataFrame | None = N
             row["tokens in / q"] = f"{costs.loc[old, 'prompt tokens / question']:.0f} → {costs.loc[new, 'prompt tokens / question']:.0f}"
             row["tokens out / q"] = f"{costs.loc[old, 'completion tokens / question']:.0f} → {costs.loc[new, 'completion tokens / question']:.0f}"
         out.append(row)
-    return pd.DataFrame(out).set_index("row") if out else pd.DataFrame()
+    return pd.DataFrame(out).set_index("new vs old") if out else pd.DataFrame()
 
 
 def before_after_slices(scores: dict[str, pd.DataFrame]) -> pd.DataFrame:
-    rows = [r for pair in BEFORE_AFTER.items() for r in pair[::-1] if r in scores]
+    rows = list(dict.fromkeys(r for pair in BEFORE_AFTER for r in pair[::-1] if r in scores))
     return reval.by_slice({r: scores[r] for r in rows}, "correct")[CONTRACT_SLICES]
 
 
 def p101_table(records: dict[str, list[dict]], scores: dict[str, pd.DataFrame]) -> pd.DataFrame:
     """The P-101 questions (m01: the lecture question, i01: the incident) in every contract row."""
     rows = []
-    for name in [r for pair in BEFORE_AFTER.items() for r in pair[::-1] if r in records]:
+    order = [f"{r}{v}" for r in S6_ROWS for v in (":v1", ":v2", "")] + ["S6:think"]
+    for name in [r for r in order if r in records]:
         sc = scores[name].set_index("case_id")
-        for cid in ("m01", "i01"):
+        for cid in ("m01", "i01", "f03", "n04"):
             rec = next(r for r in records[name] if r["case_id"] == cid)
             a = rec.get("answer") or {}
             rows.append({"row": name, "question": cid, "status": a.get("status", "invalid"),
                          "value": a.get("value"), "right": bool(sc.loc[cid, "correct"]),
                          "verified": bool(sc.loc[cid, "verified"]), "retried": bool(rec.get("retried")),
-                         "fallback": bool(rec.get("fallback")), "finish (first try)": rec.get("finish_reason")})
+                         "fallback": bool(rec.get("fallback")), "leaks": len(rec.get("leaks") or []),
+                         "check (internal)": (rec.get("check") or "")[:160]})
     return pd.DataFrame(rows)
 
 
@@ -311,6 +322,8 @@ def main() -> None:
     ap.add_argument("--configs", nargs="*", default=RUN_CONFIGS)
     ap.add_argument("--only-demos", action="store_true", help="live: only the demo calls, merged into the replay")
     ap.add_argument("--fresh", action="store_true", help="live: ask the model again even for saved requests")
+    ap.add_argument("--live-mechanisms", action="store_true",
+                    help="live: also call the LLM reranker, the translation and the cross-encoder for new requests")
     ap.add_argument("--only-needs-human", action="store_true",
                     help="live: only the needs_human set, merged into the replay (the other rows are not re-run)")
     args = ap.parse_args()
@@ -342,12 +355,12 @@ def main() -> None:
     print("store:", summary)
     _, chunks = load_store(STORE_DIR)
     cases = load_cases()
-    cl = clients(args.replay, args.fresh)
+    cl = clients(args.replay, args.fresh, args.live_mechanisms)
     vectors = VectorStore(VECTORS) if VECTORS.with_suffix(".npz").exists() else None
     if vectors:
         vectors.check(summary["index_version"])
     system = System(chunks, answer_client=cl["answers"], rerank_client=cl["rerank"], translate_client=cl["translate"],
-                    cross_client=cl["crossencoder"], vectors=vectors)
+                    cross_client=cl["crossencoder"], vectors=vectors, think_client=cl["answers_thinking"])
     holdout = load_cases(HOLDOUT_FILE)
     if vectors is None:  # no vectors: the dense rows stay TODO
         args.configs = [c for c in args.configs if CONFIGS[c].retriever == "bm25"]
@@ -372,13 +385,14 @@ def main() -> None:
     nh_scores = {name: reval.score(needs_human, recs, system.by_id) for name, recs in nh_records.items()}
     conflict_demo = demo(system, cases)
     if not args.replay:
-        for t in TASKS:
+        for t in [t for t in TASKS if args.live_mechanisms or t not in REPLAY_ONLY_TASKS]:
             n = compact_replay(RUNS_DIR / "lecturer" / f"{t}.jsonl", REPLAY_DIR / f"{t}_course.jsonl")
             print(f"replay {t}: {n} requests")
 
     REFERENCE_DIR.mkdir(exist_ok=True)
-    main = {k: v for k, v in scores.items() if k not in V1_ROWS}
-    table = reval.ablation(main, PREVIOUS)
+    main = {k: v for k, v in scores.items() if k not in VARIANT_ROWS}
+    table = reval.ablation(scores, PREVIOUS)
+    table = table[~table.config.isin(VARIANT_ROWS)]
     public = table[[c for c in table.columns if not c.startswith("_")]]
     public.to_csv(REFERENCE_DIR / "ablation.csv", index=False)
     slices_e2e = reval.by_slice(main, "correct")
@@ -398,7 +412,7 @@ def main() -> None:
         old = pd.read_csv(REFERENCE_DIR / "cost.csv", index_col="config")
         same = ["model calls / question", "prompt tokens / question", "completion tokens / question"]
         for c in costs.index:
-            src = c if c in old.index else c.removesuffix(":v1")
+            src = c if c in old.index else c.split(":")[0]
             if src in old.index and all(float(old.loc[src, x]) == float(costs.loc[c, x]) for x in same):
                 costs.loc[c, TIMING_COLUMNS] = old.loc[src, TIMING_COLUMNS].values
     costs.to_csv(REFERENCE_DIR / "cost.csv")
@@ -408,9 +422,10 @@ def main() -> None:
     p101_rows = p101_table(records, scores)
     h_contract = before_after(h_scores)
     violations = sum(len(r.get("schema_violations") or []) for name, recs in list(records.items())
-                     + list(h_records.items()) + list(nh_records.items()) if name not in V1_ROWS
-                     and CONFIGS[name].contract for r in recs)
-    h_table = reval.ablation({k: v for k, v in h_scores.items() if k not in V1_ROWS}, PREVIOUS)
+                     + list(h_records.items()) + list(nh_records.items())
+                     if CONFIGS[name].contract and CONFIGS[name].contract_version >= 2 for r in recs)
+    h_table = reval.ablation(h_scores, PREVIOUS)
+    h_table = h_table[~h_table.config.isin(VARIANT_ROWS)]
     h_public = h_table[[c for c in h_table.columns if not c.startswith("_") and c not in ("abstain ok", "conflict ok")]]
     h_public.to_csv(REFERENCE_DIR / "holdout_ablation.csv", index=False)
     pd.concat(h_scores.values()).to_csv(REFERENCE_DIR / "holdout_per_question.csv", index=False)
@@ -469,40 +484,57 @@ def main() -> None:
         "",
         md_table(mechanisms_table(public, h_public, slices_e2e, slices_recall), index=True),
         "",
-        "## The answer contract: v1 (before) and v2 (after)",
+        "## The answer contract: v1, v2, v3 (and v2 in thinking mode)",
         "",
-        "v1: the model copies citation objects (document, revision, clause, table, row, page) from the source headers; "
-        "no limits. v2: a claim cites the **ids of the chunks** in the context, and the JSON schema makes the id an "
-        f"`enum` of exactly those ids (built per question); at most {A.MAX_CLAIMS} claims, at most "
-        f"{A.MAX_SOURCES_PER_CLAIM} sources per claim; code fills the citation fields from the index. An answer cut by the "
-        "token limit (3000, unchanged) or not of the schema is asked once more with a short instruction; if it fails "
-        "again, the answer is `needs_human` with no value (a fallback). Search and context are the same in both: "
-        "evidence recall does not change. Rows `X:v1` are replayed from the first reference run.",
+        "Search and context are the same in every version: evidence recall does not change; only the answer step does.",
         "",
-        f"Guided decoding (vLLM behind LiteLLM) enforces the enum and the limits: asked to cite an id that is not in "
-        f"the context, or to write 9 claims with 4 sources each, the model returned only context ids, 5 claims, 2 "
-        f"sources per claim. Code checks it anyway: {violations} schema violations in all v2 answers.",
+        "- **v1** (`S6:v1`, `M*@S6:v1`, the first reference run): the model copies citation objects (document, "
+        "revision, clause, table, row, page) from the source headers; no limits. Long answers ran out of the 3000 tokens.",
+        f"- **v2** (`S6:v2`, `M*@S6:v2`): a claim cites the **ids of the chunks** in the context, and "
+        f"the JSON schema makes the id an `enum` of exactly those ids (built per question); at most {A.MAX_CLAIMS} "
+        f"claims, at most {A.MAX_SOURCES_PER_CLAIM} sources per claim; code fills the citation fields from the index. An "
+        "answer cut by the token limit (3000, unchanged) or not of the schema is asked once more with a short "
+        "instruction; if it fails again, the answer is `needs_human` with no value (a fallback).",
+        f"- **v3** (`S6` and every row built on it): v2 plus an internal field `check` first in the schema (at most {A.CHECK_MAX} characters: do "
+        "the sources agree, is the number in the cited text, is the answer in the documents at all), logged and never "
+        f"shown or graded, and `maxLength` {A.ANSWER_MAX} on `answer`. A leak detector in code (markers such as "
+        "\"Wait\", \"Let me\", \"Actually\", or an answer cut at the limit) asks once more, then falls back to "
+        "`needs_human`. With thinking off, the JSON is the only place the model can reason: in v1 it reasoned inside "
+        "`answer`, and that caught the conflict of f03; v2 took the room away.",
+        "- **v2 in thinking mode** (`S6:think`, profile `course-thinking`): the reasoning goes to its own channel "
+        "(not logged in the replay); the server applies the JSON schema to the content after it (checked).",
         "",
-        "Main set (143 questions); s / q and tokens are medians and means per question, all chat calls (a retry "
-        "counts):",
+        "Every S6-based row (S6, M1@S6..M4@S6) is measured with v3; its v1 and v2 answers stay in the replay as "
+        "`X:v1` and `X:v2` rows.",
+        "",
+        f"Guided decoding (vLLM behind LiteLLM) enforces the enum, `maxItems` and `maxLength`: asked to cite an id that "
+        f"is not in the context, or to write 9 claims with 4 sources each, or a long essay, the model returned only "
+        f"context ids, 5 claims, 2 sources per claim, strings cut at the limit. Code checks it anyway: {violations} "
+        "schema violations in all v2 and v3 answers.",
+        "",
+        "Main set (143 questions), new against old on the same questions; s / q and tokens are medians and means "
+        "per question, all chat calls (a retry counts; tokens out of the thinking row include the reasoning):",
         "",
         md_table(contract_table, index=True),
         "",
-        "End-to-end by slice, v1 and v2:",
+        "End-to-end by slice:",
         "",
         md_table(contract_slices, index=True),
         "",
-        "The P-101 questions (m01: the lecture question; i01: the incident):",
+        "Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict that v1 caught by reasoning "
+        "in the answer; n04: \"not in the documents\"); `check` is the internal field of v3, shown here for the "
+        "lecturer only:",
         "",
         md_table(p101_rows.fillna("")),
         "",
         "Holdout (27):",
         "",
-        md_table(h_contract[[c for c in ("invalid", "fallbacks (v2)", "end-to-end v1", "end-to-end v2",
-                                         "v2 vs v1: fixed / broke", "false refusals", "wrong or invented")
+        md_table(h_contract[[c for c in ("invalid", "leaks", "fallbacks", "end-to-end old", "end-to-end new",
+                                         "new vs old: fixed / broke", "false refusals", "wrong or invented")
                              if c in h_contract.columns]], index=True) if len(h_contract) else "",
         "",
-        "Needs a person (6): see the table in the next section (columns `X:v1` are the old contract).",
+        "Needs a person (6): see the table in the next section (the main rows are v3; `:v1`, `:v2`, `S6:think` are the "
+        "other versions).",
         "",
         "## How the rows fail: refusing against inventing",
         "",

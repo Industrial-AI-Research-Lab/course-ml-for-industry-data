@@ -1,67 +1,103 @@
-case_id,slice,config,recall@k,evidence_recall,mrr,correct,reason,verified,link,status,value,expected,fallback,outcome
-nh01,needs_human,S5,True,False,1.0,False,answered without the missing data,False,assembly,answered,"2,8",needs_human,False,wrong
-nh02,needs_human,S5,True,True,0.5,False,"status not_in_documents, expected needs_human",False,model,not_in_documents,,needs_human,False,false refusal
-nh03,needs_human,S5,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,false refusal
-nh04,needs_human,S5,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,wrong
-nh05,needs_human,S5,True,True,0.5,False,"status not_in_documents, expected needs_human",False,model,not_in_documents,,needs_human,False,false refusal
-nh06,needs_human,S5,True,True,1.0,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,wrong
-nh01,needs_human,S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,S6,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,false refusal
-nh04,needs_human,S6,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,wrong
-nh05,needs_human,S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,S6,True,True,1.0,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,wrong
-nh01,needs_human,M1@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M1@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M1@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M1@S6,False,True,0.16666666666666666,True,ok,True,,needs_human,,needs_human,False,correct
-nh05,needs_human,M1@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M1@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh01,needs_human,M2@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M2@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M2@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M2@S6,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,wrong
-nh05,needs_human,M2@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M2@S6,True,True,1.0,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,wrong
-nh01,needs_human,M3@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M3@S6,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M3@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M3@S6,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,wrong
-nh05,needs_human,M3@S6,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M3@S6,True,True,0.3333333333333333,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,wrong
-nh01,needs_human,M4@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M4@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M4@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M4@S6,True,True,0.25,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,wrong
-nh05,needs_human,M4@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M4@S6,True,True,0.25,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,wrong
-nh01,needs_human,S6:v1,True,False,1.0,False,invalid answer,False,assembly,,,needs_human,False,invalid
-nh02,needs_human,S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,S6:v1,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,false refusal
-nh04,needs_human,S6:v1,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,wrong
-nh05,needs_human,S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh01,needs_human,M1@S6:v1,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M1@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M1@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M1@S6:v1,False,True,0.16666666666666666,True,ok,True,,needs_human,,needs_human,False,correct
-nh05,needs_human,M1@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M1@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh01,needs_human,M2@S6:v1,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M2@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M2@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M2@S6:v1,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,wrong
-nh05,needs_human,M2@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M2@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh01,needs_human,M3@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M3@S6:v1,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M3@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M3@S6:v1,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,wrong
-nh05,needs_human,M3@S6:v1,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M3@S6:v1,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,correct
-nh01,needs_human,M4@S6:v1,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,correct
-nh02,needs_human,M4@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh03,needs_human,M4@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
-nh04,needs_human,M4@S6:v1,True,True,0.25,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,wrong
-nh05,needs_human,M4@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,correct
-nh06,needs_human,M4@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,correct
+case_id,slice,config,recall@k,evidence_recall,mrr,correct,reason,verified,link,status,value,expected,fallback,leaks,outcome
+nh01,needs_human,S5,True,False,1.0,False,answered without the missing data,False,assembly,answered,"2,8",needs_human,False,0,wrong
+nh02,needs_human,S5,True,True,0.5,False,"status not_in_documents, expected needs_human",False,model,not_in_documents,,needs_human,False,0,false refusal
+nh03,needs_human,S5,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,0,false refusal
+nh04,needs_human,S5,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,0,wrong
+nh05,needs_human,S5,True,True,0.5,False,"status not_in_documents, expected needs_human",False,model,not_in_documents,,needs_human,False,0,false refusal
+nh06,needs_human,S5,True,True,1.0,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,S6,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,0,false refusal
+nh04,needs_human,S6,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,0,wrong
+nh05,needs_human,S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,S6,True,True,1.0,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,M1@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M1@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M1@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M1@S6,False,True,0.16666666666666666,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh05,needs_human,M1@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M1@S6,True,True,0.5,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,M2@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M2@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M2@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M2@S6,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M2@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M2@S6,True,True,1.0,False,answered without the missing data,False,model,answered,"4,2",needs_human,False,0,wrong
+nh01,needs_human,M3@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M3@S6,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M3@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M3@S6,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M3@S6,True,True,0.3333333333333333,False,"status not_in_documents, expected needs_human",False,model,not_in_documents,,needs_human,False,0,false refusal
+nh06,needs_human,M3@S6,True,True,0.3333333333333333,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,M4@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M4@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M4@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M4@S6,True,True,0.25,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M4@S6,True,True,0.5,False,"status not_in_documents, expected needs_human",False,model,not_in_documents,,needs_human,False,0,false refusal
+nh06,needs_human,M4@S6,True,True,0.25,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,S6:v1,True,False,1.0,False,invalid answer,False,assembly,,,needs_human,False,0,invalid
+nh02,needs_human,S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,S6:v1,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,0,false refusal
+nh04,needs_human,S6:v1,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,0,wrong
+nh05,needs_human,S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh01,needs_human,M1@S6:v1,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M1@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M1@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M1@S6:v1,False,True,0.16666666666666666,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh05,needs_human,M1@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M1@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh01,needs_human,M2@S6:v1,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M2@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M2@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M2@S6:v1,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M2@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M2@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh01,needs_human,M3@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M3@S6:v1,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M3@S6:v1,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M3@S6:v1,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M3@S6:v1,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M3@S6:v1,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh01,needs_human,M4@S6:v1,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M4@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M4@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M4@S6:v1,True,True,0.25,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M4@S6:v1,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M4@S6:v1,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh01,needs_human,S6:v2,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,S6:v2,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,S6:v2,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,0,false refusal
+nh04,needs_human,S6:v2,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,0,wrong
+nh05,needs_human,S6:v2,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,S6:v2,True,True,1.0,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,M1@S6:v2,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M1@S6:v2,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M1@S6:v2,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M1@S6:v2,False,True,0.16666666666666666,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh05,needs_human,M1@S6:v2,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M1@S6:v2,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh01,needs_human,M2@S6:v2,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M2@S6:v2,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M2@S6:v2,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M2@S6:v2,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M2@S6:v2,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M2@S6:v2,True,True,1.0,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,M3@S6:v2,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M3@S6:v2,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M3@S6:v2,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M3@S6:v2,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M3@S6:v2,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M3@S6:v2,True,True,0.3333333333333333,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,M4@S6:v2,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,M4@S6:v2,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,M4@S6:v2,True,True,0.25,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh04,needs_human,M4@S6:v2,True,True,0.25,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,False,0,wrong
+nh05,needs_human,M4@S6:v2,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,M4@S6:v2,True,True,0.25,False,answered without the missing data,False,model,answered,"4,5",needs_human,False,0,wrong
+nh01,needs_human,S6:think,True,False,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh02,needs_human,S6:think,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh03,needs_human,S6:think,False,False,0.08333333333333333,False,"status not_in_documents, expected needs_human",False,search,not_in_documents,,needs_human,False,0,false refusal
+nh04,needs_human,S6:think,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,False,0,wrong
+nh05,needs_human,S6:think,True,True,0.5,True,ok,True,,needs_human,,needs_human,False,0,correct
+nh06,needs_human,S6:think,True,True,1.0,True,ok,True,,needs_human,,needs_human,False,0,correct

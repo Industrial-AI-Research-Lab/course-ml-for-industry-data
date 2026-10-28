@@ -21,6 +21,7 @@ from plant_assistant.filters import in_force, make_filter, post_filter, status_i
 from plant_assistant.normalize import find_tags, normalize_tags
 from plant_assistant.pipeline import CONFIGS, System
 from plant_assistant.query import extract_rules, find_date
+from plant_assistant import reval
 from plant_assistant.reval import attribute, grade, retrieval_metrics, score
 from plant_assistant.search import BM25Index, DenseIndex, VectorStore, rrf, tokenize, top_k, Hit
 from plant_assistant.store import load_store
@@ -284,14 +285,16 @@ def test_outcomes_split_the_failures(cases):
     assert outcome(by["t03"], None, False) == "invalid"
     ref = pd.read_csv(REFERENCE_DIR / "per_question.csv")
     got = {name: failure_modes(ref[ref.config == name])
-           for name in ("S0", "S6", "M3@S0", "M3@S6", "S6:v1", "M1@S6:v1", "M1@S6", "M3@S6:v1")}
+           for name in ("S0", "S6", "M3@S0", "M3@S6", "S6:v1", "S6:v2", "M1@S6:v1", "M1@S6", "M3@S6:v1")}
     assert got["S0"]["false refusals"].startswith("42/123") and got["S0"]["wrong or invented"].startswith("28")
     assert got["S6:v1"]["false refusals"].startswith("12/123") and got["S6:v1"]["wrong or invented"] == "1"
-    assert got["S6"]["false refusals"].startswith("12/123") and got["S6"]["wrong or invented"] == "3 (1 invented)"
+    assert got["S6:v2"]["false refusals"].startswith("12/123") and got["S6:v2"]["wrong or invented"] == "3 (1 invented)"
+    assert got["S6"]["false refusals"].startswith("11/123") and got["S6"]["wrong or invented"] == "3"  # v3: n04 back
     assert got["M3@S0"]["wrong or invented"] == "27 (3 invented)"
-    # contract v1 -> v2: the invalid answers are gone, and no fallback was needed
+    # contract v1 -> v2 -> v3: the invalid answers are gone; no fallback and no leak was needed
     assert (got["M3@S6:v1"]["invalid"], got["M1@S6:v1"]["invalid"]) == ("3", "5")
-    assert all(got[n]["invalid"] == "0" and got[n]["fallbacks"] == "0" for n in ("S6", "M1@S6", "M3@S6"))
+    assert all(got[n]["invalid"] == "0" and got[n]["fallbacks"] == "0" and got[n]["leaks"] == "0"
+               for n in ("S6", "M1@S6", "M3@S6", "S6:v2"))
     for name in ("S0", "S6", "M3@S0", "M3@S6"):
         assert ref[ref.config == name].outcome.notna().all()
 
@@ -386,7 +389,8 @@ def test_needs_human_replay(system):
     for name in ("S6", "M3@S6"):
         df = score(nh, system.run(nh, CONFIGS[name], progress=False), system.by_id)
         assert list(df.correct) == list(ref[ref.config == name].correct), name
-    assert int(ref[ref.config == "M3@S6"].correct.sum()) == 4 and int(ref[ref.config == "M3@S6:v1"].correct.sum()) == 5
+    right = {n: int(ref[ref.config == n].correct.sum()) for n in ("M3@S6", "M3@S6:v2", "M3@S6:v1", "M1@S6")}
+    assert right == {"M3@S6": 3, "M3@S6:v2": 4, "M3@S6:v1": 5, "M1@S6": 5}
 
 
 def test_cost_columns(system, cases):
@@ -487,7 +491,7 @@ def test_contract_v2_checks_and_fallback(chunks, cases):
     ctx = ["R-12-r3-table1", "R-12-r3-4.3.3"]
     # a valid answer: code fills the citation fields from the index; an id outside the context fails "exists"
     sysm = System(chunks, answer_client=_Stub((_v2_reply(["R-12-r3-table1", "R-14-r1-table1"]), "stop")))
-    out = sysm.answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    out = sysm.answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6:v2"], "answer")
     cits = {c["source"]: c for c in out["checks"]["citations"]}
     assert cits["R-12-r3-table1"]["exists"] and cits["R-12-r3-table1"]["supports"]
     assert not cits["R-14-r1-table1"]["exists"] and not out["checks"]["verified"]
@@ -495,15 +499,54 @@ def test_contract_v2_checks_and_fallback(chunks, cases):
     assert out["answer"].citations[0].doc_id == "R-12" and out["answer"].citations[0].table_no == "3"
     # cut by the token limit once: one retry with the short instruction, then a valid answer
     stub = _Stub(('{"status": "answered", "answer": "Insp', "length"), (_v2_reply(["R-12-r3-table1"]), "stop"))
-    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6:v2"], "answer")
     assert len(out["responses"]) == 2 and not out["fallback"] and grade(case, out["answer"].model_dump())[0]
     assert "too long" in stub.messages[1][0][0]["content"] and "too long" not in stub.messages[0][0][0]["content"]
     # cut twice: "needs a person", no value, counted as a fallback
     stub = _Stub(("{", "length"), ('{"status": "answ', "length"))
-    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6:v2"], "answer")
     assert out["fallback"] and out["answer"].status == "needs_human" and out["answer"].value is None
     # contract v1 keeps the old behaviour: no retry, an invalid answer stays invalid
     stub = _Stub(("{", "length"))
     out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6:v1"], "answer")
     assert out["answer"] is None and len(out["responses"]) == 1 and not out["fallback"]
+
+
+def _v3_reply(answer: str, check: str = "R-12 Table 3 applies; 4,5 is in the row of class II.") -> str:
+    return json.dumps({"check": check, "status": "answered", "answer": answer, "value": "4,5", "unit": "mm/s",
+                       "claims": [{"text": "Class II inspection limit.", "sources": ["R-12-r3-table1"]}]})
+
+
+def test_contract_v3_check_field_and_leaks(chunks, cases):
+    from plant_assistant.answer import ANSWER_MAX, CHECK_MAX, contract_v3_format, leak, parse_v3
+    from plant_assistant.display import answer_frame
+
+    ctx = ["R-12-r3-table1", "R-12-r3-4.3.3"]
+    schema = contract_v3_format(ctx)["json_schema"]["schema"]
+    assert list(schema["properties"])[0] == "check" and schema["properties"]["check"]["maxLength"] == CHECK_MAX
+    assert schema["properties"]["answer"]["maxLength"] == ANSWER_MAX and "check" in schema["required"]
+    assert schema["properties"]["claims"]["items"]["properties"]["sources"]["items"]["enum"] == ctx
+    # the check is kept apart: never in the answer, never shown, never graded
+    ans, check = parse_v3(_v3_reply("Inspect above 4,5 mm/s."))
+    assert check.startswith("R-12 Table 3") and "check" not in ans.model_dump()
+    assert leak("Wait, the table says 4,5.") and leak("Let me check R-14 first.") and leak("x" * ANSWER_MAX)
+    assert leak("Inspect within 24 hours (R-12, cl. 4.3.3).") is None
+    case = next(c for c in cases if c.case_id == "t03")
+    # a valid answer: one call, the check goes to the record, not to the answer
+    sysm = System(chunks, answer_client=_Stub((_v3_reply("Inspect above 4,5 mm/s."), "stop")))
+    rec = sysm.run_case(case, CONFIGS["S6"])
+    assert rec["check"].startswith("R-12 Table 3") and "check" not in rec["answer"] and not rec["leaks"]
+    frame, _ = answer_frame(rec)
+    assert "check" not in frame.index and "R-12 Table 3" not in frame.to_string()
+    assert reval.grade(case, rec["answer"])[0]
+    # reasoning leaked into the answer once: one retry with the v3 instruction, then a clean answer
+    stub = _Stub((_v3_reply("Wait, let me look at Table 3 again: 4,5."), "stop"), (_v3_reply("Inspect above 4,5."), "stop"))
+    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    assert len(out["leaks"]) == 1 and not out["fallback"] and out["answer"].answer == "Inspect above 4,5."
+    assert '"check"' in stub.messages[1][0][0]["content"].split("previous answer")[1]
+    # leaked twice: "needs a person", no value, counted
+    stub = _Stub((_v3_reply("Hmm, 4,5?"), "stop"), (_v3_reply("Actually it is 4,5."), "stop"))
+    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    assert out["fallback"] and out["answer"].status == "needs_human" and out["answer"].value is None
+    assert len(out["leaks"]) == 2
 

@@ -148,6 +148,7 @@ def score(cases: list[TestCase], records: list[dict], chunks_by_id: dict[str, Ch
                      "status": (rec.get("answer") or {}).get("status"),
                      "value": (rec.get("answer") or {}).get("value"),
                      "expected": case.status, "fallback": bool(rec.get("fallback")),
+                     "leaks": len(rec.get("leaks") or []),
                      "outcome": outcome(case, rec.get("answer"), bool(ok)) if ok is not None else None})
     return pd.DataFrame(rows)
 
@@ -220,7 +221,8 @@ def failure_modes(df: pd.DataFrame) -> dict[str, str]:
                                  + (f" ({int(o.get('invented', 0))} invented)" if o.get("invented", 0) else ""),
             "right abstentions": pct(len(ok_nid), len(nid)) + (f" ({nh} needs a person)" if nh else ""),
             "invalid": str(int(o.get("invalid", 0))),
-            "fallbacks": str(int(df["fallback"].sum())) if "fallback" in df else "0"}
+            "fallbacks": str(int(df["fallback"].sum())) if "fallback" in df else "0",
+            "leaks": str(int((df["leaks"] > 0).sum())) if "leaks" in df else "0"}
 
 
 def by_slice(scores: dict[str, pd.DataFrame], metric: str = "correct") -> pd.DataFrame:

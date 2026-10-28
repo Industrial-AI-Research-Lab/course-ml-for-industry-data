@@ -140,7 +140,7 @@ def model_answers(profile_name: str) -> bool:
 
 LIVE = os.environ.get("PRACTICE_MODE") != "replay" and model_answers(PROFILE)
 replay = {task: ReplayClient(REPLAY_DIR / f"{task}_course.jsonl")
-          for task in ("answers", "rerank", "translate", "crossencoder")}
+          for task in ("answers", "answers_thinking", "rerank", "translate", "crossencoder")}
 live = LLMClient(get_profile(PROFILE), logger=CallLogger(RUNS_DIR / f"my-{PROFILE}" / "calls.jsonl")) if LIVE \
     else replay["answers"]
 print("Mode:", f"LIVE single questions on {PROFILE}, the full set from replay" if LIVE else
@@ -259,7 +259,8 @@ from plant_assistant.display import answer_frame, context_frame, hits_frame
 from plant_assistant.pipeline import CONFIGS, LADDER, System
 
 system = System(chunks, answer_client=replay["answers"], rerank_client=replay["rerank"],
-                translate_client=replay["translate"], cross_client=replay["crossencoder"], vectors=VECTORS)
+                translate_client=replay["translate"], cross_client=replay["crossencoder"], vectors=VECTORS,
+                think_client=replay["answers_thinking"])
 records, scores = {}, {}
 
 
@@ -357,7 +358,7 @@ from plant_assistant.applicability import equipment_context
 # single questions: live if the course model answers (the reranker too), replay otherwise
 system_live = System(chunks, answer_client=live, rerank_client=live if LIVE else replay["rerank"],
                      translate_client=live if LIVE else replay["translate"], cross_client=replay["crossencoder"],
-                     vectors=VECTORS)
+                     vectors=VECTORS, think_client=replay["answers_thinking"])
 for name in ("S2", "S3"):
     rec = system_live.run_case(case_by_id["p01"], CONFIGS[name])
     display(Markdown(f"**{name}** · {case_by_id['p01'].question_ru} · scope: {rec['scope'] or 'none'}"),
@@ -485,12 +486,13 @@ md(r"""
   13/20) and all tag variants. They do not fix what is about the plant: dense search is 3/10 on `point_in_time`,
   3/12 on `applicability` and 0/9 on `conflict`. Versions, applicability and conflicts need the filters, the
   registry and the contract.
-- **On top of plant knowledge** no mechanism changes end-to-end detectably (M1@S6 95%, +13 / −5). Dense search
+- **On top of plant knowledge** only dense search changes end-to-end detectably, and only just (M1@S6 97% against
+  90%, +13 / −4, p = 0.049). Dense search
   answers all English questions and finds the last conflict; the rerankers raise evidence recall, not end-to-end.
 - **The cross-encoder** gives most of the reranker gain for a quarter of the time: +0.5 s and no chat tokens per
   question, against +2 s and ~2000 chat tokens for the LLM reranker.
 - **New failures come with new context:** with the first answer contract, 5 answers of M1@S6 did not fit into the
-  token limit (long lists of claims and citations); contract v2 (step 7) removes them. Dense search alone invents 5
+  token limit (long lists of claims and citations); contracts v2 and v3 (step 7) remove them. Dense search alone invents 5
   values where the answer is "not in the documents" (S0: 1). A nearest neighbour always exists.
 
 > **Discussion:** "Your project has 300 documents in two languages and versions. Which row do you build first, and
@@ -505,9 +507,15 @@ S6 = S5 + the answer contract: a status (`answered`, `not_in_documents`, `confli
 its unit, and at most 5 claims, each with at most 2 sources. A source is the **id of a chunk in the context**
 (`R-12-r3-4.3.3`), and the JSON schema of the question makes it an `enum` of exactly the ids that were put into the
 prompt: the model cannot cite a chunk it did not get (guided decoding on the course server enforces it; code checks
-it anyway). Code fills the document, revision, clause, table and page from the index. An answer cut by the token
-limit is asked once more with a short instruction; if it fails again, the answer is "needs a person" (a fallback,
-counted). Three checks of every citation:
+it anyway). Code fills the document, revision, clause, table and page from the index.
+
+The first field of the schema is **`check`** (at most 300 characters): the model's own check before it decides. Do
+the sources agree? Is the number in the text I will cite? Is the answer in the documents at all? With thinking off,
+the JSON is the only place the model can reason; without this field, it reasons inside the answer ("…Wait, let's
+r…") or not at all. `check` is logged for the audit, never shown to the engineer and never graded. The answer has a
+length limit, and code looks for reasoning that leaked into it ("Wait", "Let me", "Actually"): a leak or an answer
+cut by the token limit is asked once more; if it fails again, the answer is "needs a person" (a fallback, counted).
+Three checks of every citation:
 
 1. **exists**: the cited chunk was in the context (and so in the index);
 2. **in force**: it is valid on the date of the question;
@@ -572,27 +580,40 @@ for cid in ("x01", "x03"):
     print(cid, rec["answer"]["status"], "|", rec["answer"]["answer"][:160])
 """)
 md(r"""
-**The contract before and after.** The first version (rows `S6:v1`, `M*@S6:v1`, replayed from the first reference
-run) let the model copy citation objects without limits: with a long context, the claims and citations did not fit
-into 3000 tokens and the answer was invalid. Same search, same context, only the contract changes. v2 removes every
-invalid answer (no retry was even needed: the longest answer is 666 tokens) and halves the output tokens. It also
-costs something: with a short answer the model no longer "thinks aloud" in the answer field, and two questions break
-in most rows (f03: a conflict answered with one side; n04: "not in the documents" answered with a neighbouring
-tolerance).
+**The contract in three versions.** Same search, same context, only the answer step changes:
 
-> **Discussion:** "The old contract was right on f03 because the model reasoned inside the answer. How would you
-> give it room to check for a conflict without letting the answer grow without limit?"
+- **v1** (`S6:v1`): the model copies citation objects, no limits. With a long context the claims and citations did
+  not fit into 3000 tokens: invalid answers. It was right on f03 (a conflict) because it reasoned inside the answer.
+- **v2** (`S6:v2`, `M*@S6:v2`): chunk ids from the enum, limits, a retry, a fallback. No invalid answers, half the output
+  tokens, but f03 and n04 break: no room to check.
+- **v3** (`S6` and every row built on it): v2 + the `check` field and the leak detector. Still no invalid
+  answers, no leaks, no fallbacks; n04 is right again at S6, f03 still is not (it is right at M1@S6 and M3@S6). The
+  check costs ~50 output tokens and ~1.4 s per question.
+- `S6:think`: v2 with the course model in thinking mode (the reasoning goes to its own channel).
 """)
 code(r"""
-for name in ("S6:v1", "M1@S6:v1", "M1@S6") if VECTORS is not None else ("S6:v1",):
+for name in ("S6:v1", "S6:v2", "S6:think"):
     if name not in scores:
         run(name)
-pairs = {"S6": "S6:v1", "M1@S6": "M1@S6:v1"} if VECTORS is not None else {"S6": "S6:v1"}
-ba = reval.ablation({k: scores[k] for p in pairs.items() for k in p[::-1]}, pairs)
+pairs = {"S6:v2": "S6:v1", "S6": "S6:v2", "S6:think": "S6:v2"}
+ba = reval.ablation({k: scores[k] for k in ("S6:v1", "S6:v2", "S6", "S6:think")}, pairs)
 display(ba[["config", "vs", "end-to-end", "e2e: fixed / broke", "e2e verdict", "false refusals", "wrong or invented",
-            "invalid", "fallbacks"]].fillna(""))
-pd.read_csv(REFERENCE_DIR / "contract_before_after.csv", index_col="row")
+            "invalid", "leaks", "fallbacks"]].fillna(""))
+pd.read_csv(REFERENCE_DIR / "contract_before_after.csv", index_col="new vs old")
 """)
+md(r"""
+**What `check` is for**: f03 (P-205 at 6.0 mm/s: R-12 says inspect above 4.5, the manual says normal up to 7.1).
+The engineer sees `answer`; the audit log keeps `check` too.
+""")
+code(r"""
+f03 = case_by_id["f03"]
+for name in ("S6:v2", "S6"):
+    rec = system_live.run_case(f03, CONFIGS[name])
+    print(f"{name}: {rec['answer']['status']} | answer: {rec['answer']['answer'][:200]}")
+    if rec.get("check"):
+        print(f"      check (internal): {rec['check']}")
+""")
+
 md(r"""
 The whole ladder with S6:
 """)

@@ -111,7 +111,7 @@ datasheet that is not in the archive; P-101 was measured in one direction of thr
 | S3 | + applicability: registry → station, type, class, documents of the unit; scope filter before search; the tables of the linked documents and the class in the prompt |
 | S4 | + revision filter by the date of the question (`effective_from <= date < effective_to`) |
 | S5 | + evidence pack: references both ways, one more step back, whole sections, 2500 tokens |
-| S6 | + answer contract (v2: chunk ids from an enum of the context, at most 5 claims × 2 sources, one retry, "needs a person" fallback) and three citation checks; `X:v1` rows: the first contract (citation objects, no limits) |
+| S6 | + answer contract (v3: an internal `check` field first, chunk ids from an enum of the context, at most 5 claims × 2 sources, a length limit and a leak detector on the answer, one retry, "needs a person" fallback) and three citation checks; rows `X:v1` (citation objects, no limits) and `X:v2` (v3 without `check`) are the earlier contracts |
 | M3@S0, M3@S6 | an LLM reranker (course Qwen, listwise over the top-20) on S0 and on S6 |
 | M1t | translation of an English question into Russian before search (the `language` slice) |
 | M1, M2 @S0, @S6 | dense and hybrid search: **TODO**, see "Dense search" |
@@ -206,15 +206,15 @@ chat prompt tokens only: the cross-encoder reads ~1500–1750 tokens per questio
 | S3 + applicability (on S2b) | 67% | 68% | 71% | better (+24 / −2) | 1.7 | 1 | 1083 |
 | S4 + date filter | 76% | 76% | 76% | better (+7 / −0) | 1.8 | 1 | 1135 |
 | S5 + evidence pack | 76% | 88% | 86% | better (+14 / −0) | 3.1 | 1 | 2811 |
-| S6 + contract (v2) and checks | 76% | 88% | 90% | vs S5: +7 / −2, not detectable (p = 0.18); conflicts 0/9 → 7/9 | 4.4 | 1 | 3225 |
+| S6 + contract (v3) and checks | 76% | 88% | 90% | vs S5: +7 / −1, not detectable (p = 0.07); conflicts 0/9 → 7/9 | 5.8 | 1 | 3325 |
 | M1@S0 dense (e5-mistral) instead of BM25 | 68% | 62% | 63% | better than S0 (+32 / −15, p = 0.02) | 2.0 | 2 | 1298 |
 | M2@S0 hybrid BM25 + dense (RRF) | 63% | 53% | 60% | better than S0 (+23 / −10, p = 0.04) | 1.9 | 2 | 1073 |
 | M3@S0 LLM reranker on BM25 | 76% | 73% | 71% | better than S0 (+32 / −4) | 3.5 | 2 | 2895 |
 | M4@S0 cross-encoder on BM25 | 73% | 65% | 66% | better than S0 (+27 / −6) | 2.0 | 2 | 1341 |
-| M1@S6 S6 with dense search | 81% | 93% | 95% | not different from S6 (+13 / −5, p = 0.10) | 5.0 | 2 | 3603 |
-| M2@S6 S6 with hybrid search | 80% | 92% | 93% | not different from S6 (+6 / −1) | 5.2 | 2 | 3601 |
-| M3@S6 LLM reranker on S6 | 85% | 93% | 92% | not different from S6 (+5 / −2); evidence better (+7 / −0) | 5.7 | 2 | 4726 |
-| M4@S6 cross-encoder on S6 | 84% | 93% | 92% | not different from S6 (+6 / −2); evidence better (+6 / −0) | 4.9 | 2 | 3503 |
+| M1@S6 S6 with dense search | 81% | 93% | 97% | **better than S6** (+13 / −4, p = 0.049) | 6.0 | 2 | 3703 |
+| M2@S6 S6 with hybrid search | 80% | 92% | 93% | not different from S6 (+5 / −1) | 6.9 | 2 | 3726 |
+| M3@S6 LLM reranker on S6 | 85% | 93% | 93% | not different from S6 (+5 / −1); evidence better (+7 / −0) | 6.7 | 2 | 4826 |
+| M4@S6 cross-encoder on S6 | 84% | 93% | 92% | not different from S6 (+4 / −1); evidence better (+6 / −0) | 5.9 | 2 | 3603 |
 | M1t translation, `language` slice | 9/18 | 9/18 | 13/20 | better than S0 on the slice (5/20) | 1.9 | 2 | 769 |
 
 - At S0, 60 of 70 wrong answers are lost **in search**, 2 in assembly, 8 in the model, none in reading.
@@ -224,7 +224,7 @@ chat prompt tokens only: the cross-encoder reads ~1500–1750 tokens per questio
   0/9 up to S5 (the simple answer has no way to say "the documents disagree"), 7/9 at S6 (8/9 with contract v1).
   The manual of P-205 is never found by BM25 from a Russian question; it reaches the context only because the
   registry links it to P-205 (S3). f09 fails: the registry brings the tables of the manual, and the answer is in its
-  clause 6.4. f03 fails with contract v2 (see below).
+  clause 6.4. f03 fails at S6 with contracts v2 and v3 (see below).
 - **The P-101 question is lost in search at S6:** with the archive v2, BM25 puts Table 3 at rank 6 for this
   wording, and the evidence pack has nothing to start from. With the reranker (M3@S6) it is answered with all
   four citations and all checks pass.
@@ -236,30 +236,36 @@ chat prompt tokens only: the cross-encoder reads ~1500–1750 tokens per questio
   knowledge, every mechanism beats S0, and none comes close to S6 (best: M3@S0, 71% against 91%). They fix what is
   about words: dense search answers 17/20 English questions (translation M1t: 13/20) and 6/6 tag variants. They do
   not fix what is about the plant: dense search is 3/10 on `point_in_time`, 3/12 on `applicability` and 0/9 on
-  `conflict` (S6: 10/10, 12/12, 8/9). On top of S6, no mechanism changes end-to-end detectably. Dense search on S6
-  answers all 20 English questions and finds clause 6.4 of the manual (f09), and loses a few base, table and
-  applicability questions; the rerankers raise evidence recall (+7 / −0, +6 / −0), not end-to-end.
+  `conflict` (S6: 10/10, 12/12, 7/9). On top of S6, only dense search changes end-to-end detectably: M1@S6 97%
+  against 90% (+13 / −4, p = 0.049; with contract v2 it was +13 / −5, p = 0.10, so the verdict is borderline). It
+  answers all 20 English questions and finds clause 6.4 of the manual (f09). The rerankers raise evidence recall
+  (+7 / −0, +6 / −0), not end-to-end.
 - **The cross-encoder against the LLM reranker:** most of the gain for a quarter of the time: +0.5 s and no chat
   tokens per question against +2 s and ~2000 chat tokens (on S0: 66% against 71%; holdout 81% against 85%).
-- **The answer contract, v1 → v2** (`reference/contract_before_after.csv`, rows `X:v1` replayed from the first
-  run). v1 let the model copy citation objects with no limits: with more sources in the context, long answers did
-  not fit into 3000 tokens (invalid: S6 0, M1@S6 5, M2@S6 5, M3@S6 3, M4@S6 4; m01 and i01 at M1@S6). v2: a claim
-  cites chunk ids from an `enum` of the context ids, at most 5 claims and 2 sources per claim, one retry, then a
-  "needs a person" fallback. Result: **0 invalid answers in every row, no retry and no fallback needed** (the
-  longest v2 answer is 666 tokens); the questions that were invalid are now right (m01 and i01 at M1@S6 too);
-  output tokens halve (S6: 374 → 214), time per question drops by 0.3–0.7 s, prompt tokens grow by ~200 (the ids
-  and the schema). Guided decoding enforces the enum and the limits (tested with a prompt that asks for a foreign
-  id and for 9 claims: it gets context ids and 5 claims); code checks anyway: 0 violations.
-  **What v2 costs:** two questions break in four of five rows: f03 (a conflict answered with one side) and n04 (a
-  "not in the documents" question answered with the alignment tolerance of 7.2). With v1, the model reasoned inside
-  the `answer` field (f03: "…No, 6.0 is below 7.1. Wait, let's r…") and that reasoning caught the conflict; v2 keeps
-  the answer short, and the model decides faster. The same happens on nh06 (one direction of three measured) in
-  M2–M4@S6. End-to-end: S6 91% → 90% (+0 / −2), M1@S6 93% → 95% (+5 / −2), M2@S6 91% → 93%, M3@S6 91% → 92%,
-  M4@S6 90% → 92%; none of the pairs is significant. S6 against S5 is no longer significant (+7 / −2, p = 0.18;
-  with v1: +8 / −1, p = 0.04). A short "check" field before the decision is the next thing to try.
+- **The answer contract, v1 → v2 → v3** (`reference/contract_before_after.csv`; rows `X:v1` and `X:v2` replayed).
+  - v1 let the model copy citation objects with no limits: with more sources in the context, long answers did not
+    fit into 3000 tokens (invalid: S6 0, M1@S6 5, M2@S6 5, M3@S6 3, M4@S6 4; m01 and i01 at M1@S6).
+  - v2: a claim cites chunk ids from an `enum` of the context ids, at most 5 claims and 2 sources per claim, one
+    retry, then a "needs a person" fallback. **0 invalid answers in every row**, no retry needed, output tokens
+    halve (S6: 374 → 214). Guided decoding enforces the enum, `maxItems` and `maxLength` (tested with prompts that
+    ask for a foreign id, 9 claims, a long essay); code checks anyway: 0 violations. But with no room to reason,
+    f03 (a conflict answered with one side) and n04 ("not in the documents" answered with the tolerance of 7.2)
+    break in most rows: in v1 the model reasoned inside `answer` ("…No, 6.0 is below 7.1. Wait, let's r…").
+  - v3 (the main contract): v2 + an internal field `check` first in the schema (≤ 300 characters, logged, never
+    shown or graded), `maxLength` 600 on `answer`, a leak detector ("Wait", "Let me", "Actually"…) with one retry
+    and a fallback. **0 invalid, 0 leaks, 0 fallbacks** in every row. n04 is right again at S6, M1@S6, M4@S6
+    (still wrong at M2@S6, M3@S6); f03 is right at M1@S6 and M3@S6, still answered with one side at S6, M2@S6,
+    M4@S6. End-to-end v2 → v3: S6 90% → 90% (+2 / −1), M1@S6 95% → 97% (+2 / −0), M2@S6 93% → 93%, M3@S6 92% →
+    93% (+2 / −0), M4@S6 92% → 92%; none significant. Cost: +50 output tokens and +1.0–1.7 s per question
+    (S6: 4.4 → 5.8 s). On the needs_human set v3 is weaker than v1: S6 3/6, M1@S6 5/6, M2@S6 4/6, M3@S6 3/6,
+    M4@S6 3/6 (v1: 3, 6, 5, 5, 5); nh06 (one direction of three measured) gets a value in every v3 row.
+  - S6 (v3) against S5: +7 / −1, p = 0.07: not significant (v1: +8 / −1, p = 0.04).
+  - v2 in thinking mode (`S6:think`, reasoning in its own channel; the server applies the schema after it): 86%,
+    17.8 s and ~2000 output tokens per question, 1 fallback; f03 right, n04 wrong, needs_human 4/6. Not better
+    than v3 and three times slower.
 - Dense search alone invents more: 5 values on "not in the documents" questions (S0: 1). A nearest neighbour
   always exists.
-- Holdout: M1@S0 59%, M2@S0 67%, M4@S0 81%, M1@S6 89%, M2@S6 81%, M3@S6 85%, M4@S6 81% (S6 78%, M3@S0 85%): the
+- Holdout: M1@S0 59%, M2@S0 67%, M4@S0 81%, M1@S6 93%, M2@S6 85%, M3@S6 89%, M4@S6 81% (S6 78%, M3@S0 85%): the
   rerankers alone are as good as the whole ladder on everyday questions; dense search alone is not.
 
 **How the rows fail matters, not only how often.** A refusal ("not in the documents" or "needs a person" when the
@@ -277,18 +283,18 @@ schema. Every question is exactly one of: right, false refusal, wrong or invente
 | S3 | 102 | 19 (15%) | 22 (1 invented) | 19/20 | 0 |
 | S4 | 109 | 18 (15%) | 16 (1 invented) | 19/20 | 0 |
 | S5 | 123 | 11 (9%) | 9 | 20/20 | 0 |
-| S6 | 128 | 12 (10%), 1 of them `needs_human` (k02) | 3 (1 invented: n04) | 19/20 | 0 |
+| S6 | 129 | 11 (9%), 1 of them `needs_human` (k02) | 3 | 20/20 | 0 |
 | M3@S0 | 101 | 15 (12%) | 27 (3 invented: n03, n04, n07) | 17/20 | 0 |
-| M3@S6 | 131 | 7 (6%) | 5 (2 invented) | 18/20 | 0 |
+| M3@S6 | 133 | 7 (6%) | 3 (1 invented: n04) | 19/20 | 0 |
 | M1@S0 | 90 | 26 (21%) | 27 (5 invented) | 15/20 | 0 |
 | M4@S0 | 94 | 22 (18%) | 27 (3 invented) | 17/20 | 0 |
-| M1@S6 | 136 | 4 (3%) | 3 (1 invented) | 19/20 | 0 |
+| M1@S6 | 138 | 4 (3%) | 1 | 20/20 | 0 |
 | M4@S6 | 132 | 8 (7%) | 3 | 20/20 | 0 |
 | Holdout S6 (27) | 21 | 4/23 | 2 (1 invented) | 3/4 | 0 |
 | Holdout M3@S0 | 23 | 2/23 | 2 (1 invented) | 3/4 | 0 |
-| Holdout M3@S6 | 23 | 2/23 | 2 (1 invented) | 3/4 | 0 |
+| Holdout M3@S6 | 24 | 2/23 | 1 | 4/4 | 0 |
 
-S6 and M3@S6 have almost the same end-to-end, but M3@S6 refuses less and fails more often by a wrong value. The reranker alone (M3@S0) refuses three times less than S0 and gives as many wrong values.
+M3@S6 refuses less than S6 and fails about as often by a wrong value. The reranker alone (M3@S0) refuses three times less than S0 and gives as many wrong values.
 
 **Needs a person** (6 questions; cells: status (value)):
 
@@ -298,9 +304,9 @@ S6 and M3@S6 have almost the same end-to-end, but M3@S6 refuses less and fails m
 | nh02 "P-220": P-220A or P-220B | not_in_documents | needs_human | needs_human | needs_human | needs_human | needs_human |
 | nh03 no tag, station 2 | not_in_documents | not_in_documents | needs_human | needs_human | needs_human | needs_human |
 | nh04 spare P-216, no station | answered (4,5) | answered (4,5) | needs_human | conflict | conflict | conflict |
-| nh05 grease from a missing datasheet | not_in_documents | needs_human | needs_human | needs_human | needs_human | needs_human |
-| nh06 one direction of three measured | answered (4,5) | answered (4,5) (v1: needs_human) | needs_human | answered (4,5) (v1: needs_human) | answered (4,5) (v1: needs_human) | answered (4,5) (v1: needs_human) |
-| right | 0/6 | 3/6 (v1: 3/6) | 6/6 (v1: 6/6) | 4/6 (v1: 5/6) | 4/6 (v1: 5/6) | 4/6 (v1: 5/6) |
+| nh05 grease from a missing datasheet | not_in_documents | needs_human | needs_human | needs_human | not_in_documents | not_in_documents |
+| nh06 one direction of three measured | answered (4,5) | answered (4,5) | answered (4,5) | answered (4,2) | answered (4,5) | answered (4,5) |
+| right, v3 (v2 / v1) | 0/6 | 3/6 (3 / 3) | 5/6 (6 / 6) | 4/6 (4 / 5) | 3/6 (4 / 5) | 3/6 (4 / 5) |
 
 The contract gives the system a way to stop; S5 picks a class or a station itself in half of the cases. The station
 case (nh04) is the hardest: the system either applies R-12 or calls the two regulations a conflict, though only one
