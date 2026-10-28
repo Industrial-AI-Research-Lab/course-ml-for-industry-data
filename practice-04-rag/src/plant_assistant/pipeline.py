@@ -42,6 +42,7 @@ class Config:
     date_filter: bool = False  # S4: chunks valid on the date of the question, dates in the source headers
     evidence_pack: bool = False  # S5: references both ways and parent sections within a budget
     contract: bool = False  # S6: answer contract and citation checks
+    contract_version: int = 2  # 2: chunk ids as an enum, limits, one retry, fallback; 1: citation objects (":v1")
     retriever: str = "bm25"  # bm25 | dense | hybrid
     rerank: bool = False  # reranker over the top `depth`
     reranker: str = "llm"  # "llm": listwise, course Qwen (M3); "cross": cross-encoder bge-reranker-v2-m3 (M4)
@@ -81,7 +82,10 @@ M4_S0 = replace(S0, name="M4@S0", description="S0 + cross-encoder (bge-reranker-
 M4_S6 = replace(S6, name="M4@S6", description="S6 + cross-encoder over the filtered top-20", rerank=True,
                 reranker="cross")
 MECHANISMS = [M1_S0, M1T, M2_S0, M3_S0, M4_S0, M1_S6, M2_S6, M3_S6, M4_S6]
-CONFIGS = {c.name: c for c in LADDER + MECHANISMS}
+# The same rows with the first answer contract (citation objects, no limits): "before" for the comparison
+CONTRACT_V1 = [replace(c, name=f"{c.name}:v1", description=f"{c.name} with the answer contract v1", contract_version=1)
+               for c in (S6, M1_S6, M2_S6, M3_S6, M4_S6)]
+CONFIGS = {c.name: c for c in LADDER + MECHANISMS + CONTRACT_V1}
 
 # Demo of the contract: the two sides of the P-205 conflict put into the context by hand
 CONFLICT_DEMO = ("f01", ["R-12-r3-table1", "OM-P-205-r2-table2"])
@@ -211,40 +215,69 @@ class System:
                "context": r["context"], "rerank": r["rerank"], "cost": r["cost"]}
         if not with_answer:
             return rec
-        context_text, sources = render(r["context"], self.by_id, show_dates=cfg.date_filter)
         equipment = equipment_context(r["scope"]) if cfg.applicability else ""
-        msgs = A.messages(r["query"], context_text, case.asked_on, r["fields"].as_of, equipment, cfg.contract)
-        resp = self.answer_client.chat(msgs, response_format=A.CONTRACT_FORMAT if cfg.contract else A.SIMPLE_FORMAT,
-                                       meta={"case_id": case.case_id, "config": cfg.name, "task": "answer"})
-        ans = A.parse(resp.content, cfg.contract) if resp.ok else None
+        out = self.answer(case, r["query"], r["context"], r["fields"].as_of, equipment, cfg, "answer")
         cost = rec["cost"]
-        cost.update({"model_s": round(cost["model_s"] + resp.latency_s, 3), "calls": cost["calls"] + 1,
-                     "chat_calls": cost["chat_calls"] + 1,
-                     "prompt_tokens": cost["prompt_tokens"] + resp.prompt_tokens,
-                     "completion_tokens": cost["completion_tokens"] + resp.completion_tokens})
-        rec.update({"model": resp.model, "request_hash": resp.request_hash, "error": resp.error,
+        for resp in out["responses"]:
+            cost.update({"model_s": round(cost["model_s"] + resp.latency_s, 3), "calls": cost["calls"] + 1,
+                         "chat_calls": cost["chat_calls"] + 1,
+                         "prompt_tokens": cost["prompt_tokens"] + resp.prompt_tokens,
+                         "completion_tokens": cost["completion_tokens"] + resp.completion_tokens})
+        resp, ans = out["responses"][-1], out["answer"]
+        rec.update({"model": resp.model, "request_hash": out["responses"][0].request_hash, "error": resp.error,
                     "from_replay": resp.from_replay, "latency_s": resp.latency_s,
-                    "finish_reason": resp.finish_reason,
-                    "answer": ans.model_dump() if ans else None, "raw": None if ans else resp.content[:500]})
-        if ans is not None:
-            rec["checks"] = check_answer(ans, sources, self.chunks, self.by_id, r["fields"].as_of)
-        else:
-            rec["checks"] = None
+                    "finish_reason": out["responses"][0].finish_reason,
+                    "answer": ans.model_dump() if ans else None, "raw": None if ans else resp.content[:500],
+                    "retried": len(out["responses"]) > 1, "fallback": out["fallback"],
+                    "schema_violations": out["violations"], "checks": out["checks"]})
         return rec
+
+    def answer(self, case: TestCase, query: str, context: list[str], as_of: str | None, equipment: str, cfg: Config,
+               task: str) -> dict:
+        """The answer step. Simple answer (S0-S5) and contract v1: one call, an answer that is not of the schema is
+        invalid. Contract v2: the schema allows only the chunk ids of this context; an answer cut by the token
+        limit or not of the schema is asked once more with a short instruction; if it fails again, the answer is
+        "needs a person" with no value (`fallback`)."""
+        v2 = cfg.contract and cfg.contract_version >= 2
+        context_text, sources = render(context, self.by_id, show_dates=cfg.date_filter, ids_as_labels=v2)
+        fmt = A.contract_v2_format(context) if v2 else A.CONTRACT_FORMAT if cfg.contract else A.SIMPLE_FORMAT
+        responses, ans, fallback = [], None, False
+        for retry in ((False, True) if v2 else (False,)):
+            msgs = A.messages(query, context_text, case.asked_on, as_of, equipment, cfg.contract,
+                              cfg.contract_version, retry)
+            resp = self.answer_client.chat(msgs, response_format=fmt,
+                                           meta={"case_id": case.case_id, "config": cfg.name,
+                                                 "task": task + ("-retry" if retry else "")})
+            responses.append(resp)
+            if not resp.ok:  # a network error is not a length problem: no retry
+                break
+            ans = A.parse(resp.content, cfg.contract)
+            if not v2 or (ans is not None and resp.finish_reason != "length"):
+                break
+            ans = None
+        violations = []
+        if v2 and ans is None and responses[-1].ok:
+            ans, fallback = A.fallback_answer(), True
+        if v2 and ans is not None:
+            violations = A.schema_violations(ans, set(context))
+            ans.citations = [A.Citation(source=cid, doc_id=c.doc_id, revision=c.revision, amendment=c.amendment,
+                                        clause=c.clause if c.chunk_type == "clause" else None, table_no=c.table_no,
+                                        row_key=c.row_key, page=c.page)
+                             for cid in A.cited_ids(ans) if cid in set(context) for c in [self.by_id[cid]]]
+        checks = check_answer(ans, sources, self.chunks, self.by_id, as_of) if ans is not None else None
+        return {"answer": ans, "responses": responses, "fallback": fallback, "violations": violations,
+                "checks": checks}
 
     def answer_from_context(self, case: TestCase, chunk_ids: list[str], cfg: Config) -> dict:
         """Answer from a given context (a demo: what the contract does when both sides of a conflict are there)."""
         fields = extract_rules(case.query, case.asked_on)
-        context_text, sources = render(chunk_ids, self.by_id, show_dates=cfg.date_filter)
         scope = scope_for(fields, case.query, self.registry) if cfg.applicability else Scope()
-        msgs = A.messages(case.query, context_text, case.asked_on, fields.as_of,
-                          equipment_context(scope) if cfg.applicability else "", cfg.contract)
-        resp = self.answer_client.chat(msgs, response_format=A.CONTRACT_FORMAT if cfg.contract else A.SIMPLE_FORMAT,
-                                       meta={"case_id": case.case_id, "config": cfg.name, "task": "demo"})
-        ans = A.parse(resp.content, cfg.contract) if resp.ok else None
-        checks = check_answer(ans, sources, self.chunks, self.by_id, fields.as_of) if ans else None
+        out = self.answer(case, case.query, chunk_ids, fields.as_of,
+                          equipment_context(scope) if cfg.applicability else "", cfg, "demo")
+        ans, resp = out["answer"], out["responses"][-1]
         return {"case_id": case.case_id, "context": chunk_ids, "answer": ans.model_dump() if ans else None,
-                "checks": checks, "from_replay": resp.from_replay, "latency_s": resp.latency_s}
+                "checks": out["checks"], "from_replay": resp.from_replay, "latency_s": resp.latency_s,
+                "fallback": out["fallback"]}
 
     def run(self, cases: list[TestCase], cfg: Config, with_answer: bool = True, workers: int = 8,
             progress: bool = True) -> list[dict]:

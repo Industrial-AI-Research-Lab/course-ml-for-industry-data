@@ -485,13 +485,13 @@ md(r"""
   13/20) and all tag variants. They do not fix what is about the plant: dense search is 3/10 on `point_in_time`,
   3/12 on `applicability` and 0/9 on `conflict`. Versions, applicability and conflicts need the filters, the
   registry and the contract.
-- **On top of plant knowledge** no mechanism changes end-to-end detectably (M1@S6 93%, +11 / −8). Dense search
+- **On top of plant knowledge** no mechanism changes end-to-end detectably (M1@S6 95%, +13 / −5). Dense search
   answers all English questions and finds the last conflict; the rerankers raise evidence recall, not end-to-end.
 - **The cross-encoder** gives most of the reranker gain for a quarter of the time: +0.5 s and no chat tokens per
   question, against +2 s and ~2000 chat tokens for the LLM reranker.
-- **New failures come with new context:** with dense search on S6, 5 answers do not fit into the token limit of
-  the contract (long lists of claims and citations); dense search alone invents 5 values where the answer is "not
-  in the documents" (S0: 1). A nearest neighbour always exists.
+- **New failures come with new context:** with the first answer contract, 5 answers of M1@S6 did not fit into the
+  token limit (long lists of claims and citations); contract v2 (step 7) removes them. Dense search alone invents 5
+  values where the answer is "not in the documents" (S0: 1). A nearest neighbour always exists.
 
 > **Discussion:** "Your project has 300 documents in two languages and versions. Which row do you build first, and
 > what do you measure to decide whether a second one is worth its cost?"
@@ -502,9 +502,14 @@ md(r"""
 ## 7. The answer contract and the citation checks
 
 S6 = S5 + the answer contract: a status (`answered`, `not_in_documents`, `conflict`, `needs_human`), the value with
-its unit, claims with their sources, and citations as fields that code can check:
+its unit, and at most 5 claims, each with at most 2 sources. A source is the **id of a chunk in the context**
+(`R-12-r3-4.3.3`), and the JSON schema of the question makes it an `enum` of exactly the ids that were put into the
+prompt: the model cannot cite a chunk it did not get (guided decoding on the course server enforces it; code checks
+it anyway). Code fills the document, revision, clause, table and page from the index. An answer cut by the token
+limit is asked once more with a short instruction; if it fails again, the answer is "needs a person" (a fallback,
+counted). Three checks of every citation:
 
-1. **exists**: a chunk with this document, revision, clause / table / row is in the index;
+1. **exists**: the cited chunk was in the context (and so in the index);
 2. **in force**: it is valid on the date of the question;
 3. **supports**: the number and the unit of the answer are in its text (or in a table it refers to).
 
@@ -526,19 +531,22 @@ md(r"""
 > **Chat:** "The answer cites R-12 rev. 2. Which check fails?"
 
 Task 3 of the lecture: *"Inspect P-101 within 24 hours (R-12, rev. 3, clause 4.3.4, page 3)"*. The clause exists
-and is in force; its text is about the **stop** limit, "24 hours" is in the neighbouring clause 4.3.3.
+and is in force; its text is about the **stop** limit, "24 hours" is in the neighbouring clause 4.3.3. The enum
+makes sure the cited chunk was in the context; it does not make it the right one: the checks still matter.
 """)
 code(r"""
-from plant_assistant.answer import Answer, Citation
+from plant_assistant.answer import Answer, Claim
+from plant_assistant.assemble import render
 from plant_assistant.verify import check_answer
 
-claim = Answer(status="answered", answer="Inspect P-101 within 24 hours.", value="24", unit="h",
-               citations=[Citation(source="S1", doc_id="R-12", revision=3, clause="4.3.4", page=3)])
+context = ["R-12-r3-4.3.4", "R-12-r3-4.3.3", "R-12-r2-4.3.3"]  # rev. 2 is there, as for a "what changed" question
+_, sources = render(context, by_id, show_dates=True, ids_as_labels=True)
 rows = []
-for rev, clause in ((3, "4.3.4"), (3, "4.3.3"), (2, "4.3.3")):
-    claim.citations[0].revision, claim.citations[0].clause = rev, clause
-    r = check_answer(claim, [], chunks, by_id, P101.asked_on)
-    rows.append({"citation": f"R-12 rev. {rev} cl. {clause}", "exists": r["exists"], "in force": r["in_force"],
+for cid in context + ["R-12-r3-6.2"]:  # the last one was not in the context
+    claim = Answer(status="answered", answer="Inspect P-101 within 24 hours.", value="24", unit="h",
+                   claims=[Claim(text="Inspect within 24 hours.", sources=[cid])])
+    r = check_answer(claim, sources, chunks, by_id, P101.asked_on)
+    rows.append({"cited id": cid, "exists (in the context)": r["exists"], "in force": r["in_force"],
                  "supports 24 h": r["supports"], "verified": r["verified"]})
 pd.DataFrame(rows)
 """)
@@ -564,6 +572,28 @@ for cid in ("x01", "x03"):
     print(cid, rec["answer"]["status"], "|", rec["answer"]["answer"][:160])
 """)
 md(r"""
+**The contract before and after.** The first version (rows `S6:v1`, `M*@S6:v1`, replayed from the first reference
+run) let the model copy citation objects without limits: with a long context, the claims and citations did not fit
+into 3000 tokens and the answer was invalid. Same search, same context, only the contract changes. v2 removes every
+invalid answer (no retry was even needed: the longest answer is 666 tokens) and halves the output tokens. It also
+costs something: with a short answer the model no longer "thinks aloud" in the answer field, and two questions break
+in most rows (f03: a conflict answered with one side; n04: "not in the documents" answered with a neighbouring
+tolerance).
+
+> **Discussion:** "The old contract was right on f03 because the model reasoned inside the answer. How would you
+> give it room to check for a conflict without letting the answer grow without limit?"
+""")
+code(r"""
+for name in ("S6:v1", "M1@S6:v1", "M1@S6") if VECTORS is not None else ("S6:v1",):
+    if name not in scores:
+        run(name)
+pairs = {"S6": "S6:v1", "M1@S6": "M1@S6:v1"} if VECTORS is not None else {"S6": "S6:v1"}
+ba = reval.ablation({k: scores[k] for p in pairs.items() for k in p[::-1]}, pairs)
+display(ba[["config", "vs", "end-to-end", "e2e: fixed / broke", "e2e verdict", "false refusals", "wrong or invented",
+            "invalid", "fallbacks"]].fillna(""))
+pd.read_csv(REFERENCE_DIR / "contract_before_after.csv", index_col="row")
+""")
+md(r"""
 The whole ladder with S6:
 """)
 code(r"""
@@ -579,7 +609,7 @@ S0 (fails both ways), S6 (fails almost only by refusing) and M3@S0 (refuses less
 values where the answer is "not in the documents"):
 """)
 code(r"""
-modes = ["false refusals", "wrong or invented", "right abstentions", "invalid"]
+modes = ["false refusals", "wrong or invented", "right abstentions", "invalid", "fallbacks"]
 full[full.config.isin(["S0", "S5", "S6", "M3@S0", "M3@S6"])][["config", "end-to-end"] + modes]
 """)
 md(r"""
@@ -722,7 +752,8 @@ Files to copy (from `src/plant_assistant/`):
   `resolve`;
 - `reval.py`, with `units.py`, `evals/stats.py` and `Chunk` from `store.py`: grading, metrics, losses by link,
   failure modes, the ablation table;
-- `answer.py`: the contract (`Answer`, `CONTRACT_SCHEMA`, `CONTRACT_FORMAT`, `parse`);
+- `answer.py`: the contract (`Answer`, `contract_v2_format` with the enum of context ids, `parse`,
+  `fallback_answer`), and `System.answer` in `pipeline.py` for the retry and the fallback;
 - `verify.py`: the three citation checks (`check_answer`);
 - `applicability.py`, if your answers depend on the equipment: it needs a registry in the format of
   `data/equipment_registry.csv`, with the `documents` column.

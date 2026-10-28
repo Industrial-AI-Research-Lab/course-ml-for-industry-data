@@ -1,9 +1,9 @@
-question,S5,S6,M1@S6,M2@S6,M3@S6,M4@S6
-nh01,"answered (2,8)",invalid (length),needs_human,needs_human,needs_human,needs_human
-nh02,not_in_documents,needs_human,needs_human,needs_human,needs_human,needs_human
-nh03,not_in_documents,not_in_documents,needs_human,needs_human,needs_human,needs_human
-nh04,"answered (4,5)","answered (4,5)",needs_human,conflict,conflict,conflict
-nh05,not_in_documents,needs_human,needs_human,needs_human,needs_human,needs_human
-nh06,"answered (4,5)",needs_human,needs_human,needs_human,needs_human,needs_human
-right (needs_human),0/6,3/6,6/6,5/6,5/6,5/6
-gave a value,3,1,0,0,0,0
+question,S5,S6,M1@S6,M2@S6,M3@S6,M4@S6,S6:v1,M1@S6:v1,M2@S6:v1,M3@S6:v1,M4@S6:v1
+nh01,"answered (2,8)",needs_human,needs_human,needs_human,needs_human,needs_human,invalid (length),needs_human,needs_human,needs_human,needs_human
+nh02,not_in_documents,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human
+nh03,not_in_documents,not_in_documents,needs_human,needs_human,needs_human,needs_human,not_in_documents,needs_human,needs_human,needs_human,needs_human
+nh04,"answered (4,5)","answered (4,5)",needs_human,conflict,conflict,conflict,"answered (4,5)",needs_human,conflict,conflict,conflict
+nh05,not_in_documents,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human,needs_human
+nh06,"answered (4,5)","answered (4,5)",needs_human,"answered (4,5)","answered (4,5)","answered (4,5)",needs_human,needs_human,needs_human,needs_human,needs_human
+right (needs_human),0/6,3/6,6/6,4/6,4/6,4/6,3/6,6/6,5/6,5/6,5/6
+gave a value,3,2,0,1,1,1,1,0,0,0,0

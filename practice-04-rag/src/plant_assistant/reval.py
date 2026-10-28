@@ -13,7 +13,9 @@ How a configuration fails matters as much as how often (`outcome`, one per quest
   "needs a person". Safe, but it has a price: the engineer searches the archive by hand or waits for a person;
 - wrong: a value that is not the expected one, or one side of a conflict presented as the answer;
 - invented: a value where the right answer is "not in the documents";
-- invalid: no answer of the schema (the run cannot use it at all).
+- invalid: no answer of the schema (the run cannot use it at all). Contract v2 has none by construction: an
+  answer that fails twice becomes a "needs a person" fallback (counted in `fallbacks`; on a question with an
+  answer it is a false refusal).
 Statuses on "not in the documents" questions: "not_in_documents" and "needs_human" are both accepted (no value is
 given, the engineer is sent to the documents or to a person); a value or "conflict" is not.
 The needs_human set (data/needs_human.jsonl, not in the retrieval set): only "needs_human" is right. "Not in the
@@ -145,7 +147,7 @@ def score(cases: list[TestCase], records: list[dict], chunks_by_id: dict[str, Ch
                      "link": attribute(case, rec, bool(ok), chunks_by_id) if ok is not None else None,
                      "status": (rec.get("answer") or {}).get("status"),
                      "value": (rec.get("answer") or {}).get("value"),
-                     "expected": case.status,
+                     "expected": case.status, "fallback": bool(rec.get("fallback")),
                      "outcome": outcome(case, rec.get("answer"), bool(ok)) if ok is not None else None})
     return pd.DataFrame(rows)
 
@@ -217,7 +219,8 @@ def failure_modes(df: pd.DataFrame) -> dict[str, str]:
             "wrong or invented": f"{int(o.get('wrong', 0)) + int(o.get('invented', 0))}"
                                  + (f" ({int(o.get('invented', 0))} invented)" if o.get("invented", 0) else ""),
             "right abstentions": pct(len(ok_nid), len(nid)) + (f" ({nh} needs a person)" if nh else ""),
-            "invalid": str(int(o.get("invalid", 0)))}
+            "invalid": str(int(o.get("invalid", 0))),
+            "fallbacks": str(int(df["fallback"].sum())) if "fallback" in df else "0"}
 
 
 def by_slice(scores: dict[str, pd.DataFrame], metric: str = "correct") -> pd.DataFrame:

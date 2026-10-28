@@ -62,12 +62,17 @@ def check_answer(ans: Answer, sources: list[Source], chunks: list[Chunk], chunks
                  as_of: str | None) -> dict:
     """Checks of every citation and the verdict for the answer.
 
-    A contract answer is checked by its citation fields; a simple answer (S0-S5) only names source labels,
-    so its citations are the chunks behind the labels. The answer is verified when every citation exists and
+    A contract v1 answer is checked by its citation fields; a contract v2 answer by the chunk ids of its claims
+    (an id that was not in the context fails "exists"); a simple answer (S0-S5) only names source labels, so its
+    citations are the chunks behind the labels. The answer is verified when every citation exists and
     is in force, and at least one cited chunk holds the value with its unit (for an answer with a value)."""
     label_to_chunk = {s.label: s.chunk_id for s in sources}
     cits: list[tuple[str, Chunk | None]] = []
-    if ans.citations:
+    if sources and all(s.label == s.chunk_id for s in sources):  # contract v2: labels are the chunk ids
+        in_context = {s.chunk_id for s in sources}
+        for cid in dict.fromkeys(src for cl in ans.claims for src in cl.sources):
+            cits.append((cid, chunks_by_id.get(cid) if cid in in_context else None))
+    elif ans.citations:
         for cit in ans.citations:
             cits.append((cit.source, find_chunk(cit, chunks)))
     else:

@@ -283,11 +283,15 @@ def test_outcomes_split_the_failures(cases):
     assert outcome(by["x01"], {"status": "answered", "value": "16"}, False) == "invented"
     assert outcome(by["t03"], None, False) == "invalid"
     ref = pd.read_csv(REFERENCE_DIR / "per_question.csv")
-    got = {name: failure_modes(ref[ref.config == name]) for name in ("S0", "S6", "M3@S0", "M3@S6")}
+    got = {name: failure_modes(ref[ref.config == name])
+           for name in ("S0", "S6", "M3@S0", "M3@S6", "S6:v1", "M1@S6:v1", "M1@S6", "M3@S6:v1")}
     assert got["S0"]["false refusals"].startswith("42/123") and got["S0"]["wrong or invented"].startswith("28")
-    assert got["S6"]["false refusals"].startswith("12/123") and got["S6"]["wrong or invented"] == "1"
+    assert got["S6:v1"]["false refusals"].startswith("12/123") and got["S6:v1"]["wrong or invented"] == "1"
+    assert got["S6"]["false refusals"].startswith("12/123") and got["S6"]["wrong or invented"] == "3 (1 invented)"
     assert got["M3@S0"]["wrong or invented"] == "27 (3 invented)"
-    assert got["M3@S6"]["invalid"] == "3"
+    # contract v1 -> v2: the invalid answers are gone, and no fallback was needed
+    assert (got["M3@S6:v1"]["invalid"], got["M1@S6:v1"]["invalid"]) == ("3", "5")
+    assert all(got[n]["invalid"] == "0" and got[n]["fallbacks"] == "0" for n in ("S6", "M1@S6", "M3@S6"))
     for name in ("S0", "S6", "M3@S0", "M3@S6"):
         assert ref[ref.config == name].outcome.notna().all()
 
@@ -382,7 +386,7 @@ def test_needs_human_replay(system):
     for name in ("S6", "M3@S6"):
         df = score(nh, system.run(nh, CONFIGS[name], progress=False), system.by_id)
         assert list(df.correct) == list(ref[ref.config == name].correct), name
-    assert int(ref[ref.config == "M3@S6"].correct.sum()) == 5
+    assert int(ref[ref.config == "M3@S6"].correct.sum()) == 4 and int(ref[ref.config == "M3@S6:v1"].correct.sum()) == 5
 
 
 def test_cost_columns(system, cases):
@@ -390,7 +394,7 @@ def test_cost_columns(system, cases):
 
     recs = system.run([c for c in cases if c.slice == "conflict"], CONFIGS["M3@S6"], progress=False)
     c = cost(recs)
-    assert c["model calls / question"] == 2 and c["prompt tokens / question"] > 1000
+    assert c["model calls / question"] >= 2 and c["prompt tokens / question"] > 1000  # a retry adds a call
 
 
 # ---------------------------------------------------------------------------------------------
@@ -438,4 +442,68 @@ def test_mechanism_rows_replay(system, cases):
         assert list(df.set_index("case_id")["correct"]) == list(theirs.loc[df.case_id, "correct"]), name
     rec = sysm.run_case(next(c for c in cases if c.case_id == "t03"), CONFIGS["M4@S6"])
     assert rec["cost"]["calls"] == 2 and rec["cost"]["chat_calls"] == 1 and rec["rerank"]["ok"]
+
+
+# ---------------------------------------------------------------------------------------------
+# Answer contract v2: the enum of context ids, the limits, the length fallback (offline, a stub model)
+# ---------------------------------------------------------------------------------------------
+class _Stub:
+    """A model that returns the given (content, finish_reason) pairs in order."""
+    profile_name, model = "stub", "stub"
+
+    def __init__(self, *replies):
+        self.replies, self.messages = list(replies), []
+
+    def chat(self, messages, response_format=None, meta=None):
+        from plant_assistant.llm import ChatResponse
+
+        self.messages.append((messages, response_format))
+        content, finish = self.replies.pop(0)
+        return ChatResponse(content=content, finish_reason=finish, model="stub", profile="stub", prompt_tokens=10,
+                            completion_tokens=5)
+
+
+def test_contract_v2_enum_is_the_context(chunks, by_id):
+    from plant_assistant.answer import MAX_CLAIMS, MAX_SOURCES_PER_CLAIM, contract_v2_format
+
+    ctx = ["R-12-r3-4.3.3", "R-12-r3-table1", "R-12-r3-6.2"]
+    schema = contract_v2_format(ctx)["json_schema"]["schema"]
+    claims = schema["properties"]["claims"]
+    assert claims["maxItems"] == MAX_CLAIMS == 5
+    assert claims["items"]["properties"]["sources"]["maxItems"] == MAX_SOURCES_PER_CLAIM == 2
+    assert claims["items"]["properties"]["sources"]["items"]["enum"] == ctx
+    assert "citations" not in schema["properties"]
+    text, sources = render(ctx, by_id, show_dates=True, ids_as_labels=True)
+    assert [s.label for s in sources] == ctx and text.startswith("[R-12-r3-4.3.3] doc_id=R-12")
+
+
+def _v2_reply(sources: list[str], value: str = "4,5") -> str:
+    return json.dumps({"status": "answered", "answer": f"Inspect above {value} mm/s.", "value": value,
+                       "unit": "mm/s", "claims": [{"text": "Class II inspection limit.", "sources": sources}]})
+
+
+def test_contract_v2_checks_and_fallback(chunks, cases):
+    case = next(c for c in cases if c.case_id == "t03")
+    ctx = ["R-12-r3-table1", "R-12-r3-4.3.3"]
+    # a valid answer: code fills the citation fields from the index; an id outside the context fails "exists"
+    sysm = System(chunks, answer_client=_Stub((_v2_reply(["R-12-r3-table1", "R-14-r1-table1"]), "stop")))
+    out = sysm.answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    cits = {c["source"]: c for c in out["checks"]["citations"]}
+    assert cits["R-12-r3-table1"]["exists"] and cits["R-12-r3-table1"]["supports"]
+    assert not cits["R-14-r1-table1"]["exists"] and not out["checks"]["verified"]
+    assert out["violations"] == ["unknown id R-14-r1-table1"]
+    assert out["answer"].citations[0].doc_id == "R-12" and out["answer"].citations[0].table_no == "3"
+    # cut by the token limit once: one retry with the short instruction, then a valid answer
+    stub = _Stub(('{"status": "answered", "answer": "Insp', "length"), (_v2_reply(["R-12-r3-table1"]), "stop"))
+    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    assert len(out["responses"]) == 2 and not out["fallback"] and grade(case, out["answer"].model_dump())[0]
+    assert "too long" in stub.messages[1][0][0]["content"] and "too long" not in stub.messages[0][0][0]["content"]
+    # cut twice: "needs a person", no value, counted as a fallback
+    stub = _Stub(("{", "length"), ('{"status": "answ', "length"))
+    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6"], "answer")
+    assert out["fallback"] and out["answer"].status == "needs_human" and out["answer"].value is None
+    # contract v1 keeps the old behaviour: no retry, an invalid answer stays invalid
+    stub = _Stub(("{", "length"))
+    out = System(chunks, answer_client=stub).answer(case, case.query, ctx, case.as_of, "", CONFIGS["S6:v1"], "answer")
+    assert out["answer"] is None and len(out["responses"]) == 1 and not out["fallback"]
 

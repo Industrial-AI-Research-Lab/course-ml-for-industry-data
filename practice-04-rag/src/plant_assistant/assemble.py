@@ -102,11 +102,14 @@ def header(c: Chunk, show_dates: bool) -> str:
     return "; ".join(parts)
 
 
-def render(chunk_ids: list[str], chunks_by_id: dict[str, Chunk], show_dates: bool) -> tuple[str, list[Source]]:
+def render(chunk_ids: list[str], chunks_by_id: dict[str, Chunk], show_dates: bool,
+           ids_as_labels: bool = False) -> tuple[str, list[Source]]:
+    """The context for the prompt. Labels S1, S2, ... (simple answer, contract v1) or the chunk ids themselves
+    (contract v2: the model cites an id, the schema allows only these ids)."""
     sources, blocks = [], []
     for i, cid in enumerate(chunk_ids, start=1):
         c = chunks_by_id[cid]
-        s = Source(f"S{i}", cid, header(c, show_dates))
+        s = Source(cid if ids_as_labels else f"S{i}", cid, header(c, show_dates))
         sources.append(s)
         blocks.append(f"[{s.label}] {s.header}\n{c.text.strip()}")
     return "\n\n".join(blocks), sources

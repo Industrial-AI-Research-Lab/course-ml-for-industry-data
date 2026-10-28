@@ -34,6 +34,7 @@ sys.path.insert(0, str(ROOT / "src"))
 warnings.filterwarnings("ignore")
 
 from plant_assistant import REFERENCE_DIR, REPLAY_DIR, RUNS_DIR, STORE_DIR  # noqa: E402
+from plant_assistant import answer as A  # noqa: E402
 from plant_assistant.audit import audit_record  # noqa: E402
 from plant_assistant.cases import SLICES, counts_by_slice, load_cases  # noqa: E402
 from plant_assistant import DATA_DIR  # noqa: E402
@@ -42,7 +43,7 @@ from plant_assistant.corpus import build_corpus  # noqa: E402
 from plant_assistant.jsonl import read_json_records  # noqa: E402
 from plant_assistant.llm import CallLogger, LLMClient, ReplayClient  # noqa: E402
 from plant_assistant.crossencoder import CrossEncoderClient  # noqa: E402
-from plant_assistant.pipeline import CONFIGS, CONFLICT_DEMO, LADDER, PREVIOUS, System  # noqa: E402
+from plant_assistant.pipeline import CONFIGS, CONFLICT_DEMO, CONTRACT_V1, LADDER, PREVIOUS, System  # noqa: E402
 from plant_assistant.search import VectorStore  # noqa: E402
 from plant_assistant import reval  # noqa: E402
 from plant_assistant.store import load_store  # noqa: E402
@@ -51,12 +52,16 @@ TASKS = ("answers", "rerank", "translate", "crossencoder")
 TASK_PROFILES = {"crossencoder": "rerank-course"}  # the other tasks use the course chat profile
 VECTORS = REPLAY_DIR / "vectors" / "e5-mistral"
 MECHANISM_ROWS = ["M1@S0", "M2@S0", "M3@S0", "M4@S0", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
-RUN_CONFIGS = [c.name for c in LADDER] + ["M1t"] + MECHANISM_ROWS
+# the rows of the first answer contract (citation objects, no limits), kept for "before and after"
+V1_ROWS = [c.name for c in CONTRACT_V1]
+BEFORE_AFTER = {c.removesuffix(":v1"): c for c in V1_ROWS}
+RUN_CONFIGS = [c.name for c in LADDER] + ["M1t"] + MECHANISM_ROWS + V1_ROWS
 HOLDOUT_FILE = DATA_DIR / "holdout.jsonl"
-HOLDOUT_CONFIGS = [c.name for c in LADDER] + MECHANISM_ROWS
+HOLDOUT_CONFIGS = [c.name for c in LADDER] + MECHANISM_ROWS + V1_ROWS
 NEEDS_HUMAN_FILE = DATA_DIR / "needs_human.jsonl"
 # S5 has no status field (the simple answer gives a value or none): the row shows what the contract adds
-NEEDS_HUMAN_CONFIGS = ["S5", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
+NEEDS_HUMAN_CONFIGS = ["S5", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"] + V1_ROWS
+CONTRACT_SLICES = ["multi_evidence", "what_changed", "conflict", "language", "point_in_time"]
 # measured times of the rows already in the reference: a rebuild keeps them (search time on a laptop varies by a
 # millisecond between runs, and the rows did not change)
 TIMING_COLUMNS = ["median s / question", "p90 s", "search ms (median)"]
@@ -232,6 +237,50 @@ def mechanisms_table(public: pd.DataFrame, h_public: pd.DataFrame, e2e: pd.DataF
     return t.fillna("")
 
 
+def before_after(scores: dict[str, pd.DataFrame], costs: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Contract v1 (before) against v2 (after) on the same questions: paired verdict, failure modes, cost."""
+    out = []
+    for new, old in BEFORE_AFTER.items():
+        if new not in scores or old not in scores:
+            continue
+        t = reval.ablation({old: scores[old], new: scores[new]}, {new: old}).set_index("config")
+        a, b = t.loc[old], t.loc[new]
+        row = {"row": new, "invalid": f"{a['invalid']} → {b['invalid']}", "fallbacks (v2)": b["fallbacks"],
+               "end-to-end v1": a["end-to-end"].split(" [")[0], "end-to-end v2": b["end-to-end"].split(" [")[0],
+               "v2 vs v1: fixed / broke": b["e2e: fixed / broke"], "verdict": b["e2e verdict"],
+               "false refusals": f"{a['false refusals'].split(' = ')[0]} → {b['false refusals'].split(' = ')[0]}",
+               "wrong or invented": f"{a['wrong or invented']} → {b['wrong or invented']}",
+               "verified": f"{a['correct + verified'].split(' [')[0]} → {b['correct + verified'].split(' [')[0]}",
+               "evidence recall": b["evidence recall"].split(" [")[0]}
+        if costs is not None and old in costs.index and new in costs.index:
+            row["s / q"] = f"{costs.loc[old, 'median s / question']} → {costs.loc[new, 'median s / question']}"
+            row["chat calls / q"] = f"{costs.loc[old, 'chat calls / question']} → {costs.loc[new, 'chat calls / question']}"
+            row["tokens in / q"] = f"{costs.loc[old, 'prompt tokens / question']:.0f} → {costs.loc[new, 'prompt tokens / question']:.0f}"
+            row["tokens out / q"] = f"{costs.loc[old, 'completion tokens / question']:.0f} → {costs.loc[new, 'completion tokens / question']:.0f}"
+        out.append(row)
+    return pd.DataFrame(out).set_index("row") if out else pd.DataFrame()
+
+
+def before_after_slices(scores: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    rows = [r for pair in BEFORE_AFTER.items() for r in pair[::-1] if r in scores]
+    return reval.by_slice({r: scores[r] for r in rows}, "correct")[CONTRACT_SLICES]
+
+
+def p101_table(records: dict[str, list[dict]], scores: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    """The P-101 questions (m01: the lecture question, i01: the incident) in every contract row."""
+    rows = []
+    for name in [r for pair in BEFORE_AFTER.items() for r in pair[::-1] if r in records]:
+        sc = scores[name].set_index("case_id")
+        for cid in ("m01", "i01"):
+            rec = next(r for r in records[name] if r["case_id"] == cid)
+            a = rec.get("answer") or {}
+            rows.append({"row": name, "question": cid, "status": a.get("status", "invalid"),
+                         "value": a.get("value"), "right": bool(sc.loc[cid, "correct"]),
+                         "verified": bool(sc.loc[cid, "verified"]), "retried": bool(rec.get("retried")),
+                         "fallback": bool(rec.get("fallback")), "finish (first try)": rec.get("finish_reason")})
+    return pd.DataFrame(rows)
+
+
 def needs_human_table(scores: dict[str, pd.DataFrame], records: dict[str, list[dict]]) -> pd.DataFrame:
     """Status per question and configuration on the needs_human set, with the summary row. An invalid answer
     shows why the model stopped (finish reason "length": the token limit)."""
@@ -328,12 +377,13 @@ def main() -> None:
             print(f"replay {t}: {n} requests")
 
     REFERENCE_DIR.mkdir(exist_ok=True)
-    table = reval.ablation(scores, PREVIOUS)
+    main = {k: v for k, v in scores.items() if k not in V1_ROWS}
+    table = reval.ablation(main, PREVIOUS)
     public = table[[c for c in table.columns if not c.startswith("_")]]
     public.to_csv(REFERENCE_DIR / "ablation.csv", index=False)
-    slices_e2e = reval.by_slice(scores, "correct")
-    slices_recall = reval.by_slice(scores, "recall@k")
-    slices_evidence = reval.by_slice(scores, "evidence_recall")
+    slices_e2e = reval.by_slice(main, "correct")
+    slices_recall = reval.by_slice(main, "recall@k")
+    slices_evidence = reval.by_slice(main, "evidence_recall")
     slices_e2e.to_csv(REFERENCE_DIR / "slices_end_to_end.csv")
     slices_recall.to_csv(REFERENCE_DIR / "slices_recall.csv")
     slices_evidence.to_csv(REFERENCE_DIR / "slices_evidence.csv")
@@ -343,11 +393,24 @@ def main() -> None:
     pd.concat(scores.values()).to_csv(REFERENCE_DIR / "per_question.csv", index=False)
     costs = reval.cost_table(records)
     if (REFERENCE_DIR / "cost.csv").exists():
+        # keep the measured time of a row whose calls and tokens did not change (a ":v1" row may take it from the
+        # row of the same name measured before the contract changed)
         old = pd.read_csv(REFERENCE_DIR / "cost.csv", index_col="config")
-        keep = [c for c in costs.index if c in old.index]
-        costs.loc[keep, TIMING_COLUMNS] = old.loc[keep, TIMING_COLUMNS].values
+        same = ["model calls / question", "prompt tokens / question", "completion tokens / question"]
+        for c in costs.index:
+            src = c if c in old.index else c.removesuffix(":v1")
+            if src in old.index and all(float(old.loc[src, x]) == float(costs.loc[c, x]) for x in same):
+                costs.loc[c, TIMING_COLUMNS] = old.loc[src, TIMING_COLUMNS].values
     costs.to_csv(REFERENCE_DIR / "cost.csv")
-    h_table = reval.ablation(h_scores, PREVIOUS)
+    contract_table = before_after(scores, costs)
+    contract_table.to_csv(REFERENCE_DIR / "contract_before_after.csv")
+    contract_slices = before_after_slices(scores)
+    p101_rows = p101_table(records, scores)
+    h_contract = before_after(h_scores)
+    violations = sum(len(r.get("schema_violations") or []) for name, recs in list(records.items())
+                     + list(h_records.items()) + list(nh_records.items()) if name not in V1_ROWS
+                     and CONFIGS[name].contract for r in recs)
+    h_table = reval.ablation({k: v for k, v in h_scores.items() if k not in V1_ROWS}, PREVIOUS)
     h_public = h_table[[c for c in h_table.columns if not c.startswith("_") and c not in ("abstain ok", "conflict ok")]]
     h_public.to_csv(REFERENCE_DIR / "holdout_ablation.csv", index=False)
     pd.concat(h_scores.values()).to_csv(REFERENCE_DIR / "holdout_per_question.csv", index=False)
@@ -405,6 +468,41 @@ def main() -> None:
         "with S0 or S6. End-to-end by slice in counts; the holdout column is end-to-end on the 27 role questions.",
         "",
         md_table(mechanisms_table(public, h_public, slices_e2e, slices_recall), index=True),
+        "",
+        "## The answer contract: v1 (before) and v2 (after)",
+        "",
+        "v1: the model copies citation objects (document, revision, clause, table, row, page) from the source headers; "
+        "no limits. v2: a claim cites the **ids of the chunks** in the context, and the JSON schema makes the id an "
+        f"`enum` of exactly those ids (built per question); at most {A.MAX_CLAIMS} claims, at most "
+        f"{A.MAX_SOURCES_PER_CLAIM} sources per claim; code fills the citation fields from the index. An answer cut by the "
+        "token limit (3000, unchanged) or not of the schema is asked once more with a short instruction; if it fails "
+        "again, the answer is `needs_human` with no value (a fallback). Search and context are the same in both: "
+        "evidence recall does not change. Rows `X:v1` are replayed from the first reference run.",
+        "",
+        f"Guided decoding (vLLM behind LiteLLM) enforces the enum and the limits: asked to cite an id that is not in "
+        f"the context, or to write 9 claims with 4 sources each, the model returned only context ids, 5 claims, 2 "
+        f"sources per claim. Code checks it anyway: {violations} schema violations in all v2 answers.",
+        "",
+        "Main set (143 questions); s / q and tokens are medians and means per question, all chat calls (a retry "
+        "counts):",
+        "",
+        md_table(contract_table, index=True),
+        "",
+        "End-to-end by slice, v1 and v2:",
+        "",
+        md_table(contract_slices, index=True),
+        "",
+        "The P-101 questions (m01: the lecture question; i01: the incident):",
+        "",
+        md_table(p101_rows.fillna("")),
+        "",
+        "Holdout (27):",
+        "",
+        md_table(h_contract[[c for c in ("invalid", "fallbacks (v2)", "end-to-end v1", "end-to-end v2",
+                                         "v2 vs v1: fixed / broke", "false refusals", "wrong or invented")
+                             if c in h_contract.columns]], index=True) if len(h_contract) else "",
+        "",
+        "Needs a person (6): see the table in the next section (columns `X:v1` are the old contract).",
         "",
         "## How the rows fail: refusing against inventing",
         "",
