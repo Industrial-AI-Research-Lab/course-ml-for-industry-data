@@ -52,6 +52,7 @@ md(r"""
 - **paired comparison**: both rows answer the same questions; we count questions fixed and broken.
 - **fixed / broke**: questions the new row fixed, and questions it broke.
 - **verdict**: "B is better": new row B beats row A, and not by chance.
+- **p**: the chance to see such a difference by luck; below 0.05 we call it a real difference.
 - **[a%–b%]**: the true share lies in this range with 95% confidence.
 """)
 md(r"""
@@ -168,8 +169,8 @@ VECTORS = VectorStore(vectors[0]) if vectors else None
 md(r"""
 ## 2. The plant archive, version 2
 
-The four documents of practice 3 plus 12 new synthetic ones. All are born-digital, so reading the PDFs does not
-get in the way. The scale is small (tens of pages, 440 chunks); the process is the same at any scale. The
+The four documents of practice 3 plus 12 new synthetic ones. All were created as digital files, not scans, so
+reading the PDFs does not get in the way. The scale is small (tens of pages, 440 chunks); the process is the same at any scale. The
 document registry (`data/documents.csv`) gives each document its dates of validity and the stations it covers.
 """)
 code(r"""
@@ -281,7 +282,7 @@ pd.DataFrame([reval.losses(scores["S0"])], index=["S0"])
 md(r"""
 A wrong answer is charged to the first link that lost it: reading the PDF, search, building the context, or the
 model. Most answers are lost **in search**: the chunk with the answer never reached the model. Nothing is lost in
-reading, because the documents are born-digital. Below: the top five search results for the P-101 question.
+reading, because the documents were created as digital files, not scans. Below: the top five search results for the P-101 question.
 """)
 code(r"""
 rec = next(r for r in records["S0"] if r["case_id"] == "m01")
@@ -495,7 +496,8 @@ support the value; the others back other claims and are checked in part 2 by a j
 """)
 md(r"""
 **The P-101 question.** At S6, keyword search puts Table 3 sixth, so the evidence pack has nothing to start from.
-The reranker on top (M3@S6) brings Table 3 back:
+The reranker on top (M3@S6) brings Table 3 back. At S6 the answer is a refusal: it states no number, so it passes
+the checks; "verified" does not mean "right".
 """)
 code(r"""
 for name in ("S6", "M3@S6"):
@@ -510,8 +512,8 @@ checks
 """)
 md(r"""
 **Task 3 of the lecture**: "Inspect P-101 within 24 hours (R-12, rev. 3, clause 4.3.4)". The clause exists and is
-in force, but it is about the stop limit; "24 hours" is in the next clause, 4.3.3. A citation of a given chunk can
-still be the wrong chunk: the checks catch it.
+in force, but it is about the stop limit; "24 hours" is in the next clause, 4.3.3. The model can cite only chunks
+it was given, but it can still cite the wrong one. The checks catch it.
 """)
 code(r"""
 from plant_assistant.answer import Answer, Claim
@@ -552,8 +554,9 @@ for cid in ("x01", "x03"):
 md(r"""
 **The contract in three versions.** An early version had no length limit: long answers were cut off, and the
 model sometimes reasoned inside the answer. The final version adds limits and the `check` field. Thinking mode was
-worse and three times slower. The table counts invalid answers, reasoning found in the answer, and answers handed
-to a person.
+worse and three times slower. S6:v1 is the early version, S6:v2 adds limits, S6 is the final version with `check`,
+S6:think is thinking mode. The table counts invalid answers, reasoning found in the answer, and answers handed to
+a person.
 """)
 code(r"""
 for name in ("S6:v1", "S6:v2", "S6:think"):
@@ -561,10 +564,8 @@ for name in ("S6:v1", "S6:v2", "S6:think"):
         run(name)
 pairs = {"S6:v2": "S6:v1", "S6": "S6:v2", "S6:think": "S6:v2"}
 ba = reval.ablation({k: scores[k] for k in ("S6:v1", "S6:v2", "S6", "S6:think")}, pairs)
-display(show(ba, ["config", "vs", "end-to-end", "e2e: fixed / broke", "e2e verdict", "false refusals",
-                  "wrong or invented", "invalid", "leaks", "fallbacks"]))
-show(pd.read_csv(REFERENCE_DIR / "contract_before_after.csv", index_col="new vs old"),
-     ["invalid", "end-to-end old", "end-to-end new", "new vs old: fixed / broke", "s / q", "tokens out / q"])
+show(ba, ["config", "vs", "end-to-end", "e2e: fixed / broke", "e2e verdict", "false refusals", "wrong or invented",
+          "invalid", "leaks", "fallbacks"])
 """)
 md(r"""
 **What `check` shows.** Pump P-205 at 6.0 mm/s, where R-12 and the manual disagree (`f03`). At S6 the model sees
@@ -677,7 +678,7 @@ md(r"""
 - Valve V-912 gets no value; P-205 and the lubrication of P-101 get "conflict" with both documents cited.
 """)
 md(r"""
-**What you built:** a question set, losses by link, five plant steps, an answer contract with checks, an audit
+**What you built:** a question set, losses by link, six plant steps, an answer contract with checks, an audit
 record and a regression gate.
 """)
 md(r"""
