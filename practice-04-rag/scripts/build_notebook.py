@@ -60,7 +60,7 @@ question ─► fields (tags, date) ─► registry: station, class ─► filte
 | 3 | Retrieval set | 143 questions in 12 slices, gold chunks computed by code; a holdout of 27 written by role |
 | 4 | Baseline S0 | about half of the answers right; most losses in search |
 | 5 | Ladder S1-S5 | tags, table rows (mixed or separate), applicability, dates, evidence pack: one row each |
-| 6 | Mechanisms | a reranker and query translation as rows of the same table, with their cost |
+| 6 | Mechanisms | dense (M1), hybrid (M2), LLM reranker (M3), cross-encoder (M4), translation (M1t) as rows of the same table, with their cost |
 | 7 | Answer and checks | P-101 answered with checked citations; a neighbour clause caught; conflict; abstention |
 | 8 | Audit, regression, holdout | an audit record; the regression gate S6 vs S5; the ladder on questions written by role |
 | 9 | Reproduce | the mandatory path, success criteria, optional tasks |
@@ -179,7 +179,7 @@ md(r"""
 **What is new, and why.** An **amendment** to R-12 rev. 3 changes one clause (4.4.1: 720 h → 500 h from
 01.09.2026). **R-14** is a near-copy of R-12 for pump station No. 3, with the same title and clause numbers and a
 stricter Table 3. The **manual of P-205** is in English and gives milder limits than R-12: a conflict.
-The **valve list** has a table of 110 rows over four pages. R-20 defines what "priority high" in clause 6.2 of
+The **valve list** VL-2 has 7 pages; its table of 110 rows runs over pages 4-7. R-20 defines what "priority high" in clause 6.2 of
 R-12 means.
 
 > **Chat:** "R-12 and R-14 have the same title. Name one field that tells them apart."
@@ -290,8 +290,10 @@ rec = next(r for r in records["S0"] if r["case_id"] == "m01")
 hits_frame(rec, P101, by_id)
 """)
 md(r"""
-No word of the question is in clause 4.3.3 ("при превышении границы осмотра ... осматривают в течение 24 часов"):
-lexical search cannot find it from "вибрирует 4,8 мм/с, это норма?". Only Table 3 comes up, by "мм/с".
+No word of the question is in clause 4.3.3 ("при превышении границы осмотра ... осматривают в течение 24 часов"),
+and Table 3 is not in the top-5 either. What comes up shares "после замены подшипника" with the question: clause
+4.4.2 of R-12 rev. 2, R-12 rev. 3 and R-14 (measure within 8 hours after a bearing change), and two clauses of the
+maintenance regulation R-15 (4.3 and 5.1). The answer is lost in search.
 
 **Task 1 of the lecture** used five failures of exactly this run:
 """)
@@ -314,8 +316,9 @@ for name in ("S0", "S1"):
     display(Markdown(f"**{name}** · {case_by_id['g02'].question_ru}"), hits_frame(rec, case_by_id["g02"], by_id))
 """)
 md(r"""
-**S2: rows of long tables are chunks.** The valve list has 110 rows on 4 pages. A page of 33 rows is one chunk in
-S0-S1; in S2 every row is a chunk with the caption, the column names and the units:
+**S2: rows of long tables are chunks.** The valve list VL-2 has 7 pages; its Table А.2 runs over pages 4-7: 110 rows,
+33 on each of pages 4-6 and 11 on page 7. In S0-S1 a page of the table is one chunk; in S2 every row is a chunk
+with the caption, the column names and the units:
 """)
 code(r"""
 print(by_id["VL-2-r4-tА.2-V-12"].text)
@@ -359,11 +362,15 @@ from plant_assistant.applicability import equipment_context
 system_live = System(chunks, answer_client=live, rerank_client=live if LIVE else replay["rerank"],
                      translate_client=live if LIVE else replay["translate"], cross_client=replay["crossencoder"],
                      vectors=VECTORS, think_client=replay["answers_thinking"])
-for name in ("S2", "S3"):
-    rec = system_live.run_case(case_by_id["p01"], CONFIGS[name])
-    display(Markdown(f"**{name}** · {case_by_id['p01'].question_ru} · scope: {rec['scope'] or 'none'}"),
-            hits_frame(rec, case_by_id["p01"], by_id, 3))
-    print("answer:", (rec["answer"] or {}).get("answer"))
+for cid in ("p01", "p07"):  # P-310 at 4.0 mm/s; P-311 (class I, station 3) at 3.0 mm/s
+    case = case_by_id[cid]
+    for name in ("S2", "S3"):
+        rec = system_live.run_case(case, CONFIGS[name])
+        a = rec["answer"] or {}
+        display(Markdown(f"**{cid} · {name}** · {case.question_ru} · scope: {rec['scope'] or 'none'}"),
+                hits_frame(rec, case, by_id, 3))
+        print(f"value {a.get('value')} (expected {case.expected['values'][0]}), right {reval.grade(case, a)[0]}:",
+              a.get("answer"))
 """)
 md(r"""
 **S4: a revision filter by the date of the question.** `effective_from <= date < effective_to`, not
@@ -401,13 +408,19 @@ pd.DataFrame({"pre-filter by date": pd.Series(pre), "post-filter by date": pd.Se
 md(r"""
 **S5: the evidence pack.** For every hit: the chunks it refers to and the chunks that refer to it (6.2 refers to
 4.3.3, not the other way round), one more step back, then the whole sections, within 2500 tokens.
+
+m06 (the case of the lecture slides): "after a bearing change P-101 was started: within how many hours must the
+vibration be measured, and against which limit?". At S4, clause 4.4.2 of rev. 3 (8 hours) is first, but Table 3
+(the limit) is not in the context: half of the answer. The pack adds section 4 with Table 3:
 """)
 code(r"""
+m06 = case_by_id["m06"]
 for name in ("S4", "S5"):
-    rec = system.run_case(P101, CONFIGS[name], with_answer=False)
-    ctx = context_frame(rec, P101, by_id)
-    print(f"{name}: {len(ctx)} chunks, {ctx.tokens.sum()} tokens; gold in the context: "
-          f"{sorted(set(ctx.gold) - {''})}, evidence recall = {reval.retrieval_metrics(P101, rec)['evidence_recall']}")
+    rec = system.run_case(m06, CONFIGS[name], with_answer=False)
+    ctx = context_frame(rec, m06, by_id)
+    print(f"{name}: top-1 {where(by_id[rec['retrieved'][0]])}; {len(ctx)} chunks, {ctx.tokens.sum()} tokens; "
+          f"gold in the context: {sorted(set(ctx.gold) - {''})}; "
+          f"evidence recall = {reval.retrieval_metrics(m06, rec)['evidence_recall']}")
 ctx[ctx.gold != ""]
 """)
 md(r"""
@@ -482,7 +495,7 @@ md(r"""
 **What the mechanism rows say** (the lecturer's run; compare with your table):
 
 - **Instead of plant knowledge** every mechanism beats S0, and none comes close to S6 (best: the LLM reranker,
-  71% against 91%). They fix what is about words: dense search answers 17/20 English questions (translation:
+  71% against 90%). They fix what is about words: dense search answers 17/20 English questions (translation:
   13/20) and all tag variants. They do not fix what is about the plant: dense search is 3/10 on `point_in_time`,
   3/12 on `applicability` and 0/9 on `conflict`. Versions, applicability and conflicts need the filters, the
   registry and the contract.
@@ -521,6 +534,9 @@ Three checks of every citation:
 2. **in force**: it is valid on the date of the question;
 3. **supports**: the number and the unit of the answer are in its text (or in a table it refers to).
 
+"supports" is required for at least one citation: the one that holds the value with its unit. The other citations
+support other claims (the class, the actions) and are checked by a judge in part 2.
+
 The P-101 question. With the archive v2, BM25 puts Table 3 at rank 6 for this wording (a lubrication clause of
 R-15 shares "подшипник" and "насос"), so S6 has nothing to build the evidence pack from. The reranker over the
 top-20 brings Table 3 back, and the pack does the rest:
@@ -533,6 +549,7 @@ for name in ("S6", "M3@S6"):
           f"verified {rec['checks']['verified']}")
 answer, checks = answer_frame(rec)
 display(answer)
+checks.insert(1, "where", checks.chunk_id.map(lambda c: where(by_id[c]) if c else ""))  # R-12-r3-table3 is Table А.1
 checks
 """)
 md(r"""
@@ -602,8 +619,11 @@ display(ba[["config", "vs", "end-to-end", "e2e: fixed / broke", "e2e verdict", "
 pd.read_csv(REFERENCE_DIR / "contract_before_after.csv", index_col="new vs old")
 """)
 md(r"""
-**What `check` is for**: f03 (P-205 at 6.0 mm/s: R-12 says inspect above 4.5, the manual says normal up to 7.1).
-The engineer sees `answer`; the audit log keeps `check` too.
+**What `check` shows**: f03 (P-205 at 6.0 mm/s: R-12 says inspect above 4.5, the manual says normal up to 7.1).
+`check` does not fix f03 at S6: the model sees both documents and picks R-12 as "the plant regulation", an order of
+precedence that nobody gave it. But the audit log now shows *why* it chose a side, so a person can fix the rule (a
+document hierarchy in code, optional task 6) or the prompt. f03 is right at M1@S6 and M3@S6. The engineer sees only
+`answer`; the audit log keeps `check` too.
 """)
 code(r"""
 f03 = case_by_id["f03"]
@@ -640,8 +660,9 @@ class in its card, a tag that matches two pumps (P-220A and P-220B), no tag at a
 (R-12 or R-14?), a grease named only in a missing datasheet, a measurement in one direction of three. The right
 answer names what is missing and who has it. A value here is the dangerous failure: the system chose the class or
 the station itself. On the retrieval set, `needs_human` is accepted on a "not in the documents" question (x01:
-no value is given) and counted as a false refusal on a question with an answer (k02 at S6: R-12 Table 3 did not
-reach the context).
+no value is given) and counted as a false refusal on a question with an answer. Example: p12 at M1@S6 and M4@S6
+("a pump of station 3 with a 75 kW motor at 4.0 mm/s"): the model asks for the class, though R-14 gives it from the
+power (pumps above 15 kW are class II).
 """)
 code(r"""
 from plant_assistant import DATA_DIR

@@ -56,7 +56,7 @@ the standard. 16 documents, 47 pages, 440 chunks (110 of them rows of one long t
 | PS-101, DS-P-205 | datasheets from practice 3 | applicability: class, power |
 | PS-102, PS-310, PS-311 | datasheets of pumps of stations 2 and 3 | P-310 falls under R-14, not R-12 |
 | OM-P-205 (English) | manufacturer's manual of the imported pump P-205 | a conflict with R-12 (alarm 7.1 / trip 11.2 mm/s) and a second language |
-| VL-2 | valve list of station 2: a table of 110 rows on 4 pages | rows as chunks; "allowed pressure for valve V-12" (lecture 1) |
+| VL-2 | valve list of station 2: a table of 110 rows on pages 4-7 (33, 33, 33, 11) | rows as chunks; "allowed pressure for valve V-12" (lecture 1) |
 | FS-07, LAB-03, WH-04 | fire safety, laboratory access, lubricant storage | realistic background |
 
 New fields of a chunk (the schema of practice 3 is kept, fields are added): `effective_from` / `effective_to`,
@@ -233,7 +233,7 @@ chat prompt tokens only: the cross-encoder reads ~1500–1750 tokens per questio
   reranker alone is at least as good as the plant-side ladder; the ladder is what fixes versions, applicability
   and conflicts, and those are rare in the holdout. 27 questions cannot separate S6 from M3@S0.
 - **Mechanisms against plant knowledge** (end-to-end by slice in `reference/results.md`). Instead of plant
-  knowledge, every mechanism beats S0, and none comes close to S6 (best: M3@S0, 71% against 91%). They fix what is
+  knowledge, every mechanism beats S0, and none comes close to S6 (best: M3@S0, 71% against 90%). They fix what is
   about words: dense search answers 17/20 English questions (translation M1t: 13/20) and 6/6 tag variants. They do
   not fix what is about the plant: dense search is 3/10 on `point_in_time`, 3/12 on `applicability` and 0/9 on
   `conflict` (S6: 10/10, 12/12, 7/9). On top of S6, only dense search changes end-to-end detectably: M1@S6 97%
