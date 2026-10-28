@@ -110,9 +110,9 @@ md(r"""
 
 Profiles are in `models.toml`, secrets in `.env` (as in practices 1-3). The answers use the course model
 Qwen 3.8 27B with thinking off. The embedding (`embed-course`, e5-mistral-7b-instruct) and cross-encoder
-(`rerank-course`, bge-reranker-v2-m3) profiles are optional: on 28.10.2026 they answer for the lecturer's key, and
-it is not known whether a student token sees them. The notebook uses the saved vectors (`data/replay/vectors/`) and
-the saved cross-encoder answers.
+(`rerank-course`, bge-reranker-v2-m3) profiles are optional. The notebook uses saved vectors
+(`data/replay/vectors/`) and reranker scores; if your token has access to these models, you can rebuild them live
+(see README).
 """)
 code(r"""
 import os
@@ -181,8 +181,6 @@ md(r"""
 stricter Table 3. The **manual of P-205** is in English and gives milder limits than R-12: a conflict.
 The **valve list** VL-2 has 7 pages; its table of 110 rows runs over pages 4-7. R-20 defines what "priority high" in clause 6.2 of
 R-12 means.
-
-> **Chat:** "R-12 and R-14 have the same title. Name one field that tells them apart."
 """)
 code(r"""
 from plant_assistant.display import where
@@ -248,8 +246,6 @@ and the actions (6.1, 6.2). recall@k counts only the answer; **evidence recall**
 # ---------------------------------------------------------------------------------------------
 md(r"""
 ## 4. Baseline S0: BM25 over raw chunks, top-5, no filters
-
-> **Predict, then run.** Where will most answers be lost: reading, search, context assembly or the model?
 
 Search runs live; the answers of the course model for 143 questions come from replay.
 """)
@@ -409,7 +405,7 @@ md(r"""
 **S5: the evidence pack.** For every hit: the chunks it refers to and the chunks that refer to it (6.2 refers to
 4.3.3, not the other way round), one more step back, then the whole sections, within 2500 tokens.
 
-m06 (the case of the lecture slides): "after a bearing change P-101 was started: within how many hours must the
+m06 (the case from the lecture): "after a bearing change P-101 was started: within how many hours must the
 vibration be measured, and against which limit?". At S4, clause 4.4.2 of rev. 3 (8 hours) is first, but Table 3
 (the limit) is not in the context: half of the answer. The pack adds section 4 with Table 3:
 """)
@@ -424,9 +420,6 @@ for name in ("S4", "S5"):
 ctx[ctx.gold != ""]
 """)
 md(r"""
-> **Poll:** "Which fix will give the biggest gain on the whole set? Tag normalization / Table rows /
-> Applicability / Revision filter / Evidence pack"
-
 The rows of the table, each against the previous one:
 """)
 code(r"""
@@ -459,8 +452,6 @@ how they work; we look at where they help.
 - **M3** an LLM reranker (listwise, course Qwen) over the top-20 of the current search;
 - **M4** a cross-encoder (bge-reranker-v2-m3) over the same top-20: one `/rerank` call, no chat tokens;
 - **M1t** translation of an English question into Russian before search (the `language` slice only).
-
-> **Chat:** "Will a reranker fix the point-in-time slice? yes / no"
 """)
 code(r"""
 MECH = ["S0", "M1@S0", "M2@S0", "M3@S0", "M4@S0", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
@@ -507,9 +498,6 @@ md(r"""
 - **New failures come with new context:** with the first answer contract, 5 answers of M1@S6 did not fit into the
   token limit (long lists of claims and citations); contracts v2 and v3 (step 7) remove them. Dense search alone invents 5
   values where the answer is "not in the documents" (S0: 1). A nearest neighbour always exists.
-
-> **Discussion:** "Your project has 300 documents in two languages and versions. Which row do you build first, and
-> what do you measure to decide whether a second one is worth its cost?"
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -553,8 +541,6 @@ checks.insert(1, "where", checks.chunk_id.map(lambda c: where(by_id[c]) if c els
 checks
 """)
 md(r"""
-> **Chat:** "The answer cites R-12 rev. 2. Which check fails?"
-
 Task 3 of the lecture: *"Inspect P-101 within 24 hours (R-12, rev. 3, clause 4.3.4, page 3)"*. The clause exists
 and is in force; its text is about the **stop** limit, "24 hours" is in the neighbouring clause 4.3.3. The enum
 makes sure the cited chunk was in the context; it does not make it the right one: the checks still matter.
@@ -704,7 +690,8 @@ md(r"""
 **Holdout: are the fixes fitted to our own slices?** The retrieval set was written together with the fixes. The
 holdout has 27 questions written by a model (gpt-oss-120b on the course server) from the documents and four role
 descriptions only: an operator, a mechanic, a reliability engineer, an auditor. It never saw the ladder or the
-slices. Code kept the gradable ones (the review list: `reference/holdout_review.md`).
+slices. The drafts were filtered by code (the evidence resolves, the value is in the evidence, lexical leak <= 0.6,
+not a near-copy of the retrieval set) and by hand: 27 of 75 kept.
 """)
 code(r"""
 holdout = load_cases(REPLAY_DIR.parent / "holdout.jsonl")
@@ -770,39 +757,7 @@ agent (topic 5), the regression test of the index (topic 6) and the audit log (t
 5. Near-duplicates without metadata: remove `scope` and count the P-310 questions answered from R-12.
 6. Document hierarchy: a company standard above R-12 and the rule "the stricter wins" in code; the `conflict` slice.
 7. A vector database: the index in pgvector or Qdrant (installed from PyPI or a mirror); time and result.
-8. Your documents: the process on your project documents: 20 questions from the structure, S0 and one ladder row.
 """)
-md(r"""
-**Use it in your project**
-
-The same process works on the documents of your project. Do it step by step:
-
-1. Write 20–50 questions from the roles of your users. For each question, note the answer type (number, short
-   fact, text, not in the documents). Note the gold evidence too (document, revision, clause or page). Take it from
-   the structure of the document, not from search results.
-2. Add slices. Always add "not in the documents" (at least 5 questions). Then add the slices that matter for your
-   data: versions, near-duplicate documents, tables, languages.
-3. Build the baseline: BM25 over your chunks, top 5, the answer contract with citations. Measure recall@5,
-   evidence recall, end-to-end, false refusals and invented values.
-4. Count the losses by link with `reval.py`: reading, search, assembly, model.
-5. Fix the biggest link with one step. Compare the new row in pairs with the row above (practice 2 statistics).
-6. Keep the ablation table. It is your evidence for the search criterion at the defense.
-7. Run the set again after every change of documents, parser or model.
-
-Files to copy (from `src/plant_assistant/`):
-- `cases.py`: the question format, `TestCase` with `expected` and `evidence` locators, turned into chunk ids by
-  `resolve`;
-- `reval.py`, with `units.py`, `evals/stats.py` and `Chunk` from `store.py`: grading, metrics, losses by link,
-  failure modes, the ablation table;
-- `answer.py`: the contract (`Answer`, `contract_v2_format` with the enum of context ids, `parse`,
-  `fallback_answer`), and `System.answer` in `pipeline.py` for the retry and the fallback;
-- `verify.py`: the three citation checks (`check_answer`);
-- `applicability.py`, if your answers depend on the equipment: it needs a registry in the format of
-  `data/equipment_registry.csv`, with the `documents` column.
-
-Text answers are not graded by code here: part 2 grades them with a judge.
-""")
-
 
 def build() -> None:
     nb = nbf.v4.new_notebook()

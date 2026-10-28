@@ -362,7 +362,7 @@ def main() -> None:
     system = System(chunks, answer_client=cl["answers"], rerank_client=cl["rerank"], translate_client=cl["translate"],
                     cross_client=cl["crossencoder"], vectors=vectors, think_client=cl["answers_thinking"])
     holdout = load_cases(HOLDOUT_FILE)
-    if vectors is None:  # no vectors: the dense rows stay TODO
+    if vectors is None:  # no vectors: the dense rows are skipped
         args.configs = [c for c in args.configs if CONFIGS[c].retriever == "bm25"]
 
     records, scores, h_records, h_scores = {}, {}, {}, {}
@@ -462,7 +462,7 @@ def main() -> None:
         f"- Store: {summary['documents']} documents, {summary['pages']} pages, {summary['chunks']} chunks "
         f"({summary['table_rows']} of them rows of the long valve table); index version `{summary['index_version']}`.",
         f"- Retrieval set: {len(cases)} questions; by slice: {counts_by_slice(cases)}.",
-        "- Mechanisms (28.10.2026, the course server, lecturer's key): dense search with `iairlab/e5-mistral-7b-instruct` "
+        "- Mechanisms (the course server): dense search with `iairlab/e5-mistral-7b-instruct` "
         "(4096-dim; questions with the instruction, documents without; vectors in `data/replay/vectors/e5-mistral.*`), "
         "hybrid = RRF of the BM25 and dense top-20, the LLM reranker (M3, course Qwen, listwise) and the cross-encoder "
         "`iairlab/bge-reranker-v2-m3` (M4, `/rerank`), both over the top-20 of the row they are added to.",
@@ -522,8 +522,8 @@ def main() -> None:
         md_table(contract_slices, index=True),
         "",
         "Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict that v1 caught by reasoning "
-        "in the answer; n04: \"not in the documents\"); `check` is the internal field of v3, shown here for the "
-        "lecturer only:",
+        "in the answer; n04: \"not in the documents\"); `check` is the internal field of v3: logged for the audit, "
+        "never shown to the engineer:",
         "",
         md_table(p101_rows.fillna("")),
         "",
@@ -570,8 +570,8 @@ def main() -> None:
         "",
         f"{len(holdout)} questions drafted by `{next(iter(c.source for c in holdout), '')}` from the documents and four "
         "role descriptions (operator, mechanic, reliability engineer, auditor), filtered by code (evidence resolves, "
-        "value in the evidence, lexical leak <= 0.6, no near-copy of the retrieval set) and reviewed; the review list "
-        "is `holdout_review.md`. The ladder was never shown to the drafter.",
+        "value in the evidence, lexical leak <= 0.6, no near-copy of the retrieval set) and by hand: 27 of 75 drafts "
+        "kept. The ladder was never shown to the drafter.",
         "",
         md_table(h_public.fillna("")),
         "",

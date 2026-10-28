@@ -4,9 +4,9 @@
 #
 # Chat profiles answer, rerank and translate. Embedding profiles (embed-*) give vectors through the
 # OpenAI-compatible /embeddings endpoint; the cross-encoder profile (rerank-*) calls /rerank at the server root.
-# On 28.10.2026 the course server has e5-mistral-7b-instruct (embeddings) and bge-reranker-v2-m3 (cross-encoder)
-# for the lecturer's key; whether a student token sees them is not known. The notebook replays the lecturer's
-# vectors (data/replay/vectors/) and the reranker answers (data/replay/crossencoder_course.jsonl).
+# The course server has e5-mistral-7b-instruct (embeddings) and bge-reranker-v2-m3 (cross-encoder). The notebook
+# uses saved vectors (data/replay/vectors/) and reranker scores (data/replay/crossencoder_course.jsonl); if your
+# token has access to these models, you can rebuild them live (see README).
 
 [defaults]
 timeout_s = 120
@@ -83,7 +83,7 @@ bypass_proxy_cache = false
 # ---------- drafting the holdout questions (scripts/draft_holdout.py) ----------
 
 [profiles.drafter]
-description = "Model that drafts holdout questions: gpt-oss-120b on the course server (a frontier profile is better)"
+description = "Model that drafts holdout questions: gpt-oss-120b on the course server"
 base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
 api_key = "${LECTURER_LLM_API_KEY|COURSE_LLM_API_KEY}"
 model = "${DRAFTER_MODEL:-iairlab/gpt-oss-120b}"

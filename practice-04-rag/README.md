@@ -35,7 +35,7 @@ rows of the ablation table), text answers graded by a judge, and a document-cont
 | `data/holdout.jsonl`, `data/holdout_drafts.jsonl` | 27 holdout questions written by role (and all 75 drafts); `scripts/draft_holdout.py` |
 | `data/ground_truth/` | page texts and the clause and table pages of the new documents |
 | `data/replay/` | the lecturer's model calls: answers, LLM reranker rankings, cross-encoder scores, translations (`vectors/`: e5-mistral vectors, see "Dense search") |
-| `reference/` | `results.md`, `ablation.csv`, `cost.csv`, slices, losses, per-question scores, `s0_failures.md`, the holdout (`holdout_ablation.csv`, `holdout_review.md`), the audit record of the P-101 answer, the store `reference/store/`, the executed notebook |
+| `reference/` | `results.md`, `ablation.csv`, `cost.csv`, slices, losses, per-question scores, `s0_failures.md`, the holdout (`holdout_ablation.csv`, `holdout_per_question.csv`), the audit record of the P-101 answer, the store `reference/store/`, the executed notebook |
 | `scripts/` | `generate_corpus.py`, `build_questions.py`, `build_reference.py`, `build_vectors.py`, `build_notebook.py`; content in `corpus_content.py`, `questions_content.py` |
 | `src/plant_assistant/` | `corpus.py`, `normalize.py`, `search.py`, `query.py`, `applicability.py`, `filters.py`, `assemble.py`, `answer.py`, `verify.py`, `reval.py`, `audit.py`, `pipeline.py`; the client, the store and the statistics from practices 1–3 |
 
@@ -114,7 +114,9 @@ datasheet that is not in the archive; P-101 was measured in one direction of thr
 | S6 | + answer contract (v3: an internal `check` field first, chunk ids from an enum of the context, at most 5 claims × 2 sources, a length limit and a leak detector on the answer, one retry, "needs a person" fallback) and three citation checks; rows `X:v1` (citation objects, no limits) and `X:v2` (v3 without `check`) are the earlier contracts |
 | M3@S0, M3@S6 | an LLM reranker (course Qwen, listwise over the top-20) on S0 and on S6 |
 | M1t | translation of an English question into Russian before search (the `language` slice) |
-| M1, M2 @S0, @S6 | dense and hybrid search: **TODO**, see "Dense search" |
+| M1@S0, M1@S6 | dense search (e5-mistral-7b-instruct, saved vectors) instead of BM25 |
+| M2@S0, M2@S6 | hybrid search: BM25 and dense top-20 fused by reciprocal rank (RRF) |
+| M4@S0, M4@S6 | a cross-encoder (bge-reranker-v2-m3, one `/rerank` call, no chat tokens) over the top-20 on S0 and on S6 |
 
 ## Reproduce the practice (30–60 minutes)
 
@@ -164,8 +166,8 @@ uv run python scripts/build_notebook.py
 
 ### Dense search and the cross-encoder (M1, M2, M4)
 
-On 28.10.2026 the course server has an embedding model and a cross-encoder for the lecturer's key; whether a student
-token sees them is not known, so the notebook replays them:
+The course server has an embedding model and a cross-encoder. The notebook uses saved vectors and reranker scores; if
+your token has access to these models, you can rebuild them live (commands below):
 
 - **M1** dense search: `iairlab/e5-mistral-7b-instruct`, 4096-dim, cosine in numpy (`search.DenseIndex`). The model is
   asymmetric: a question is embedded with the instruction of the profile (`query_prefix` in `models.toml`:
@@ -228,8 +230,8 @@ chat prompt tokens only: the cross-encoder reads ~1500–1750 tokens per questio
 - **The P-101 question is lost in search at S6:** with the archive v2, BM25 puts Table 3 at rank 6 for this
   wording, and the evidence pack has nothing to start from. With the reranker (M3@S6) it is answered with all
   four citations and all checks pass.
-- **Holdout** (27 questions written by role by gpt-oss-120b, never shown the ladder; `reference/holdout_review.md`):
-  S0 56%, S3 74%, S6 78%, M3@S0 85%, M3@S6 85% (Wilson intervals about ±15 points). On everyday questions the
+- **Holdout** (27 questions written by role by gpt-oss-120b, never shown the ladder; filtered by code (the evidence resolves, the value is in the evidence, lexical leak <= 0.6, not a near-copy of the retrieval set) and by hand: 27 of 75 drafts kept):
+  S0 56%, S3 74%, S6 78%, M3@S0 85%, M3@S6 89% (Wilson intervals about ±15 points). On everyday questions the
   reranker alone is at least as good as the plant-side ladder; the ladder is what fixes versions, applicability
   and conflicts, and those are rare in the holdout. 27 questions cannot separate S6 from M3@S0.
 - **Mechanisms against plant knowledge** (end-to-end by slice in `reference/results.md`). Instead of plant
@@ -321,38 +323,9 @@ of them applies.
   cl. 6.1–6.2, all three citation checks pass (at S6 it is lost in search: the reason is the point of step 7);
 - V-912: no value (`not_in_documents` or `needs_human`, both accepted); P-205 and the lubrication interval of P-101 at S6: `conflict` with both documents cited.
 
-## Use it in your project
-
-The same process works on the documents of your project. Do it step by step:
-
-1. Write 20–50 questions from the roles of your users. For each question, note the answer type (number, short
-   fact, text, not in the documents). Note the gold evidence too (document, revision, clause or page). Take it from
-   the structure of the document, not from search results.
-2. Add slices. Always add "not in the documents" (at least 5 questions). Then add the slices that matter for your
-   data: versions, near-duplicate documents, tables, languages.
-3. Build the baseline: BM25 over your chunks, top 5, the answer contract with citations. Measure recall@5,
-   evidence recall, end-to-end, false refusals and invented values.
-4. Count the losses by link with `reval.py`: reading, search, assembly, model.
-5. Fix the biggest link with one step. Compare the new row in pairs with the row above (practice 2 statistics).
-6. Keep the ablation table. It is your evidence for the search criterion at the defense.
-7. Run the set again after every change of documents, parser or model.
-
-Files to copy (from `src/plant_assistant/`):
-- `cases.py`: the question format, `TestCase` with `expected` and `evidence` locators, turned into chunk ids by
-  `resolve`;
-- `reval.py`, with `units.py`, `evals/stats.py` and `Chunk` from `store.py`: grading, metrics, losses by link,
-  failure modes, the ablation table;
-- `answer.py`: the contract (`Answer`, `contract_v2_format` with the enum of context ids, `parse`,
-  `fallback_answer`), and `System.answer` in `pipeline.py` for the retry and the fallback;
-- `verify.py`: the three citation checks (`check_answer`);
-- `applicability.py`, if your answers depend on the equipment: it needs a registry in the format of
-  `data/equipment_registry.csv`, with the `documents` column.
-
-Text answers are not graded by code here: part 2 grades them with a judge.
-
 ## Optional tasks (for better understanding)
 
-Each is a section you add to the notebook or a script; a team can take any of them into its project.
+Each is a section you add to the notebook or a script.
 
 1. **Reading against search.** Build the R-12 part of the store from the Docling output of the scan (practice 3,
    `data/parsed/docling.jsonl`) and run S6 on it. How many losses move from "search" to "reading"?
@@ -366,4 +339,3 @@ Each is a section you add to the notebook or a script; a team can take any of th
    the `conflict` slice.
 7. **A vector database.** Move the index to pgvector or Qdrant (installed from PyPI or a mirror: Docker Hub is not
    available from Russia), compare time and results with numpy.
-8. **Your documents.** The process on your project documents: 20 questions from the structure, S0 and one ladder row.

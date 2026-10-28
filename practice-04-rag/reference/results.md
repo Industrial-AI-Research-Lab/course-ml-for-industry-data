@@ -4,7 +4,7 @@ Lecturer's run on the course model `iairlab/qwen3.8-27b` (thinking off), replaye
 
 - Store: 16 documents, 47 pages, 440 chunks (110 of them rows of the long valve table); index version `corpus-5719c6dc76.parser-a53367.emb-none`.
 - Retrieval set: 143 questions; by slice: {'base': 50, 'language': 20, 'applicability': 12, 'point_in_time': 10, 'incident': 3, 'what_changed': 4, 'multi_evidence': 8, 'cross_doc': 3, 'conflict': 9, 'table_row': 8, 'tag_variant': 6, 'not_in_documents': 10}.
-- Mechanisms (28.10.2026, the course server, lecturer's key): dense search with `iairlab/e5-mistral-7b-instruct` (4096-dim; questions with the instruction, documents without; vectors in `data/replay/vectors/e5-mistral.*`), hybrid = RRF of the BM25 and dense top-20, the LLM reranker (M3, course Qwen, listwise) and the cross-encoder `iairlab/bge-reranker-v2-m3` (M4, `/rerank`), both over the top-20 of the row they are added to.
+- Mechanisms (the course server): dense search with `iairlab/e5-mistral-7b-instruct` (4096-dim; questions with the instruction, documents without; vectors in `data/replay/vectors/e5-mistral.*`), hybrid = RRF of the BM25 and dense top-20, the LLM reranker (M3, course Qwen, listwise) and the cross-encoder `iairlab/bge-reranker-v2-m3` (M4, `/rerank`), both over the top-20 of the row they are added to.
 
 ## Ablation table
 
@@ -97,7 +97,7 @@ End-to-end by slice:
 | M4@S6    | 8/8              | 3/4            | 7/9        | 13/20      | 10/10           |
 | S6:think | 4/8              | 2/4            | 7/9        | 11/20      | 10/10           |
 
-Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict that v1 caught by reasoning in the answer; n04: "not in the documents"); `check` is the internal field of v3, shown here for the lecturer only:
+Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict that v1 caught by reasoning in the answer; n04: "not in the documents"); `check` is the internal field of v3: logged for the audit, never shown to the engineer:
 
 | row      | question   | status           | value   | right   | verified   | retried   | fallback   |   leaks | check (internal)                                                                                                                                                 |
 |:---------|:-----------|:-----------------|:--------|:--------|:-----------|:----------|:-----------|--------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -243,7 +243,7 @@ The first reference run (rows mixed with the clauses) broke these questions; Tru
 
 ## Holdout: questions written by role, not by slice
 
-27 questions drafted by `holdout (iairlab/gpt-oss-120b)` from the documents and four role descriptions (operator, mechanic, reliability engineer, auditor), filtered by code (evidence resolves, value in the evidence, lexical leak <= 0.6, no near-copy of the retrieval set) and reviewed; the review list is `holdout_review.md`. The ladder was never shown to the drafter.
+27 questions drafted by `holdout (iairlab/gpt-oss-120b)` from the documents and four role descriptions (operator, mechanic, reliability engineer, auditor), filtered by code (evidence resolves, value in the evidence, lexical leak <= 0.6, no near-copy of the retrieval set) and by hand: 27 of 75 drafts kept. The ladder was never shown to the drafter.
 
 | config   |   n | recall@5              | evidence recall       | end-to-end            | correct + verified    |   MRR | false refusals   | wrong or invented   | right abstentions            |   invalid |   fallbacks |   leaks | vs   | e2e: fixed / broke   | e2e verdict                          | evidence verdict                            |
 |:---------|----:|:----------------------|:----------------------|:----------------------|:----------------------|------:|:-----------------|:--------------------|:-----------------------------|----------:|------------:|--------:|:-----|:---------------------|:-------------------------------------|:--------------------------------------------|

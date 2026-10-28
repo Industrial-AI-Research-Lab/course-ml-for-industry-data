@@ -3,7 +3,7 @@
 Rules of lecture 2: every question comes from a known place (a clause, a table, a row, a datasheet), the
 answer is a value with a unit or a status, and the wording does not copy the clause. Every question has a
 Russian wording (it goes to search and to the prompt: the engineer of a Russian plant asks in Russian) and an
-English one (for the notebook and the slides). The `language` slice sends the English wording to search as is.
+English one (for the notebook). The `language` slice sends the English wording to search as is.
 
 Evidence is written as locators, never as chunk ids: "R-12 r3 cl 4.3.3", "R-12 r3a1 cl 4.4.1" (amendment 1),
 "R-12 r3 t 3" (Table 3), "VL-2 r4 t А.2 row V-12", "PS-101" (the datasheet). An evidence item is
@@ -18,7 +18,7 @@ text (questions "what changed", and decisions like "is it normal, what to do": t
 from corpus_content import TODAY
 
 # ---------------------------------------------------------------------------------------------
-# The 50 questions of practice 3, translated once (the lecturer checks the translation).
+# The 50 questions of practice 3, translated once.
 # id -> (Russian wording, evidence). The English wording is the practice 3 text; questions that did not name
 # the document get ", according to R-12": the archive now has R-14 with the same clauses.
 # ---------------------------------------------------------------------------------------------

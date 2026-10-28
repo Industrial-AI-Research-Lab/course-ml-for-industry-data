@@ -7,7 +7,8 @@ evidence, the wording does not copy the answer chunk (lexical leak), the questio
 
 Live (lecturer):  uv run python scripts/draft_holdout.py --draft        # calls the `drafter` profile
 Rebuild:          uv run python scripts/draft_holdout.py                # from data/holdout_drafts.jsonl
-Writes data/holdout.jsonl (slice "holdout", tag "role") and reference/holdout_review.md.
+Writes data/holdout.jsonl (slice "holdout", tag "role") and the list of all drafts with the reasons they were
+kept or dropped to runs/holdout_review.md (not published).
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from corpus_content import TODAY  # noqa: E402
 
-from plant_assistant import DATA_DIR, REFERENCE_DIR, STORE_DIR  # noqa: E402
+from plant_assistant import DATA_DIR, RUNS_DIR, STORE_DIR  # noqa: E402
 from plant_assistant.cases import TestCase, load_cases, resolve, write_cases  # noqa: E402
 from plant_assistant.config import get_profile  # noqa: E402
 from plant_assistant.jsonl import read_json_records  # noqa: E402
@@ -33,7 +34,7 @@ from plant_assistant.search import tokenize  # noqa: E402
 from plant_assistant.store import load_store  # noqa: E402
 from plant_assistant.units import has_value  # noqa: E402
 
-# Rejected at the review of the kept drafts (the checks by code passed, a person did not)
+# Dropped by hand after the checks by code passed
 REVIEWED_OUT = {
     "h11": "a free-text answer (a fire extinguisher model with its name): code cannot grade it",
     "h24": "not a conflict: R-12 and R-14 apply to different stations; the answer is two values",
@@ -198,7 +199,7 @@ def build() -> None:
             reasons.append(f"repeats a kept holdout question ({twin:.2f})")
         case_id = f"h{i:02d}"
         if case_id in REVIEWED_OUT and not reasons:
-            reasons.append(f"rejected at review: {REVIEWED_OUT[case_id]}")
+            reasons.append(f"dropped by hand: {REVIEWED_OUT[case_id]}")
         review.append((case_id, q, expected, evidence, leak, reasons))
         if not reasons:
             as_of = q.get("as_of") or TODAY
@@ -206,11 +207,10 @@ def build() -> None:
                                  evidence, f"holdout ({q.get('drafted_by', 'drafter')})",
                                  f"role: {q.get('role')}; {q.get('note') or ''}".strip("; ")))
     write_cases(kept, HOLDOUT)
-    lines = ["# Holdout questions: review list", "",
+    lines = ["# Holdout questions: all drafts", "",
              f"Drafted by role by `{next(iter(read_json_records(DRAFTS)), {}).get('drafted_by')}` from the documents and "
              "four role descriptions only (never the ladder or the slices). Kept: questions whose evidence resolves, "
              f"whose value is in the evidence, with a lexical leak <= {LEAK_MAX} and no near-copy of the retrieval set.",
-             "The lecturer checks every kept question (gold answer and evidence) before the numbers go to the slides.", "",
              f"Kept {len(kept)} of {len(review)}.", "",
              "| id | role | question (RU) | translation | expected | evidence | leak | kept / why not |",
              "|---|---|---|---|---|---|---|---|"]
@@ -220,7 +220,8 @@ def build() -> None:
         ev = "; ".join(f"{e['role']}: {e['any_of'][0]}" for e in evidence) or "—"
         lines.append(f"| {case_id} | {q.get('role')} | {q['question_ru']} | {q['question_en']} | {exp} {unit} | {ev} | "
                      f"{leak:.2f} | {'kept' if not reasons else '; '.join(reasons)} |")
-    (REFERENCE_DIR / "holdout_review.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+    (RUNS_DIR / "holdout_review.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     roles = {}
     for c in kept:
         r = c.note.split(";")[0].replace("role: ", "")
