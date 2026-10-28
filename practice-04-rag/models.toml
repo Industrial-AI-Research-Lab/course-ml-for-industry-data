@@ -3,8 +3,10 @@
 # Secrets live only in .env (see .env.example), never in this file.
 #
 # Chat profiles answer, rerank and translate. Embedding profiles (embed-*) give vectors through the
-# OpenAI-compatible /embeddings endpoint. On 27.10.2026 the course LiteLLM has no embedding or rerank model:
-# the mandatory path replays the lecturer's vectors (data/replay/vectors/) and reranker answers.
+# OpenAI-compatible /embeddings endpoint; the cross-encoder profile (rerank-*) calls /rerank at the server root.
+# On 28.10.2026 the course server has e5-mistral-7b-instruct (embeddings) and bge-reranker-v2-m3 (cross-encoder)
+# for the lecturer's key; whether a student token sees them is not known. The notebook replays the lecturer's
+# vectors (data/replay/vectors/) and the reranker answers (data/replay/crossencoder_course.jsonl).
 
 [defaults]
 timeout_s = 120
@@ -63,10 +65,20 @@ model = "qwen3-embedding:0.6b"
 bypass_proxy_cache = false
 
 [profiles.embed-course]
-description = "Embeddings on the course server, if the lab deploys a model (variant A of the design)"
+description = "e5-mistral-7b-instruct (4096-dim) on the course server: questions with an instruction, documents without"
 base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
-api_key = "${COURSE_LLM_API_KEY|LITE_LLM_TOKEN_QWEN}"
-model = "${COURSE_EMBED_MODEL:-iairlab/bge-m3}"
+api_key = "${LECTURER_LLM_API_KEY|COURSE_LLM_API_KEY}"
+model = "${COURSE_EMBED_MODEL:-iairlab/e5-mistral-7b-instruct}"
+query_prefix = "Instruct: Given a question about plant equipment, retrieve the regulation or manual passages that answer it\nQuery: "
+
+# ---------- cross-encoder reranker (optional: the notebook replays its answers) ----------
+
+[profiles.rerank-course]
+description = "Cross-encoder bge-reranker-v2-m3 on the course server: POST <server root>/rerank, one call per question"
+base_url = "${COURSE_LLM_BASE_URL|LITE_LLM_URL}"
+api_key = "${LECTURER_LLM_API_KEY|COURSE_LLM_API_KEY}"
+model = "${COURSE_RERANK_MODEL:-iairlab/bge-reranker-v2-m3}"
+bypass_proxy_cache = false
 
 # ---------- drafting the holdout questions (scripts/draft_holdout.py) ----------
 

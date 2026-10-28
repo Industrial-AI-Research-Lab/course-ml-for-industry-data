@@ -69,8 +69,8 @@ question ─► fields (tags, date) ─► registry: station, class ─► filte
 
 Search, filters and evidence packs run **live** (milliseconds, no model). Model answers for all 143 questions
 in every configuration come from the **replay** of the lecturer's run: identical requests get identical saved
-answers. Single questions in steps 5 and 7 go to the course model live if it answers. Dense vectors and
-reranker answers are replayed too (when present).
+answers. Single questions in steps 5 and 7 go to the course model live if it answers. Dense vectors
+(e5-mistral) and the answers of both rerankers (LLM and cross-encoder) are replayed too.
 
 ## Common problems
 
@@ -109,8 +109,10 @@ md(r"""
 ## 1. Setup
 
 Profiles are in `models.toml`, secrets in `.env` (as in practices 1-3). The answers use the course model
-Qwen 3.8 27B with thinking off. Embedding profiles (`embed-*`) are optional: on 27.10.2026 the course server has
-no embedding or reranking model, so dense vectors come from `data/replay/vectors/` when the lecturer adds them.
+Qwen 3.8 27B with thinking off. The embedding (`embed-course`, e5-mistral-7b-instruct) and cross-encoder
+(`rerank-course`, bge-reranker-v2-m3) profiles are optional: on 28.10.2026 they answer for the lecturer's key, and
+it is not known whether a student token sees them. The notebook uses the saved vectors (`data/replay/vectors/`) and
+the saved cross-encoder answers.
 """)
 code(r"""
 import os
@@ -137,13 +139,17 @@ def model_answers(profile_name: str) -> bool:
 
 
 LIVE = os.environ.get("PRACTICE_MODE") != "replay" and model_answers(PROFILE)
-replay = {task: ReplayClient(REPLAY_DIR / f"{task}_course.jsonl") for task in ("answers", "rerank", "translate")}
+replay = {task: ReplayClient(REPLAY_DIR / f"{task}_course.jsonl")
+          for task in ("answers", "rerank", "translate", "crossencoder")}
 live = LLMClient(get_profile(PROFILE), logger=CallLogger(RUNS_DIR / f"my-{PROFILE}" / "calls.jsonl")) if LIVE \
     else replay["answers"]
 print("Mode:", f"LIVE single questions on {PROFILE}, the full set from replay" if LIVE else
       "REPLAY of the lecturer's saved answers (course model)")
+from plant_assistant.search import VectorStore
+
 vectors = sorted((REPLAY_DIR / "vectors").glob("*.npz"))
-print("Embedding vectors:", [v.stem for v in vectors] or "none yet: dense rows (M1, M2) are not measured")
+print("Embedding vectors:", [v.stem for v in vectors] or "none: dense rows (M1, M2) are not measured")
+VECTORS = VectorStore(vectors[0]) if vectors else None
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -253,7 +259,7 @@ from plant_assistant.display import answer_frame, context_frame, hits_frame
 from plant_assistant.pipeline import CONFIGS, LADDER, System
 
 system = System(chunks, answer_client=replay["answers"], rerank_client=replay["rerank"],
-                translate_client=replay["translate"])
+                translate_client=replay["translate"], cross_client=replay["crossencoder"], vectors=VECTORS)
 records, scores = {}, {}
 
 
@@ -350,7 +356,8 @@ from plant_assistant.applicability import equipment_context
 
 # single questions: live if the course model answers (the reranker too), replay otherwise
 system_live = System(chunks, answer_client=live, rerank_client=live if LIVE else replay["rerank"],
-                     translate_client=live if LIVE else replay["translate"])
+                     translate_client=live if LIVE else replay["translate"], cross_client=replay["crossencoder"],
+                     vectors=VECTORS)
 for name in ("S2", "S3"):
     rec = system_live.run_case(case_by_id["p01"], CONFIGS[name])
     display(Markdown(f"**{name}** · {case_by_id['p01'].question_ru} · scope: {rec['scope'] or 'none'}"),
@@ -433,54 +440,61 @@ md(r"""
 Two points of attachment: **instead of** plant knowledge (on S0) and **on top of** it (on S6). We do not explain
 how they work; we look at where they help.
 
+- **M1** dense search (e5-mistral-7b-instruct on the course server, saved vectors) instead of BM25;
+- **M2** hybrid search: BM25 and dense top-20 fused by reciprocal rank (RRF);
 - **M3** an LLM reranker (listwise, course Qwen) over the top-20 of the current search;
-- **M1t** translation of an English question into Russian before search (the `language` slice only);
-- **M1 / M2** dense and hybrid search: need embedding vectors (see below).
+- **M4** a cross-encoder (bge-reranker-v2-m3) over the same top-20: one `/rerank` call, no chat tokens;
+- **M1t** translation of an English question into Russian before search (the `language` slice only).
 
 > **Chat:** "Will a reranker fix the point-in-time slice? yes / no"
 """)
 code(r"""
-for name in ("S6", "M1t", "M3@S0", "M3@S6"):
-    run(name)
+MECH = ["S0", "M1@S0", "M2@S0", "M3@S0", "M4@S0", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
+for name in ["M1t"] + MECH:
+    if name not in scores and (VECTORS is not None or CONFIGS[name].retriever == "bm25"):
+        run(name)
 table = reval.ablation(scores, previous)
-table[table.config.isin(["S0", "M1t", "M3@S0", "S6", "M3@S6"])][cols].fillna("")
+table[table.config.isin(MECH + ["M1t"])][cols].fillna("")
 """)
 code(r"""
-reval.by_slice({k: scores[k] for k in ("S0", "M3@S0", "S6", "M3@S6")}, "correct")
+focus = ["language", "point_in_time", "applicability", "conflict", "table_row", "tag_variant", "multi_evidence"]
+reval.by_slice({k: scores[k] for k in MECH if k in scores}, "correct")[focus]
 """)
 md(r"""
 **What each row costs.** Median seconds per question (search here + model latency saved with the answers), model
-calls and tokens per question. A row that is better must also be affordable: the reranker doubles the calls.
+calls (all: chat, the question embedding, the cross-encoder), chat calls and tokens per question. A row that is
+better must also be affordable: the LLM reranker adds a chat call with ~1800 prompt tokens; the cross-encoder adds
+one short call and no chat tokens.
 """)
 code(r"""
 reval.cost_table(records)
 """)
 code(r"""
 lang = scores["M1t"].case_id
-display(Markdown("**The `language` slice**: English questions as they are (S0) vs translated to Russian (M1t)"))
+display(Markdown("**The `language` slice**: English questions as they are (S0), translated to Russian (M1t), "
+                 "dense search on the English wording (M1@S0)"))
 pd.DataFrame({name: [f"{int(scores[name].set_index('case_id').loc[lang, m].astype(bool).sum())}/{len(lang)}"
-                     for m in ("recall@k", "correct")] for name in ("S0", "M1t")}, index=["recall@5", "end-to-end"])
+                     for m in ("recall@k", "correct")] for name in ("S0", "M1t", "M1@S0") if name in scores},
+             index=["recall@5", "end-to-end"])
 """)
 md(r"""
-**Dense search (M1, M2).** On 27.10.2026 the course server has no embedding model, and the lecturer's vectors are
-not in `data/replay/vectors/` yet. With Ollama you can make them yourself (optional task 2):
-`ollama pull bge-m3`, then `uv run python scripts/build_vectors.py --profile embed-bge-m3 --name bge-m3`.
-The cell below runs M1 and M2 when vectors are there.
-""")
-code(r"""
-from dataclasses import replace
+**What the mechanism rows say** (the lecturer's run; compare with your table):
 
-from plant_assistant.search import VectorStore
+- **Instead of plant knowledge** every mechanism beats S0, and none comes close to S6 (best: the LLM reranker,
+  71% against 91%). They fix what is about words: dense search answers 17/20 English questions (translation:
+  13/20) and all tag variants. They do not fix what is about the plant: dense search is 3/10 on `point_in_time`,
+  3/12 on `applicability` and 0/9 on `conflict`. Versions, applicability and conflicts need the filters, the
+  registry and the contract.
+- **On top of plant knowledge** no mechanism changes end-to-end detectably (M1@S6 93%, +11 / −8). Dense search
+  answers all English questions and finds the last conflict; the rerankers raise evidence recall, not end-to-end.
+- **The cross-encoder** gives most of the reranker gain for a quarter of the time: +0.5 s and no chat tokens per
+  question, against +2 s and ~2000 chat tokens for the LLM reranker.
+- **New failures come with new context:** with dense search on S6, 5 answers do not fit into the token limit of
+  the contract (long lists of claims and citations); dense search alone invents 5 values where the answer is "not
+  in the documents" (S0: 1). A nearest neighbour always exists.
 
-if vectors:
-    system.vectors = VectorStore(vectors[0])
-    system.vectors.check(system.index_version)
-    for name in ("M1@S0", "M2@S0", "M1@S6", "M2@S6"):
-        run(name)
-    previous.update({"M1@S0": "S0", "M2@S0": "S0", "M1@S6": "S6", "M2@S6": "S6"})
-    display(reval.ablation(scores, previous)[cols].fillna(""))
-else:
-    print("No vectors: M1 and M2 are TODO in the reference table too.")
+> **Discussion:** "Your project has 300 documents in two languages and versions. Which row do you build first, and
+> what do you measure to decide whether a second one is worth its cost?"
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -583,8 +597,8 @@ from plant_assistant import DATA_DIR
 
 needs_human = load_cases(DATA_DIR / "needs_human.jsonl")
 rows = {}
-for name in ("S6", "M3@S6"):
-    recs = system_live.run(needs_human, CONFIGS[name], workers=4, progress=False)
+for name in ["S6", "M3@S6", "M4@S6"] + (["M1@S6", "M2@S6"] if VECTORS is not None else []):
+    recs = system.run(needs_human, CONFIGS[name], workers=4, progress=False)
     rows[name] = {r["case_id"]: (r.get("answer") or {}).get("status", "invalid") for r in recs}
 pd.DataFrame(rows).assign(question=[c.question_en for c in needs_human])
 """)

@@ -5,7 +5,8 @@ question -> fields (query.py) -> scope (applicability.py) -> filter (filters.py)
 
 The ladder S0-S6 adds one plant-side change per row (S2 and S2b are two ways to index the rows of a long table:
 mixed with the clauses, or in a separate collection with a small quota; S3 and later build on S2b); the mechanism branch (M*) adds dense search, hybrid
-search and an LLM reranker at two points: instead of plant knowledge (on S0) and on top of it (on S6).
+search, an LLM reranker (M3) and a cross-encoder (M4) at two points: instead of plant knowledge (on S0) and on top
+of it (on S6).
 """
 
 from __future__ import annotations
@@ -25,7 +26,7 @@ from .cases import TestCase
 from .corpus import index_version
 from .filters import make_filter
 from .query import extract_rules
-from .search import BM25Index, DenseIndex, Hit, HybridIndex, VectorStore, rerank, view
+from .search import BM25Index, DenseIndex, Hit, HybridIndex, VectorStore, cross_rerank, rerank, view
 from .store import Chunk
 from .verify import check_answer
 
@@ -42,7 +43,8 @@ class Config:
     evidence_pack: bool = False  # S5: references both ways and parent sections within a budget
     contract: bool = False  # S6: answer contract and citation checks
     retriever: str = "bm25"  # bm25 | dense | hybrid
-    rerank: bool = False  # LLM reranker over the top `depth`
+    rerank: bool = False  # reranker over the top `depth`
+    reranker: str = "llm"  # "llm": listwise, course Qwen (M3); "cross": cross-encoder bge-reranker-v2-m3 (M4)
     translate: bool = False  # translate an English question into Russian before search
     k: int = 5
     depth: int = 20
@@ -62,18 +64,23 @@ S5 = replace(S4, name="S5", description="+ evidence pack: references both ways, 
 S6 = replace(S5, name="S6", description="+ answer contract and citation checks", contract=True)
 LADDER = [S0, S1, S2, S2B, S3, S4, S5, S6]
 PREVIOUS = {"S1": "S0", "S2": "S1", "S2b": "S1", "S3": "S2b", "S4": "S3", "S5": "S4", "S6": "S5", "M1t": "S0",
-            "M3@S0": "S0", "M3@S6": "S6", "M1@S0": "S0", "M2@S0": "S0", "M1@S6": "S6", "M2@S6": "S6"}
+            "M3@S0": "S0", "M3@S6": "S6", "M1@S0": "S0", "M2@S0": "S0", "M1@S6": "S6", "M2@S6": "S6",
+            "M4@S0": "S0", "M4@S6": "S6"}
 
 M3_S0 = replace(S0, name="M3@S0", description="S0 + LLM reranker (course Qwen) over BM25 top-20", rerank=True)
 M3_S6 = replace(S6, name="M3@S6", description="S6 + LLM reranker (course Qwen) over the filtered top-20",
                 rerank=True)
 M1T = replace(S0, name="M1t", description="S0 + translation of the English question into Russian (course Qwen)",
               translate=True, only_slices=("language",))
-M1_S0 = replace(S0, name="M1@S0", description="dense search instead of BM25", retriever="dense")
-M2_S0 = replace(S0, name="M2@S0", description="hybrid BM25 + dense (RRF)", retriever="hybrid")
+M1_S0 = replace(S0, name="M1@S0", description="dense search (e5-mistral) instead of BM25", retriever="dense")
+M2_S0 = replace(S0, name="M2@S0", description="hybrid BM25 + dense (RRF over the two top-20)", retriever="hybrid")
 M1_S6 = replace(S6, name="M1@S6", description="S6 with dense search", retriever="dense")
 M2_S6 = replace(S6, name="M2@S6", description="S6 with hybrid search", retriever="hybrid")
-MECHANISMS = [M1_S0, M1T, M2_S0, M3_S0, M1_S6, M2_S6, M3_S6]
+M4_S0 = replace(S0, name="M4@S0", description="S0 + cross-encoder (bge-reranker-v2-m3) over BM25 top-20", rerank=True,
+                reranker="cross")
+M4_S6 = replace(S6, name="M4@S6", description="S6 + cross-encoder over the filtered top-20", rerank=True,
+                reranker="cross")
+MECHANISMS = [M1_S0, M1T, M2_S0, M3_S0, M4_S0, M1_S6, M2_S6, M3_S6, M4_S6]
 CONFIGS = {c.name: c for c in LADDER + MECHANISMS}
 
 # Demo of the contract: the two sides of the P-205 conflict put into the context by hand
@@ -87,7 +94,8 @@ class System:
     """Everything a configuration needs: the store, the registry, the indexes and the model clients."""
 
     def __init__(self, chunks: list[Chunk], answer_client=None, rerank_client=None, translate_client=None,
-                 vectors: VectorStore | None = None, embedder_name: str | None = None):
+                 vectors: VectorStore | None = None, embedder_name: str | None = None, cross_client=None,
+                 embed_query=None):
         self.chunks = chunks
         self.by_id = {c.chunk_id: c for c in chunks}
         self.registry = load_registry()
@@ -95,9 +103,11 @@ class System:
         self.rerank_client = rerank_client
         self.translate_client = translate_client
         self.vectors = vectors
+        self.cross_client = cross_client
+        self.embed_query = embed_query  # live embedding of a question without a saved vector
         self.index_version = index_version(chunks, embedder_name)
         self._bm25: dict[tuple, BM25Index] = {}
-        self._dense: dict[str, DenseIndex] = {}
+        self._dense: dict[tuple, DenseIndex] = {}
         self._lock = threading.Lock()
 
     def bm25(self, cfg: Config, rows: str | None = None) -> BM25Index:
@@ -111,10 +121,10 @@ class System:
         if self.vectors is None:
             raise RuntimeError("no embedding vectors: dense rows need data/replay/vectors/<model>.npz or a live "
                                "embedding profile (see README, 'Dense search')")
-        key = rows or ("main" if cfg.rows == "separate" else cfg.rows)
+        key = (cfg.normalize, rows or ("main" if cfg.rows == "separate" else cfg.rows))
         with self._lock:
             if key not in self._dense:
-                self._dense[key] = DenseIndex(self.chunks, self.vectors, key)
+                self._dense[key] = DenseIndex(self.chunks, self.vectors, key[1], self.embed_query, cfg.normalize)
         return self._dense[key]
 
     def index(self, cfg: Config, rows: str | None = None):
@@ -138,12 +148,19 @@ class System:
 
     def retrieve(self, case: TestCase, cfg: Config) -> dict:
         t0 = time.perf_counter()
-        calls = []  # model calls made during retrieval: (latency, prompt tokens, completion tokens, wall seconds)
+        # model calls made during retrieval: (latency, prompt tokens, completion tokens, wall seconds, kind);
+        # kind "chat" uses chat tokens; "embed" (the question vector) and "cross" (the cross-encoder) do not
+        calls = []
         query = case.query
         if cfg.translate and case.language == "en":
             t = time.perf_counter()
             query, resp = self.translate(query, {"case_id": case.case_id, "task": "translate"})
-            calls.append((resp.latency_s, resp.prompt_tokens, resp.completion_tokens, time.perf_counter() - t))
+            calls.append((resp.latency_s, resp.prompt_tokens, resp.completion_tokens, time.perf_counter() - t,
+                          "chat"))
+        if cfg.retriever in ("dense", "hybrid"):  # one embedding call for the question (latency as saved)
+            t = time.perf_counter()
+            latency = self.dense(cfg).query_vector(query)[1]
+            calls.append((latency, 0, 0, time.perf_counter() - t, "embed"))
         fields = extract_rules(query, case.asked_on)
         scope = scope_for(fields, query, self.registry) if cfg.applicability else Scope()
         allowed = make_filter(fields, scope, cfg.applicability, cfg.date_filter)
@@ -152,10 +169,14 @@ class System:
         rerank_info = None
         if cfg.rerank:
             t = time.perf_counter()
-            hits, rerank_info = rerank(self.rerank_client, query, hits, self.by_id, cfg.depth,
-                                       meta={"case_id": case.case_id, "config": cfg.name, "task": "rerank"})
+            if cfg.reranker == "cross":
+                hits, rerank_info = cross_rerank(self.cross_client, query, hits, self.by_id, cfg.depth,
+                                                 meta={"case_id": case.case_id, "config": cfg.name, "task": "cross"})
+            else:
+                hits, rerank_info = rerank(self.rerank_client, query, hits, self.by_id, cfg.depth,
+                                           meta={"case_id": case.case_id, "config": cfg.name, "task": "rerank"})
             calls.append((rerank_info["latency_s"], rerank_info["prompt_tokens"], rerank_info["completion_tokens"],
-                          time.perf_counter() - t))
+                          time.perf_counter() - t, "cross" if cfg.reranker == "cross" else "chat"))
         top = hits[:cfg.k]
         if separate:  # the row collection gives at most `row_quota` rows, and only rows that share a term
             rows = [h for h in self.index(cfg, "rows").search(query, cfg.row_quota, allowed) if h.score > 0]
@@ -176,8 +197,9 @@ class System:
             context = top_context(seeds, len(seeds))
         model_wall = sum(c[3] for c in calls)
         cost = {"search_s": round(time.perf_counter() - t0 - model_wall, 4), "model_s": sum(c[0] for c in calls),
-                "calls": len(calls), "prompt_tokens": sum(c[1] for c in calls),
-                "completion_tokens": sum(c[2] for c in calls)}
+                "calls": len(calls), "chat_calls": sum(c[4] == "chat" for c in calls),
+                "prompt_tokens": sum(c[1] for c in calls), "completion_tokens": sum(c[2] for c in calls),
+                "reranker_tokens": (rerank_info or {}).get("reranker_tokens", 0)}
         return {"query": query, "fields": fields, "scope": scope, "hits": hits, "top": [h.chunk_id for h in top],
                 "linked": linked, "context": context, "rerank": rerank_info, "cost": cost}
 
@@ -197,6 +219,7 @@ class System:
         ans = A.parse(resp.content, cfg.contract) if resp.ok else None
         cost = rec["cost"]
         cost.update({"model_s": round(cost["model_s"] + resp.latency_s, 3), "calls": cost["calls"] + 1,
+                     "chat_calls": cost["chat_calls"] + 1,
                      "prompt_tokens": cost["prompt_tokens"] + resp.prompt_tokens,
                      "completion_tokens": cost["completion_tokens"] + resp.completion_tokens})
         rec.update({"model": resp.model, "request_hash": resp.request_hash, "error": resp.error,

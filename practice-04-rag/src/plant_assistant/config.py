@@ -67,6 +67,8 @@ class Profile:
     price_in_per_m: float = 0.0
     price_out_per_m: float = 0.0
     extra_body: dict[str, Any] = field(default_factory=dict)
+    # embedding profiles: an asymmetric model (e5-mistral) embeds a question with an instruction, documents without
+    query_prefix: str = ""
 
     def cost_usd(self, prompt_tokens: int, completion_tokens: int) -> float:
         return (prompt_tokens * self.price_in_per_m + completion_tokens * self.price_out_per_m) / 1e6

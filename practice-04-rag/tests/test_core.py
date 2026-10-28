@@ -391,3 +391,51 @@ def test_cost_columns(system, cases):
     recs = system.run([c for c in cases if c.slice == "conflict"], CONFIGS["M3@S6"], progress=False)
     c = cost(recs)
     assert c["model calls / question"] == 2 and c["prompt tokens / question"] > 1000
+
+
+# ---------------------------------------------------------------------------------------------
+# Mechanisms on the course server: the e5 instruction and the /rerank response (offline)
+# ---------------------------------------------------------------------------------------------
+def test_query_instruction_for_e5(cases):
+    from plant_assistant.config import get_profile
+    from plant_assistant.crossencoder import query_text
+
+    prefix = get_profile("embed-course").query_prefix
+    assert prefix.startswith("Instruct: ") and prefix.endswith("\nQuery: ")
+    q = "Насос P-101 вибрирует 4,8 мм/с. Это норма?"
+    assert query_text(q, prefix) == prefix + q and query_text(q) == q  # documents: no instruction
+    store = VectorStore(REPLAY_DIR / "vectors" / "e5-mistral")
+    assert store.query_prefix == prefix and cases[0].query in store.queries  # saved under the bare question
+    assert not any(k.startswith("Instruct") for k in store.queries)
+    assert len(store.latency) == len(store.queries) and store.chunk_vectors.shape[1] == 4096
+
+
+def test_parse_rerank_response():
+    from plant_assistant.crossencoder import parse_rerank, rerank_request, server_root
+
+    body = json.dumps({"results": [{"index": 2, "relevance_score": 0.9}, {"index": 0, "relevance_score": 0.1},
+                                   {"index": 1, "relevance_score": 0.5}]})
+    assert parse_rerank(body, 3) == [2, 1, 0]
+    assert parse_rerank(json.dumps({"results": [{"index": 1, "relevance_score": 0.3}]}), 3) == [1, 0, 2]
+    assert parse_rerank(json.dumps({"results": [{"index": 7, "relevance_score": 1.0}]}), 2) == [0, 1]
+    assert parse_rerank("not json", 3) is None and parse_rerank(json.dumps({"data": []}), 3) is None
+    assert server_root("https://llm.example.org/v1/") == "https://llm.example.org"
+    msgs = rerank_request("q", ["a", "b"])
+    assert [m["role"] for m in msgs] == ["query", "document", "document"]
+
+
+def test_mechanism_rows_replay(system, cases):
+    """Dense, hybrid and the cross-encoder from the saved vectors and answers reproduce the reference."""
+    from plant_assistant.llm import ReplayClient
+
+    sysm = System(system.chunks, answer_client=system.answer_client, rerank_client=system.rerank_client,
+                  cross_client=ReplayClient(REPLAY_DIR / "crossencoder_course.jsonl"),
+                  vectors=VectorStore(REPLAY_DIR / "vectors" / "e5-mistral"))
+    ref = pd.read_csv(REFERENCE_DIR / "per_question.csv")
+    for name in ("M1@S0", "M2@S6", "M4@S6"):
+        df = score(cases, sysm.run(cases, CONFIGS[name], progress=False), sysm.by_id)
+        theirs = ref[ref.config == name].set_index("case_id")
+        assert list(df.set_index("case_id")["correct"]) == list(theirs.loc[df.case_id, "correct"]), name
+    rec = sysm.run_case(next(c for c in cases if c.case_id == "t03"), CONFIGS["M4@S6"])
+    assert rec["cost"]["calls"] == 2 and rec["cost"]["chat_calls"] == 1 and rec["rerank"]["ok"]
+

@@ -215,6 +215,60 @@ h57,holdout,S6,True,True,0.5,True,ok,True,,answered,720,answered,correct
 h67,holdout,S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
 h68,holdout,S6,True,True,0.3333333333333333,True,ok,True,,answered,25 000,answered,correct
 h75,holdout,S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+h01,holdout,M1@S0,True,False,0.5,True,ok,True,,answered,"4,5",answered,correct
+h02,holdout,M1@S0,False,False,0.14285714285714285,False,wrong value,False,search,answered,720,answered,wrong
+h03,holdout,M1@S0,True,True,1.0,True,ok,True,,answered,80,answered,correct
+h04,holdout,M1@S0,True,True,0.5,True,ok,False,,answered,30,answered,correct
+h06,holdout,M1@S0,True,True,0.5,True,ok,False,,answered,12,answered,correct
+h07,holdout,M1@S0,True,False,0.3333333333333333,False,wrong value,False,assembly,answered,"11,2",answered,wrong
+h09,holdout,M1@S0,True,False,1.0,True,ok,True,,answered,"5,6",answered,correct
+h17,holdout,M1@S0,True,True,0.5,True,ok,True,,answered,300,answered,correct
+h19,holdout,M1@S0,True,True,0.5,True,ok,True,,answered,1500,answered,correct
+h20,holdout,M1@S0,True,True,1.0,True,ok,True,,answered,4500,answered,correct
+h22,holdout,M1@S0,False,False,0.07142857142857142,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h23,holdout,M1@S0,False,False,0.058823529411764705,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h25,holdout,M1@S0,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h28,holdout,M1@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+h30,holdout,M1@S0,True,True,0.25,True,ok,True,,answered,"9,0",answered,correct
+h33,holdout,M1@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+h36,holdout,M1@S0,True,True,0.5,True,ok,False,,answered,600,answered,correct
+h39,holdout,M1@S0,True,True,1.0,False,wrong value,False,model,answered,80,answered,wrong
+h48,holdout,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+h50,holdout,M1@S0,,,,False,invented a value,False,model,answered,8,not_in_documents,invented
+h52,holdout,M1@S0,False,False,0.05,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h55,holdout,M1@S0,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h56,holdout,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,500,answered,correct
+h57,holdout,M1@S0,True,True,0.5,False,wrong value,False,model,answered,500,answered,wrong
+h67,holdout,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+h68,holdout,M1@S0,False,False,0.05263157894736842,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h75,holdout,M1@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+h01,holdout,M2@S0,True,False,0.5,True,ok,True,,answered,"4,5",answered,correct
+h02,holdout,M2@S0,False,False,0.07692307692307693,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h03,holdout,M2@S0,True,True,1.0,True,ok,False,,answered,80,answered,correct
+h04,holdout,M2@S0,True,True,0.5,True,ok,False,,answered,30,answered,correct
+h06,holdout,M2@S0,False,False,0.16666666666666666,True,ok,False,,answered,12,answered,correct
+h07,holdout,M2@S0,True,False,0.2,False,wrong value,False,assembly,answered,"11,2",answered,wrong
+h09,holdout,M2@S0,True,False,0.5,True,ok,True,,answered,"5,6",answered,correct
+h17,holdout,M2@S0,True,True,0.5,True,ok,True,,answered,300,answered,correct
+h19,holdout,M2@S0,True,True,1.0,True,ok,True,,answered,1500,answered,correct
+h20,holdout,M2@S0,True,True,1.0,True,ok,True,,answered,4500,answered,correct
+h22,holdout,M2@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h23,holdout,M2@S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,"2,8",answered,wrong
+h25,holdout,M2@S0,False,False,0.14285714285714285,True,ok,False,,answered,"11,2",answered,correct
+h28,holdout,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,80,answered,correct
+h30,holdout,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,"9,0",answered,correct
+h33,holdout,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+h36,holdout,M2@S0,True,True,0.5,True,ok,False,,answered,600,answered,correct
+h39,holdout,M2@S0,True,True,1.0,True,ok,False,,answered,85,answered,correct
+h48,holdout,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+h50,holdout,M2@S0,,,,False,invented a value,False,model,answered,8,not_in_documents,invented
+h52,holdout,M2@S0,False,False,0.07692307692307693,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h55,holdout,M2@S0,False,False,0.1111111111111111,False,wrong value,False,search,answered,"18,0",answered,wrong
+h56,holdout,M2@S0,True,True,1.0,True,ok,True,,answered,500,answered,correct
+h57,holdout,M2@S0,True,True,0.5,True,ok,True,,answered,720,answered,correct
+h67,holdout,M2@S0,,,,False,invented a value,False,model,answered,V,not_in_documents,invented
+h68,holdout,M2@S0,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h75,holdout,M2@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
 h01,holdout,M3@S0,True,True,0.25,True,ok,True,,answered,"4,5",answered,correct
 h02,holdout,M3@S0,False,False,0.0,False,wrong value,False,search,answered,720,answered,wrong
 h03,holdout,M3@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
@@ -242,6 +296,87 @@ h57,holdout,M3@S0,True,True,0.5,True,ok,True,,answered,720,answered,correct
 h67,holdout,M3@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
 h68,holdout,M3@S0,True,True,0.5,True,ok,False,,answered,25 000,answered,correct
 h75,holdout,M3@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+h01,holdout,M4@S0,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+h02,holdout,M4@S0,False,False,0.0,False,wrong value,False,search,answered,720,answered,wrong
+h03,holdout,M4@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+h04,holdout,M4@S0,True,True,0.5,True,ok,False,,answered,30,answered,correct
+h06,holdout,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h07,holdout,M4@S0,True,True,1.0,True,ok,True,,answered,"18,0",answered,correct
+h09,holdout,M4@S0,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+h17,holdout,M4@S0,True,True,0.5,True,ok,True,,answered,300,answered,correct
+h19,holdout,M4@S0,True,True,0.5,True,ok,True,,answered,1500,answered,correct
+h20,holdout,M4@S0,True,True,0.5,True,ok,True,,answered,4500,answered,correct
+h22,holdout,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h23,holdout,M4@S0,True,False,0.3333333333333333,False,wrong value,False,assembly,answered,"2,8",answered,wrong
+h25,holdout,M4@S0,True,True,0.5,True,ok,True,,answered,"11,2",answered,correct
+h28,holdout,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,80,answered,correct
+h30,holdout,M4@S0,True,True,1.0,True,ok,True,,answered,"9,0",answered,correct
+h33,holdout,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+h36,holdout,M4@S0,True,True,0.5,True,ok,False,,answered,600,answered,correct
+h39,holdout,M4@S0,True,True,1.0,True,ok,False,,answered,85,answered,correct
+h48,holdout,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+h50,holdout,M4@S0,,,,False,invented a value,False,model,answered,8,not_in_documents,invented
+h52,holdout,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,"4,5",answered,correct
+h55,holdout,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,"14,0",answered,correct
+h56,holdout,M4@S0,True,True,0.25,True,ok,True,,answered,500,answered,correct
+h57,holdout,M4@S0,True,True,0.25,True,ok,True,,answered,720,answered,correct
+h67,holdout,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+h68,holdout,M4@S0,True,True,0.5,True,ok,False,,answered,25 000,answered,correct
+h75,holdout,M4@S0,True,True,0.3333333333333333,True,ok,False,,answered,5,answered,correct
+h01,holdout,M1@S6,True,False,1.0,False,invalid answer,False,assembly,,,answered,invalid
+h02,holdout,M1@S6,True,True,0.25,True,ok,True,,answered,500,answered,correct
+h03,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+h04,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,30,answered,correct
+h06,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,12,answered,correct
+h07,holdout,M1@S6,True,False,1.0,True,ok,True,,answered,"18,0",answered,correct
+h09,holdout,M1@S6,True,False,1.0,True,ok,True,,answered,"5,6",answered,correct
+h17,holdout,M1@S6,True,True,0.16666666666666666,True,ok,True,,answered,300,answered,correct
+h19,holdout,M1@S6,True,True,0.5,True,ok,True,,answered,1500,answered,correct
+h20,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,4500,answered,correct
+h22,holdout,M1@S6,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h23,holdout,M1@S6,False,True,0.1111111111111111,True,ok,True,,answered,"2,2",answered,correct
+h25,holdout,M1@S6,True,True,0.25,True,ok,True,,answered,"11,2",answered,correct
+h28,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+h30,holdout,M1@S6,True,True,0.5,True,ok,True,,answered,"9,0",answered,correct
+h33,holdout,M1@S6,,,,True,ok,True,,needs_human,,not_in_documents,correct
+h36,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,600,answered,correct
+h39,holdout,M1@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h48,holdout,M1@S6,,,,False,invented a value,False,model,conflict,,not_in_documents,invented
+h50,holdout,M1@S6,,,,False,invented a value,False,model,answered,8,not_in_documents,invented
+h52,holdout,M1@S6,False,True,0.14285714285714285,True,ok,True,,answered,"4,5",answered,correct
+h55,holdout,M1@S6,False,True,0.16666666666666666,True,ok,True,,answered,"14,0",answered,correct
+h56,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+h57,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+h67,holdout,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+h68,holdout,M1@S6,False,True,0.1,True,ok,True,,answered,25 000,answered,correct
+h75,holdout,M1@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+h01,holdout,M2@S6,True,False,1.0,False,invalid answer,False,assembly,,,answered,invalid
+h02,holdout,M2@S6,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h03,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+h04,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,30,answered,correct
+h06,holdout,M2@S6,True,True,0.2,True,ok,True,,answered,12,answered,correct
+h07,holdout,M2@S6,True,True,0.5,True,ok,True,,answered,"18,0",answered,correct
+h09,holdout,M2@S6,True,False,0.5,True,ok,True,,answered,"5,6",answered,correct
+h17,holdout,M2@S6,False,False,0.0,False,wrong value,False,search,answered,250,answered,wrong
+h19,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,1500,answered,correct
+h20,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,4500,answered,correct
+h22,holdout,M2@S6,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h23,holdout,M2@S6,True,True,0.5,True,ok,True,,answered,"2,2",answered,correct
+h25,holdout,M2@S6,True,True,0.3333333333333333,True,ok,True,,answered,"11,2",answered,correct
+h28,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+h30,holdout,M2@S6,True,True,0.5,True,ok,True,,answered,"9,0",answered,correct
+h33,holdout,M2@S6,,,,True,ok,True,,needs_human,,not_in_documents,correct
+h36,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,600,answered,correct
+h39,holdout,M2@S6,False,False,0.0,False,wrong value,False,search,answered,80,answered,wrong
+h48,holdout,M2@S6,,,,True,ok,True,,needs_human,,not_in_documents,correct
+h50,holdout,M2@S6,,,,False,invented a value,False,model,answered,8,not_in_documents,invented
+h52,holdout,M2@S6,False,True,0.14285714285714285,True,ok,True,,answered,"4,5",answered,correct
+h55,holdout,M2@S6,True,True,0.25,True,ok,True,,answered,"14,0",answered,correct
+h56,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+h57,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+h67,holdout,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+h68,holdout,M2@S6,True,True,0.2,True,ok,True,,answered,25 000,answered,correct
+h75,holdout,M2@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
 h01,holdout,M3@S6,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
 h02,holdout,M3@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
 h03,holdout,M3@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
@@ -269,3 +404,30 @@ h57,holdout,M3@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
 h67,holdout,M3@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
 h68,holdout,M3@S6,True,True,1.0,True,ok,True,,answered,25 000,answered,correct
 h75,holdout,M3@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+h01,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+h02,holdout,M4@S6,True,True,0.5,True,ok,True,,answered,500,answered,correct
+h03,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+h04,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,30,answered,correct
+h06,holdout,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h07,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,"18,0",answered,correct
+h09,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+h17,holdout,M4@S6,False,False,0.0,False,wrong value,False,search,answered,250,answered,wrong
+h19,holdout,M4@S6,True,True,0.5,True,ok,True,,answered,1500,answered,correct
+h20,holdout,M4@S6,True,True,0.5,True,ok,True,,answered,4500,answered,correct
+h22,holdout,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h23,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,"2,2",answered,correct
+h25,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,"11,2",answered,correct
+h28,holdout,M4@S6,True,True,0.5,True,ok,True,,answered,80,answered,correct
+h30,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,"9,0",answered,correct
+h33,holdout,M4@S6,,,,True,ok,True,,needs_human,,not_in_documents,correct
+h36,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,600,answered,correct
+h39,holdout,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+h48,holdout,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+h50,holdout,M4@S6,,,,False,invented a value,False,model,answered,8,not_in_documents,invented
+h52,holdout,M4@S6,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
+h55,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,"14,0",answered,correct
+h56,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+h57,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+h67,holdout,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+h68,holdout,M4@S6,True,True,1.0,True,ok,True,,answered,25 000,answered,correct
+h75,holdout,M4@S6,True,True,0.5,True,ok,True,,answered,5,answered,correct

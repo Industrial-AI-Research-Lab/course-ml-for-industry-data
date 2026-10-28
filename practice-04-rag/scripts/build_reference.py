@@ -7,7 +7,8 @@ Only the needs_human set, live, merged into the replay:  uv run python scripts/b
 Steps:
 1. the store (store/ and its committed copy reference/store/) and the retrieval set (data/questions.jsonl);
 2. every configuration of the ladder (S0-S6) and of the mechanism branch on all questions;
-   answers, reranker calls and translations go to the course model (live) or come from data/replay/;
+   answers, reranker calls (LLM and cross-encoder) and translations go to the course server (live) or come from
+   data/replay/; dense rows use the saved vectors data/replay/vectors/e5-mistral.* (scripts/build_vectors.py);
 3. reference/ablation.csv, reference/slices_*.csv, reference/losses.csv, reference/per_question.csv,
    reference/s0_failures.md (five failed answers for task 1 of the lecture) and reference/results.md.
 
@@ -40,18 +41,25 @@ from plant_assistant.config import get_profile  # noqa: E402
 from plant_assistant.corpus import build_corpus  # noqa: E402
 from plant_assistant.jsonl import read_json_records  # noqa: E402
 from plant_assistant.llm import CallLogger, LLMClient, ReplayClient  # noqa: E402
+from plant_assistant.crossencoder import CrossEncoderClient  # noqa: E402
 from plant_assistant.pipeline import CONFIGS, CONFLICT_DEMO, LADDER, PREVIOUS, System  # noqa: E402
+from plant_assistant.search import VectorStore  # noqa: E402
 from plant_assistant import reval  # noqa: E402
 from plant_assistant.store import load_store  # noqa: E402
 
-TASKS = ("answers", "rerank", "translate")
-RUN_CONFIGS = [c.name for c in LADDER] + ["M1t", "M3@S0", "M3@S6"]
-TODO_CONFIGS = {"M1@S0": "S0", "M2@S0": "S0", "M1@S6": "S6", "M2@S6": "S6"}
+TASKS = ("answers", "rerank", "translate", "crossencoder")
+TASK_PROFILES = {"crossencoder": "rerank-course"}  # the other tasks use the course chat profile
+VECTORS = REPLAY_DIR / "vectors" / "e5-mistral"
+MECHANISM_ROWS = ["M1@S0", "M2@S0", "M3@S0", "M4@S0", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
+RUN_CONFIGS = [c.name for c in LADDER] + ["M1t"] + MECHANISM_ROWS
 HOLDOUT_FILE = DATA_DIR / "holdout.jsonl"
-HOLDOUT_CONFIGS = [c.name for c in LADDER] + ["M3@S0", "M3@S6"]
+HOLDOUT_CONFIGS = [c.name for c in LADDER] + MECHANISM_ROWS
 NEEDS_HUMAN_FILE = DATA_DIR / "needs_human.jsonl"
 # S5 has no status field (the simple answer gives a value or none): the row shows what the contract adds
-NEEDS_HUMAN_CONFIGS = ["S5", "S6", "M3@S6"]
+NEEDS_HUMAN_CONFIGS = ["S5", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
+# measured times of the rows already in the reference: a rebuild keeps them (search time on a laptop varies by a
+# millisecond between runs, and the rows did not change)
+TIMING_COLUMNS = ["median s / question", "p90 s", "search ms (median)"]
 # the questions that mixed table rows (S2) broke in the first reference run
 BROKEN_BY_MIXED_ROWS = ["d01", "d02", "d04", "z01", "z02", "z04", "z05", "i02", "g01"]
 
@@ -116,14 +124,14 @@ class ReplayFirst:
 def clients(replay: bool, fresh: bool = False) -> dict:
     if replay:
         return {t: ReplayClient(REPLAY_DIR / f"{t}_course.jsonl") for t in TASKS}
-    profile = get_profile("course")
     out = {}
     for t in TASKS:
         log = RUNS_DIR / "lecturer" / f"{t}.jsonl"
         log.parent.mkdir(parents=True, exist_ok=True)
         log.unlink(missing_ok=True)
         logger = CallLogger(log)
-        live = MemoClient(LLMClient(profile, logger=logger))
+        profile = get_profile(TASK_PROFILES.get(t, "course"))
+        live = MemoClient((CrossEncoderClient if t == "crossencoder" else LLMClient)(profile, logger=logger))
         saved = REPLAY_DIR / f"{t}_course.jsonl"
         out[t] = live if fresh or not saved.exists() else \
             ReplayFirst(ReplayClient(saved, logger=logger, strict=False), live)
@@ -207,6 +215,23 @@ def reason_text(link: str) -> str:
             "model": "every needed chunk was in the context, the answer is still wrong"}[link]
 
 
+MECHANISM_VIEW = ["S0", "M1@S0", "M2@S0", "M3@S0", "M4@S0", "S6", "M1@S6", "M2@S6", "M3@S6", "M4@S6"]
+FOCUS_SLICES = ["language", "point_in_time", "applicability", "conflict", "table_row", "tag_variant", "multi_evidence"]
+
+
+def mechanisms_table(public: pd.DataFrame, h_public: pd.DataFrame, e2e: pd.DataFrame, recall: pd.DataFrame) -> pd.DataFrame:
+    rows = [r for r in MECHANISM_VIEW if r in set(public.config)]
+    t = public.set_index("config").loc[rows, ["vs", "recall@5", "end-to-end", "e2e: fixed / broke", "e2e verdict"]]
+    t["recall@5"] = t["recall@5"].str.extract(r"= (\d+%)")[0]
+    t["end-to-end"] = t["end-to-end"].str.extract(r"= (\d+%)")[0]
+    t["language recall@5"] = recall.loc[rows, "language"]
+    for s in FOCUS_SLICES:
+        t[s] = e2e.loc[rows, s]
+    h = h_public.set_index("config")
+    t["holdout"] = [h.loc[r, "end-to-end"].split(" [")[0] if r in h.index else "" for r in rows]
+    return t.fillna("")
+
+
 def needs_human_table(scores: dict[str, pd.DataFrame], records: dict[str, list[dict]]) -> pd.DataFrame:
     """Status per question and configuration on the needs_human set, with the summary row. An invalid answer
     shows why the model stopped (finish reason "length": the token limit)."""
@@ -244,12 +269,13 @@ def main() -> None:
         _, chunks = load_store(STORE_DIR)
         cl = clients(False)
         system = System(chunks, answer_client=cl["answers"], rerank_client=cl["rerank"],
-                        translate_client=cl["translate"])
+                        translate_client=cl["translate"], cross_client=cl["crossencoder"],
+                        vectors=VectorStore(VECTORS) if VECTORS.with_suffix(".npz").exists() else None)
         nh = load_cases(NEEDS_HUMAN_FILE)
         for name in NEEDS_HUMAN_CONFIGS:
             df = reval.score(nh, system.run(nh, CONFIGS[name], workers=6, progress=False), system.by_id)
             print(name, df[["case_id", "status", "value", "correct"]].to_string(index=False))
-        for t in ("answers", "rerank"):
+        for t in ("answers", "rerank", "crossencoder"):
             print(f"replay {t}:", compact_replay(RUNS_DIR / "lecturer" / f"{t}.jsonl", REPLAY_DIR / f"{t}_course.jsonl",
                                                  merge=True))
         return
@@ -268,8 +294,14 @@ def main() -> None:
     _, chunks = load_store(STORE_DIR)
     cases = load_cases()
     cl = clients(args.replay, args.fresh)
-    system = System(chunks, answer_client=cl["answers"], rerank_client=cl["rerank"], translate_client=cl["translate"])
+    vectors = VectorStore(VECTORS) if VECTORS.with_suffix(".npz").exists() else None
+    if vectors:
+        vectors.check(summary["index_version"])
+    system = System(chunks, answer_client=cl["answers"], rerank_client=cl["rerank"], translate_client=cl["translate"],
+                    cross_client=cl["crossencoder"], vectors=vectors)
     holdout = load_cases(HOLDOUT_FILE)
+    if vectors is None:  # no vectors: the dense rows stay TODO
+        args.configs = [c for c in args.configs if CONFIGS[c].retriever == "bm25"]
 
     records, scores, h_records, h_scores = {}, {}, {}, {}
     for name in args.configs:
@@ -297,10 +329,6 @@ def main() -> None:
 
     REFERENCE_DIR.mkdir(exist_ok=True)
     table = reval.ablation(scores, PREVIOUS)
-    for name, base in TODO_CONFIGS.items():
-        table = pd.concat([table, pd.DataFrame([{"config": name, "n": "TODO",
-                                                 "recall@5": "TODO: no embedding vectors yet (see README)",
-                                                 "vs": base}])], ignore_index=True)
     public = table[[c for c in table.columns if not c.startswith("_")]]
     public.to_csv(REFERENCE_DIR / "ablation.csv", index=False)
     slices_e2e = reval.by_slice(scores, "correct")
@@ -314,6 +342,10 @@ def main() -> None:
     losses.to_csv(REFERENCE_DIR / "losses.csv")
     pd.concat(scores.values()).to_csv(REFERENCE_DIR / "per_question.csv", index=False)
     costs = reval.cost_table(records)
+    if (REFERENCE_DIR / "cost.csv").exists():
+        old = pd.read_csv(REFERENCE_DIR / "cost.csv", index_col="config")
+        keep = [c for c in costs.index if c in old.index]
+        costs.loc[keep, TIMING_COLUMNS] = old.loc[keep, TIMING_COLUMNS].values
     costs.to_csv(REFERENCE_DIR / "cost.csv")
     h_table = reval.ablation(h_scores, PREVIOUS)
     h_public = h_table[[c for c in h_table.columns if not c.startswith("_") and c not in ("abstain ok", "conflict ok")]]
@@ -352,8 +384,10 @@ def main() -> None:
         f"- Store: {summary['documents']} documents, {summary['pages']} pages, {summary['chunks']} chunks "
         f"({summary['table_rows']} of them rows of the long valve table); index version `{summary['index_version']}`.",
         f"- Retrieval set: {len(cases)} questions; by slice: {counts_by_slice(cases)}.",
-        "- Dense search (M1, M2) is **not measured yet**: the course server has no embedding model and this machine "
-        "had no Ollama. The code path and the replay format are ready (README, 'Dense search').",
+        "- Mechanisms (28.10.2026, the course server, lecturer's key): dense search with `iairlab/e5-mistral-7b-instruct` "
+        "(4096-dim; questions with the instruction, documents without; vectors in `data/replay/vectors/e5-mistral.*`), "
+        "hybrid = RRF of the BM25 and dense top-20, the LLM reranker (M3, course Qwen, listwise) and the cross-encoder "
+        "`iairlab/bge-reranker-v2-m3` (M4, `/rerank`), both over the top-20 of the row they are added to.",
         "",
         "## Ablation table",
         "",
@@ -364,6 +398,13 @@ def main() -> None:
         "(S3+) are not search: they count in evidence recall, not in recall@5.",
         "",
         md_table(public.fillna("")),
+        "",
+        "## Mechanisms against plant knowledge",
+        "",
+        "Each mechanism at two points: instead of plant knowledge (on S0) and on top of it (on S6), compared in pairs "
+        "with S0 or S6. End-to-end by slice in counts; the holdout column is end-to-end on the 27 role questions.",
+        "",
+        md_table(mechanisms_table(public, h_public, slices_e2e, slices_recall), index=True),
         "",
         "## How the rows fail: refusing against inventing",
         "",

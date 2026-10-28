@@ -255,7 +255,8 @@ def gate(baseline: pd.DataFrame, candidate: pd.DataFrame, metric: str = "correct
 
 def cost(records: list[dict]) -> dict:
     """Latency and cost per question: median seconds (search measured here + model latency as measured when the
-    answer was made), model calls, tokens. A replayed answer keeps the latency of the live call."""
+    answer was made), model calls (all: chat, embedding of the question, cross-encoder) and chat calls, chat tokens,
+    cross-encoder tokens. A replayed answer keeps the latency of the live call."""
     c = [r["cost"] for r in records if r.get("cost")]
     if not c:
         return {}
@@ -263,8 +264,11 @@ def cost(records: list[dict]) -> dict:
     return {"median s / question": round(float(secs.median()), 2), "p90 s": round(float(secs.quantile(0.9)), 2),
             "search ms (median)": round(1000 * float(pd.Series([x["search_s"] for x in c]).median()), 1),
             "model calls / question": round(sum(x["calls"] for x in c) / len(c), 2),
+            "chat calls / question": round(sum(x.get("chat_calls", x["calls"]) for x in c) / len(c), 2),
             "prompt tokens / question": round(sum(x["prompt_tokens"] for x in c) / len(c)),
-            "completion tokens / question": round(sum(x["completion_tokens"] for x in c) / len(c))}
+            "completion tokens / question": round(sum(x["completion_tokens"] for x in c) / len(c)),
+            # chat tokens above; the cross-encoder reads its own tokens (no chat model, no generation)
+            "cross-encoder tokens / question": round(sum(x.get("reranker_tokens", 0) for x in c) / len(c))}
 
 
 def cost_table(records: dict[str, list[dict]]) -> pd.DataFrame:

@@ -1163,6 +1163,292 @@ en-z01,language,M1t,True,True,0.2,True,ok,True,,answered,50,answered,correct
 en-z04,language,M1t,False,False,0.16666666666666666,True,ok,False,,answered,37,answered,correct
 en-n01,language,M1t,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
 en-n05,language,M1t,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+t01,base,M1@S0,True,True,1.0,True,ok,True,,answered,"2,8",answered,correct
+t02,base,M1@S0,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t03,base,M1@S0,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t04,base,M1@S0,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+t05,base,M1@S0,True,True,0.25,True,ok,True,,answered,"7,1",answered,correct
+t06,base,M1@S0,True,True,1.0,True,ok,True,,answered,"11,2",answered,correct
+t07,base,M1@S0,True,True,1.0,True,ok,False,,answered,"11,2",answered,correct
+t08,base,M1@S0,True,True,1.0,True,ok,True,,answered,"18,0",answered,correct
+t09,base,M1@S0,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+t10,base,M1@S0,True,True,1.0,True,ok,True,,answered,"9,0",answered,correct
+a01,base,M1@S0,False,False,0.16666666666666666,True,ok,False,,answered,250,answered,correct
+a02,base,M1@S0,False,False,0.16666666666666666,True,ok,False,,answered,30,answered,correct
+a03,base,M1@S0,True,True,0.5,True,ok,False,,answered,11,answered,correct
+a04,base,M1@S0,False,False,0.16666666666666666,True,ok,False,,answered,400,answered,correct
+c01,base,M1@S0,False,False,0.09090909090909091,False,wrong value,False,search,answered,"18,0",answered,wrong
+c02,base,M1@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+c03,base,M1@S0,True,True,0.5,True,ok,False,,answered,12,answered,correct
+c04,base,M1@S0,True,True,0.3333333333333333,True,ok,False,,answered,30,answered,correct
+c05,base,M1@S0,True,True,0.5,True,ok,False,,answered,24,answered,correct
+c06,base,M1@S0,True,True,1.0,True,ok,True,,answered,500,answered,correct
+c07,base,M1@S0,True,True,0.5,True,ok,False,,answered,8,answered,correct
+c08,base,M1@S0,True,True,0.5,True,ok,False,,answered,15,answered,correct
+c09,base,M1@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+c10,base,M1@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+c11,base,M1@S0,True,True,0.5,True,ok,False,,answered,1,answered,correct
+c12,base,M1@S0,True,True,0.3333333333333333,True,ok,False,,answered,2000,answered,correct
+c13,base,M1@S0,True,True,0.5,True,ok,False,,answered,"0,05",answered,correct
+c14,base,M1@S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+c15,base,M1@S0,True,True,0.2,True,ok,False,,answered,5,answered,correct
+c16,base,M1@S0,True,True,0.5,True,ok,False,,answered,600,answered,correct
+c17,base,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,1000,answered,correct
+d01,base,M1@S0,True,True,0.5,True,ok,True,,answered,65,answered,correct
+d02,base,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,125,answered,correct
+d03,base,M1@S0,True,True,0.5,True,ok,True,,answered,2950,answered,correct
+d04,base,M1@S0,True,True,0.5,True,ok,False,,answered,55,answered,correct
+d05,base,M1@S0,True,True,0.2,True,ok,True,,answered,640,answered,correct
+d06,base,M1@S0,True,True,0.5,True,ok,True,,answered,2019,answered,correct
+z01,base,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+z02,base,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+z03,base,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+z04,base,M1@S0,True,True,0.5,True,ok,False,,answered,37,answered,correct
+z05,base,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+n01,base,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n02,base,M1@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n03,base,M1@S0,,,,False,invented a value,False,model,answered,720,not_in_documents,invented
+n04,base,M1@S0,,,,False,invented a value,False,model,answered,"0,05",not_in_documents,invented
+n05,base,M1@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n06,base,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n07,base,M1@S0,,,,False,invented a value,False,model,answered,"4,0",not_in_documents,invented
+n08,base,M1@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+en-t03,language,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,"4,5",answered,correct
+en-t04,language,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,"7,1",answered,correct
+en-t09,language,M1@S0,True,True,0.25,True,ok,True,,answered,"5,6",answered,correct
+en-a01,language,M1@S0,True,True,0.3333333333333333,True,ok,False,,answered,250,answered,correct
+en-a03,language,M1@S0,True,True,0.3333333333333333,True,ok,False,,answered,11,answered,correct
+en-c01,language,M1@S0,True,True,0.25,True,ok,False,,answered,100,answered,correct
+en-c02,language,M1@S0,True,True,0.25,True,ok,False,,answered,5,answered,correct
+en-c05,language,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,24,answered,correct
+en-c06,language,M1@S0,True,True,1.0,True,ok,True,,answered,500,answered,correct
+en-c08,language,M1@S0,True,True,0.5,True,ok,False,,answered,15,answered,correct
+en-c09,language,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,80,answered,correct
+en-c11,language,M1@S0,True,True,0.3333333333333333,True,ok,False,,answered,1,answered,correct
+en-c12,language,M1@S0,True,True,0.2,True,ok,False,,answered,2000,answered,correct
+en-c14,language,M1@S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-d01,language,M1@S0,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-d04,language,M1@S0,False,False,0.1111111111111111,False,wrong value,False,search,answered,37,answered,wrong
+en-z01,language,M1@S0,True,True,1.0,True,ok,True,,answered,50,answered,correct
+en-z04,language,M1@S0,True,True,0.5,True,ok,True,,answered,37,answered,correct
+en-n01,language,M1@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+en-n05,language,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+p01,applicability,M1@S0,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+p02,applicability,M1@S0,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+p03,applicability,M1@S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+p04,applicability,M1@S0,True,False,0.25,False,wrong value,False,assembly,answered,"4,5",answered,wrong
+p05,applicability,M1@S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,"4,5",answered,wrong
+p06,applicability,M1@S0,True,False,0.25,False,wrong value,False,assembly,answered,"4,5",answered,wrong
+p07,applicability,M1@S0,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+p08,applicability,M1@S0,True,False,0.2,True,ok,True,,answered,"7,1",answered,correct
+p09,applicability,M1@S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+p10,applicability,M1@S0,True,False,0.25,True,ok,True,,answered,"5,6",answered,correct
+p11,applicability,M1@S0,True,True,0.25,True,ok,True,,answered,II,answered,correct
+p12,applicability,M1@S0,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+v01,point_in_time,M1@S0,True,True,0.25,False,wrong value,False,model,answered,720,answered,wrong
+v02,point_in_time,M1@S0,True,True,0.5,False,wrong value,False,model,answered,500,answered,wrong
+v03,point_in_time,M1@S0,True,True,1.0,True,ok,True,,answered,500,answered,correct
+v04,point_in_time,M1@S0,True,True,0.5,False,wrong value,False,model,answered,500,answered,wrong
+v05,point_in_time,M1@S0,True,False,0.2,False,wrong value,False,assembly,answered,"4,5",answered,wrong
+v06,point_in_time,M1@S0,True,False,0.25,True,ok,True,,answered,"4,5",answered,correct
+v07,point_in_time,M1@S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,80,answered,wrong
+v08,point_in_time,M1@S0,True,True,1.0,True,ok,True,,answered,80,answered,correct
+v09,point_in_time,M1@S0,True,True,0.3333333333333333,False,wrong value,False,model,answered,500,answered,wrong
+v10,point_in_time,M1@S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+i01,incident,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+i02,incident,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+i03,incident,M1@S0,True,True,1.0,True,ok,True,,answered,500,answered,correct
+w01,what_changed,M1@S0,False,False,0.058823529411764705,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+w02,what_changed,M1@S0,True,True,0.25,False,missing ['720'],False,model,answered,500,answered,wrong
+w03,what_changed,M1@S0,False,False,0.25,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+w04,what_changed,M1@S0,True,True,0.25,True,ok,True,,answered,500,answered,correct
+m01,multi_evidence,M1@S0,False,False,0.0,False,missing ['24'],False,search,answered,"4,5",answered,wrong
+m02,multi_evidence,M1@S0,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+m03,multi_evidence,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+m04,multi_evidence,M1@S0,False,False,0.0,False,missing ['24'],False,search,answered,"11,2",answered,wrong
+m05,multi_evidence,M1@S0,False,False,0.16666666666666666,True,ok,False,,answered,1,answered,correct
+m06,multi_evidence,M1@S0,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8,answered,wrong
+m07,multi_evidence,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+m08,multi_evidence,M1@S0,True,False,0.25,True,ok,True,,answered,"4,5",answered,correct
+k01,cross_doc,M1@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+k02,cross_doc,M1@S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+k03,cross_doc,M1@S0,False,False,0.05263157894736842,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+f01,conflict,M1@S0,False,False,0.25,False,"status not_in_documents, expected conflict",False,search,not_in_documents,,conflict,false refusal
+f02,conflict,M1@S0,False,False,0.25,False,"status not_in_documents, expected conflict",False,search,not_in_documents,,conflict,false refusal
+f03,conflict,M1@S0,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"4,5",conflict,wrong
+f04,conflict,M1@S0,False,False,0.2,False,"status answered, expected conflict",False,search,answered,"11,2",conflict,wrong
+f05,conflict,M1@S0,True,True,0.3333333333333333,False,"status answered, expected conflict",False,model,answered,3000,conflict,wrong
+f06,conflict,M1@S0,True,True,0.25,False,"status answered, expected conflict",False,model,answered,3000,conflict,wrong
+f07,conflict,M1@S0,True,True,0.5,False,"status answered, expected conflict",False,model,answered,"0,05",conflict,wrong
+f08,conflict,M1@S0,True,True,0.5,False,"status answered, expected conflict",False,model,answered,0.08,conflict,wrong
+f09,conflict,M1@S0,False,False,0.2,False,"status answered, expected conflict",False,search,answered,25 000,conflict,wrong
+r01,table_row,M1@S0,True,True,0.25,True,ok,True,,answered,"1,6",answered,correct
+r02,table_row,M1@S0,True,True,1.0,True,ok,True,,answered,100,answered,correct
+r03,table_row,M1@S0,True,True,0.5,True,ok,True,,answered,"4,0",answered,correct
+r04,table_row,M1@S0,True,True,1.0,True,ok,True,,answered,250,answered,correct
+r05,table_row,M1@S0,True,True,1.0,True,ok,True,,answered,"2,5",answered,correct
+r06,table_row,M1@S0,True,True,1.0,True,ok,True,,answered,50,answered,correct
+r07,table_row,M1@S0,True,True,1.0,True,ok,True,,answered,300,answered,correct
+r08,table_row,M1@S0,True,True,1.0,True,ok,True,,answered,80,answered,correct
+g01,tag_variant,M1@S0,True,True,0.5,True,ok,False,,answered,55,answered,correct
+g02,tag_variant,M1@S0,True,True,0.5,True,ok,True,,answered,65,answered,correct
+g03,tag_variant,M1@S0,True,True,1.0,True,ok,True,,answered,45,answered,correct
+g04,tag_variant,M1@S0,True,True,0.5,True,ok,True,,answered,"2,5",answered,correct
+g05,tag_variant,M1@S0,True,True,0.25,True,ok,True,,answered,2019,answered,correct
+g06,tag_variant,M1@S0,True,True,0.3333333333333333,True,ok,True,,answered,32,answered,correct
+x01,not_in_documents,M1@S0,,,,False,invented a value,False,model,answered,"1,6",not_in_documents,invented
+x02,not_in_documents,M1@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+x03,not_in_documents,M1@S0,,,,False,invented a value,False,model,answered,"1,6",not_in_documents,invented
+x04,not_in_documents,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x05,not_in_documents,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x06,not_in_documents,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x07,not_in_documents,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x08,not_in_documents,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x09,not_in_documents,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x10,not_in_documents,M1@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+t01,base,M2@S0,True,True,0.5,True,ok,True,,answered,"2,8",answered,correct
+t02,base,M2@S0,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
+t03,base,M2@S0,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
+t04,base,M2@S0,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+t05,base,M2@S0,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+t06,base,M2@S0,True,True,0.5,True,ok,False,,answered,"11,2",answered,correct
+t07,base,M2@S0,True,True,0.5,True,ok,True,,answered,"11,2",answered,correct
+t08,base,M2@S0,True,True,0.5,True,ok,False,,answered,"18,0",answered,correct
+t09,base,M2@S0,True,True,0.5,True,ok,False,,answered,"5,6",answered,correct
+t10,base,M2@S0,True,True,0.5,True,ok,False,,answered,"9,0",answered,correct
+a01,base,M2@S0,True,True,0.2,True,ok,False,,answered,250,answered,correct
+a02,base,M2@S0,False,False,0.16666666666666666,True,ok,False,,answered,30,answered,correct
+a03,base,M2@S0,True,True,0.5,True,ok,False,,answered,11,answered,correct
+a04,base,M2@S0,True,True,0.2,True,ok,False,,answered,400,answered,correct
+c01,base,M2@S0,False,False,0.14285714285714285,True,ok,False,,answered,100,answered,correct
+c02,base,M2@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+c03,base,M2@S0,True,True,0.5,True,ok,False,,answered,12,answered,correct
+c04,base,M2@S0,True,True,0.5,True,ok,False,,answered,30,answered,correct
+c05,base,M2@S0,True,True,0.5,True,ok,False,,answered,24,answered,correct
+c06,base,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,500,answered,correct
+c07,base,M2@S0,True,True,0.5,True,ok,False,,answered,8,answered,correct
+c08,base,M2@S0,True,True,0.3333333333333333,True,ok,False,,answered,15,answered,correct
+c09,base,M2@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+c10,base,M2@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+c11,base,M2@S0,True,True,0.5,True,ok,False,,answered,1,answered,correct
+c12,base,M2@S0,True,True,0.5,True,ok,False,,answered,2000,answered,correct
+c13,base,M2@S0,True,True,0.3333333333333333,True,ok,False,,answered,"0,05",answered,correct
+c14,base,M2@S0,True,True,0.3333333333333333,True,ok,False,,answered,25 000,answered,correct
+c15,base,M2@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+c16,base,M2@S0,True,True,0.5,True,ok,False,,answered,600,answered,correct
+c17,base,M2@S0,True,True,0.5,True,ok,False,,answered,1000,answered,correct
+d01,base,M2@S0,True,True,0.5,True,ok,True,,answered,65,answered,correct
+d02,base,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,125,answered,correct
+d03,base,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,2950,answered,correct
+d04,base,M2@S0,True,True,0.5,True,ok,False,,answered,55,answered,correct
+d05,base,M2@S0,True,True,0.5,True,ok,True,,answered,640,answered,correct
+d06,base,M2@S0,True,True,0.5,True,ok,True,,answered,2019,answered,correct
+z01,base,M2@S0,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+z02,base,M2@S0,False,False,0.06666666666666667,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+z03,base,M2@S0,False,False,0.058823529411764705,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+z04,base,M2@S0,True,True,0.5,True,ok,False,,answered,37,answered,correct
+z05,base,M2@S0,False,False,0.07142857142857142,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+n01,base,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n02,base,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n03,base,M2@S0,,,,False,invented a value,False,model,answered,500,not_in_documents,invented
+n04,base,M2@S0,,,,False,invented a value,False,model,answered,"0,05",not_in_documents,invented
+n05,base,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n06,base,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n07,base,M2@S0,,,,False,invented a value,False,model,answered,"1,0",not_in_documents,invented
+n08,base,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-t03,language,M2@S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-t04,language,M2@S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-t09,language,M2@S0,False,False,0.1,True,ok,False,,answered,"5,6",answered,correct
+en-a01,language,M2@S0,True,True,0.25,True,ok,False,,answered,250,answered,correct
+en-a03,language,M2@S0,True,True,0.5,True,ok,True,,answered,11,answered,correct
+en-c01,language,M2@S0,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c02,language,M2@S0,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c05,language,M2@S0,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c06,language,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,500,answered,correct
+en-c08,language,M2@S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c09,language,M2@S0,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c11,language,M2@S0,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c12,language,M2@S0,False,False,0.1,False,wrong value,False,search,answered,3000,answered,wrong
+en-c14,language,M2@S0,False,False,0.05555555555555555,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-d01,language,M2@S0,False,False,0.14285714285714285,False,wrong value,False,search,answered,50,answered,wrong
+en-d04,language,M2@S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,37,answered,wrong
+en-z01,language,M2@S0,True,True,0.5,True,ok,True,,answered,50,answered,correct
+en-z04,language,M2@S0,True,True,0.5,True,ok,True,,answered,37,answered,correct
+en-n01,language,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+en-n05,language,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+p01,applicability,M2@S0,False,False,0.16666666666666666,False,"missing ['3,5']",False,search,answered,"2,8",answered,wrong
+p02,applicability,M2@S0,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,"2,8",answered,wrong
+p03,applicability,M2@S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,"4,5",answered,wrong
+p04,applicability,M2@S0,True,False,0.25,False,wrong value,False,assembly,answered,"4,5",answered,wrong
+p05,applicability,M2@S0,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+p06,applicability,M2@S0,False,False,0.16666666666666666,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+p07,applicability,M2@S0,True,False,0.2,False,"missing ['3,5']",False,assembly,answered,"4,5",answered,wrong
+p08,applicability,M2@S0,True,False,0.2,True,ok,True,,answered,"7,1",answered,correct
+p09,applicability,M2@S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,"4,5",answered,wrong
+p10,applicability,M2@S0,True,False,0.25,True,ok,True,,answered,"5,6",answered,correct
+p11,applicability,M2@S0,True,True,0.25,True,ok,False,,answered,II,answered,correct
+p12,applicability,M2@S0,False,False,0.16666666666666666,False,"missing ['3,5']",False,search,answered,"2,8",answered,wrong
+v01,point_in_time,M2@S0,True,True,0.5,True,ok,True,,answered,1000,answered,correct
+v02,point_in_time,M2@S0,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v03,point_in_time,M2@S0,True,True,0.25,True,ok,True,,answered,500,answered,correct
+v04,point_in_time,M2@S0,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v05,point_in_time,M2@S0,True,False,0.25,False,wrong value,False,assembly,answered,"4,5",answered,wrong
+v06,point_in_time,M2@S0,True,False,0.2,True,ok,True,,answered,"4,5",answered,correct
+v07,point_in_time,M2@S0,True,True,0.2,True,ok,True,,answered,85,answered,correct
+v08,point_in_time,M2@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+v09,point_in_time,M2@S0,True,True,0.3333333333333333,False,wrong value,False,model,answered,500,answered,wrong
+v10,point_in_time,M2@S0,True,False,0.2,False,status not_in_documents,False,assembly,not_in_documents,,answered,false refusal
+i01,incident,M2@S0,False,False,0.08333333333333333,False,"missing ['5,0']",False,search,answered,24,answered,wrong
+i02,incident,M2@S0,False,False,0.07142857142857142,False,"missing ['4,5']",False,search,answered,24,answered,wrong
+i03,incident,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,500,answered,correct
+w01,what_changed,M2@S0,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+w02,what_changed,M2@S0,True,True,0.3333333333333333,True,ok,True,,answered,500,answered,correct
+w03,what_changed,M2@S0,False,False,0.2,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+w04,what_changed,M2@S0,False,False,0.08333333333333333,False,missing ['720'],False,search,answered,500,answered,wrong
+m01,multi_evidence,M2@S0,False,False,0.0,False,missing ['24'],False,search,answered,"4,5",answered,wrong
+m02,multi_evidence,M2@S0,True,False,1.0,True,ok,True,,answered,"7,1",answered,correct
+m03,multi_evidence,M2@S0,False,False,0.0,False,"missing ['2,8', '24']",False,search,answered,7,answered,wrong
+m04,multi_evidence,M2@S0,False,False,0.0,False,missing ['24'],False,search,answered,"11,2",answered,wrong
+m05,multi_evidence,M2@S0,True,False,0.5,True,ok,False,,answered,1,answered,correct
+m06,multi_evidence,M2@S0,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8,answered,wrong
+m07,multi_evidence,M2@S0,False,False,0.0,False,missing ['24'],False,search,answered,"3,5",answered,wrong
+m08,multi_evidence,M2@S0,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,"5,0",answered,wrong
+k01,cross_doc,M2@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+k02,cross_doc,M2@S0,False,False,0.0625,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+k03,cross_doc,M2@S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+f01,conflict,M2@S0,False,False,0.5,False,"status not_in_documents, expected conflict",False,search,not_in_documents,,conflict,false refusal
+f02,conflict,M2@S0,False,False,0.25,False,"status answered, expected conflict",False,search,answered,"4,5",conflict,wrong
+f03,conflict,M2@S0,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"4,5",conflict,wrong
+f04,conflict,M2@S0,False,False,0.5,False,"status answered, expected conflict",False,search,answered,"11,2",conflict,wrong
+f05,conflict,M2@S0,True,True,0.3333333333333333,False,"status answered, expected conflict",False,model,answered,3000,conflict,wrong
+f06,conflict,M2@S0,True,True,0.25,False,"status answered, expected conflict",False,model,answered,3000,conflict,wrong
+f07,conflict,M2@S0,True,True,0.3333333333333333,False,"status answered, expected conflict",False,model,answered,"0,05",conflict,wrong
+f08,conflict,M2@S0,True,True,0.5,False,"status answered, expected conflict",False,model,answered,"0,05",conflict,wrong
+f09,conflict,M2@S0,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,25 000,conflict,wrong
+r01,table_row,M2@S0,True,True,0.5,True,ok,True,,answered,"1,6",answered,correct
+r02,table_row,M2@S0,True,True,1.0,True,ok,True,,answered,100,answered,correct
+r03,table_row,M2@S0,True,True,0.5,True,ok,True,,answered,"4,0",answered,correct
+r04,table_row,M2@S0,True,True,1.0,True,ok,True,,answered,250,answered,correct
+r05,table_row,M2@S0,True,True,1.0,True,ok,True,,answered,"2,5",answered,correct
+r06,table_row,M2@S0,True,True,1.0,True,ok,True,,answered,50,answered,correct
+r07,table_row,M2@S0,True,True,1.0,True,ok,True,,answered,300,answered,correct
+r08,table_row,M2@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+g01,tag_variant,M2@S0,False,False,0.16666666666666666,True,ok,False,,answered,55,answered,correct
+g02,tag_variant,M2@S0,False,False,0.07692307692307693,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+g03,tag_variant,M2@S0,True,True,1.0,True,ok,True,,answered,45,answered,correct
+g04,tag_variant,M2@S0,True,True,0.2,True,ok,True,,answered,"2,5",answered,correct
+g05,tag_variant,M2@S0,False,False,0.09090909090909091,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+g06,tag_variant,M2@S0,False,False,0.08333333333333333,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+x01,not_in_documents,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x02,not_in_documents,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+x03,not_in_documents,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x04,not_in_documents,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x05,not_in_documents,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x06,not_in_documents,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x07,not_in_documents,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x08,not_in_documents,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+x09,not_in_documents,M2@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x10,not_in_documents,M2@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
 t01,base,M3@S0,True,True,0.5,True,ok,False,,answered,"2,8",answered,correct
 t02,base,M3@S0,True,True,0.5,True,ok,False,,answered,"4,5",answered,correct
 t03,base,M3@S0,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
@@ -1306,6 +1592,435 @@ x07,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,c
 x08,not_in_documents,M3@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
 x09,not_in_documents,M3@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
 x10,not_in_documents,M3@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+t01,base,M4@S0,True,True,0.3333333333333333,True,ok,False,,answered,"2,8",answered,correct
+t02,base,M4@S0,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t03,base,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,"4,5",answered,correct
+t04,base,M4@S0,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+t05,base,M4@S0,True,True,1.0,True,ok,False,,answered,"7,1",answered,correct
+t06,base,M4@S0,True,True,1.0,True,ok,False,,answered,"11,2",answered,correct
+t07,base,M4@S0,True,True,0.3333333333333333,True,ok,False,,answered,"11,2",answered,correct
+t08,base,M4@S0,True,True,1.0,True,ok,True,,answered,"18,0",answered,correct
+t09,base,M4@S0,True,True,1.0,True,ok,False,,answered,"5,6",answered,correct
+t10,base,M4@S0,True,True,1.0,True,ok,True,,answered,"9,0",answered,correct
+a01,base,M4@S0,True,True,0.25,True,ok,False,,answered,250,answered,correct
+a02,base,M4@S0,True,True,0.5,True,ok,False,,answered,30,answered,correct
+a03,base,M4@S0,True,True,1.0,True,ok,False,,answered,11,answered,correct
+a04,base,M4@S0,True,True,0.3333333333333333,True,ok,False,,answered,400,answered,correct
+c01,base,M4@S0,True,True,0.5,True,ok,False,,answered,100,answered,correct
+c02,base,M4@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+c03,base,M4@S0,True,True,0.5,True,ok,False,,answered,12,answered,correct
+c04,base,M4@S0,True,True,0.5,True,ok,False,,answered,30,answered,correct
+c05,base,M4@S0,True,True,0.5,True,ok,False,,answered,24,answered,correct
+c06,base,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,500,answered,correct
+c07,base,M4@S0,True,True,0.5,True,ok,False,,answered,8,answered,correct
+c08,base,M4@S0,True,True,0.5,True,ok,False,,answered,15,answered,correct
+c09,base,M4@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+c10,base,M4@S0,True,True,0.5,True,ok,False,,answered,5,answered,correct
+c11,base,M4@S0,True,True,0.5,True,ok,False,,answered,1,answered,correct
+c12,base,M4@S0,True,True,0.5,True,ok,False,,answered,2000,answered,correct
+c13,base,M4@S0,True,True,0.5,True,ok,False,,answered,"0,05",answered,correct
+c14,base,M4@S0,True,True,0.5,True,ok,False,,answered,25 000,answered,correct
+c15,base,M4@S0,True,True,0.5,True,ok,True,,answered,5,answered,correct
+c16,base,M4@S0,True,True,0.5,True,ok,False,,answered,600,answered,correct
+c17,base,M4@S0,True,True,0.5,True,ok,False,,answered,1000,answered,correct
+d01,base,M4@S0,True,True,0.25,True,ok,True,,answered,65,answered,correct
+d02,base,M4@S0,True,True,0.25,True,ok,True,,answered,125,answered,correct
+d03,base,M4@S0,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+d04,base,M4@S0,True,True,0.5,True,ok,False,,answered,55,answered,correct
+d05,base,M4@S0,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+d06,base,M4@S0,True,True,1.0,True,ok,True,,answered,2019,answered,correct
+z01,base,M4@S0,True,True,1.0,True,ok,True,,answered,50,answered,correct
+z02,base,M4@S0,True,True,1.0,True,ok,True,,answered,80,answered,correct
+z03,base,M4@S0,True,True,1.0,True,ok,True,,answered,2900,answered,correct
+z04,base,M4@S0,True,True,1.0,True,ok,False,,answered,37,answered,correct
+z05,base,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,520,answered,correct
+n01,base,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n02,base,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n03,base,M4@S0,,,,False,invented a value,False,model,answered,500,not_in_documents,invented
+n04,base,M4@S0,,,,False,invented a value,False,model,answered,"0,05",not_in_documents,invented
+n05,base,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+n06,base,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n07,base,M4@S0,,,,False,invented a value,False,model,answered,"4,0",not_in_documents,invented
+n08,base,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-t03,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-t04,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-t09,language,M4@S0,False,False,0.0,True,ok,False,,answered,"5,6",answered,correct
+en-a01,language,M4@S0,True,True,0.5,True,ok,False,,answered,250,answered,correct
+en-a03,language,M4@S0,True,True,1.0,True,ok,True,,answered,11,answered,correct
+en-c01,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c02,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c05,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c06,language,M4@S0,True,True,1.0,True,ok,True,,answered,500,answered,correct
+en-c08,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c09,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c11,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c12,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c14,language,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-d01,language,M4@S0,True,True,0.5,True,ok,True,,answered,65,answered,correct
+en-d04,language,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,55,answered,correct
+en-z01,language,M4@S0,True,True,1.0,True,ok,True,,answered,50,answered,correct
+en-z04,language,M4@S0,True,True,1.0,True,ok,True,,answered,37,answered,correct
+en-n01,language,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+en-n05,language,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+p01,applicability,M4@S0,True,False,0.25,False,"missing ['3,5']",False,assembly,answered,"5,0",answered,wrong
+p02,applicability,M4@S0,False,False,0.16666666666666666,False,"missing ['4,5']",False,search,answered,"5,0",answered,wrong
+p03,applicability,M4@S0,True,True,0.3333333333333333,False,wrong value,False,model,answered,"7,1",answered,wrong
+p04,applicability,M4@S0,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+p05,applicability,M4@S0,False,False,0.16666666666666666,False,wrong value,False,search,answered,"2,8",answered,wrong
+p06,applicability,M4@S0,True,False,0.25,True,ok,True,,answered,"2,8",answered,correct
+p07,applicability,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,"3,5",answered,correct
+p08,applicability,M4@S0,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+p09,applicability,M4@S0,True,True,0.5,False,wrong value,False,model,answered,"7,1",answered,wrong
+p10,applicability,M4@S0,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+p11,applicability,M4@S0,True,True,1.0,True,ok,True,,answered,II,answered,correct
+p12,applicability,M4@S0,True,False,0.25,False,"missing ['3,5']",False,assembly,answered,"5,0",answered,wrong
+v01,point_in_time,M4@S0,True,True,0.5,False,wrong value,False,model,answered,720,answered,wrong
+v02,point_in_time,M4@S0,True,True,0.5,True,ok,True,,answered,720,answered,correct
+v03,point_in_time,M4@S0,True,True,0.25,True,ok,True,,answered,500,answered,correct
+v04,point_in_time,M4@S0,True,True,0.5,False,wrong value,False,model,answered,500,answered,wrong
+v05,point_in_time,M4@S0,True,False,0.5,False,wrong value,False,assembly,answered,"4,5",answered,wrong
+v06,point_in_time,M4@S0,True,False,1.0,True,ok,True,,answered,"4,5",answered,correct
+v07,point_in_time,M4@S0,True,True,1.0,False,wrong value,False,model,answered,80,answered,wrong
+v08,point_in_time,M4@S0,True,True,0.5,True,ok,True,,answered,80,answered,correct
+v09,point_in_time,M4@S0,True,True,1.0,False,wrong value,False,model,answered,500,answered,wrong
+v10,point_in_time,M4@S0,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+i01,incident,M4@S0,False,False,0.16666666666666666,False,"missing ['5,0']",False,search,answered,"4,5",answered,wrong
+i02,incident,M4@S0,True,False,0.2,True,ok,True,,answered,"4,5",answered,correct
+i03,incident,M4@S0,True,True,0.25,True,ok,True,,answered,500,answered,correct
+w01,what_changed,M4@S0,True,True,0.3333333333333333,True,ok,True,,answered,"4,5",answered,correct
+w02,what_changed,M4@S0,True,True,0.5,True,ok,True,,answered,720,answered,correct
+w03,what_changed,M4@S0,True,True,1.0,True,ok,True,,answered,80,answered,correct
+w04,what_changed,M4@S0,False,False,0.0,False,missing ['720'],False,search,answered,500,answered,wrong
+m01,multi_evidence,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+m02,multi_evidence,M4@S0,True,False,0.5,True,ok,True,,answered,"7,1",answered,correct
+m03,multi_evidence,M4@S0,False,False,0.0,False,missing ['24'],False,search,answered,"2,8",answered,wrong
+m04,multi_evidence,M4@S0,False,False,0.0,False,missing ['24'],False,search,answered,"11,2",answered,wrong
+m05,multi_evidence,M4@S0,True,False,0.3333333333333333,True,ok,False,,answered,1,answered,correct
+m06,multi_evidence,M4@S0,True,False,0.5,False,"missing ['4,5']",False,assembly,answered,8,answered,wrong
+m07,multi_evidence,M4@S0,False,False,0.0,False,missing ['24'],False,search,answered,"3,5",answered,wrong
+m08,multi_evidence,M4@S0,True,False,0.3333333333333333,True,ok,True,,answered,"4,5",answered,correct
+k01,cross_doc,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+k02,cross_doc,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+k03,cross_doc,M4@S0,False,False,0.14285714285714285,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+f01,conflict,M4@S0,False,False,1.0,False,"status not_in_documents, expected conflict",False,search,not_in_documents,,conflict,false refusal
+f02,conflict,M4@S0,False,False,0.3333333333333333,False,"status not_in_documents, expected conflict",False,search,not_in_documents,,conflict,false refusal
+f03,conflict,M4@S0,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"5,6",conflict,wrong
+f04,conflict,M4@S0,False,False,0.3333333333333333,False,"status answered, expected conflict",False,search,answered,"7,1",conflict,wrong
+f05,conflict,M4@S0,True,True,0.25,False,"status answered, expected conflict",False,model,answered,2000,conflict,wrong
+f06,conflict,M4@S0,True,True,0.5,False,"status answered, expected conflict",False,model,answered,3000,conflict,wrong
+f07,conflict,M4@S0,True,True,0.25,False,"status answered, expected conflict",False,model,answered,"0,05",conflict,wrong
+f08,conflict,M4@S0,True,True,0.5,False,"status answered, expected conflict",False,model,answered,"0,05",conflict,wrong
+f09,conflict,M4@S0,False,False,0.5,False,"status answered, expected conflict",False,search,answered,25 000,conflict,wrong
+r01,table_row,M4@S0,True,True,1.0,True,ok,True,,answered,"1,6",answered,correct
+r02,table_row,M4@S0,True,True,1.0,True,ok,True,,answered,100,answered,correct
+r03,table_row,M4@S0,True,True,0.5,True,ok,True,,answered,"4,0",answered,correct
+r04,table_row,M4@S0,True,True,1.0,True,ok,True,,answered,250,answered,correct
+r05,table_row,M4@S0,True,True,0.5,True,ok,True,,answered,"2,5",answered,correct
+r06,table_row,M4@S0,True,True,1.0,True,ok,True,,answered,50,answered,correct
+r07,table_row,M4@S0,True,True,1.0,True,ok,True,,answered,300,answered,correct
+r08,table_row,M4@S0,True,True,0.25,True,ok,True,,answered,80,answered,correct
+g01,tag_variant,M4@S0,True,True,0.5,True,ok,False,,answered,55,answered,correct
+g02,tag_variant,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+g03,tag_variant,M4@S0,True,True,1.0,True,ok,True,,answered,45,answered,correct
+g04,tag_variant,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+g05,tag_variant,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+g06,tag_variant,M4@S0,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+x01,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x02,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x03,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x04,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x05,not_in_documents,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+x06,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x07,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x08,not_in_documents,M4@S0,,,,True,ok,False,,not_in_documents,,not_in_documents,correct
+x09,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x10,not_in_documents,M4@S0,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+t01,base,M1@S6,True,True,1.0,True,ok,True,,answered,"2,8",answered,correct
+t02,base,M1@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t03,base,M1@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t04,base,M1@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+t05,base,M1@S6,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+t06,base,M1@S6,True,True,1.0,True,ok,True,,answered,"11,2",answered,correct
+t07,base,M1@S6,True,True,1.0,True,ok,True,,answered,"11,2",answered,correct
+t08,base,M1@S6,True,True,1.0,True,ok,True,,answered,"18,0",answered,correct
+t09,base,M1@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+t10,base,M1@S6,True,True,1.0,True,ok,True,,answered,"9,0",answered,correct
+a01,base,M1@S6,True,True,0.5,True,ok,True,,answered,250,answered,correct
+a02,base,M1@S6,True,True,0.5,True,ok,True,,answered,30,answered,correct
+a03,base,M1@S6,True,True,1.0,True,ok,True,,answered,11,answered,correct
+a04,base,M1@S6,True,True,0.5,True,ok,True,,answered,400,answered,correct
+c01,base,M1@S6,True,True,0.25,True,ok,True,,answered,100,answered,correct
+c02,base,M1@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c03,base,M1@S6,True,True,1.0,True,ok,True,,answered,12,answered,correct
+c04,base,M1@S6,True,True,1.0,True,ok,True,,answered,30,answered,correct
+c05,base,M1@S6,True,True,1.0,True,ok,True,,answered,24,answered,correct
+c06,base,M1@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+c07,base,M1@S6,True,True,1.0,True,ok,True,,answered,8,answered,correct
+c08,base,M1@S6,True,True,1.0,True,ok,True,,answered,15,answered,correct
+c09,base,M1@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+c10,base,M1@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c11,base,M1@S6,True,True,1.0,True,ok,True,,answered,1,answered,correct
+c12,base,M1@S6,True,True,1.0,True,ok,True,,answered,2000,answered,correct
+c13,base,M1@S6,True,True,1.0,True,ok,True,,answered,"0,05",answered,correct
+c14,base,M1@S6,True,True,0.25,True,ok,True,,answered,25 000,answered,correct
+c15,base,M1@S6,True,True,0.5,True,ok,True,,answered,5,answered,correct
+c16,base,M1@S6,True,True,1.0,True,ok,True,,answered,600,answered,correct
+c17,base,M1@S6,True,True,0.5,True,ok,True,,answered,1000,answered,correct
+d01,base,M1@S6,True,True,1.0,True,ok,True,,answered,65,answered,correct
+d02,base,M1@S6,True,True,0.5,True,ok,True,,answered,125,answered,correct
+d03,base,M1@S6,True,True,1.0,True,ok,True,,answered,2950,answered,correct
+d04,base,M1@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+d05,base,M1@S6,True,True,0.5,True,ok,True,,answered,640,answered,correct
+d06,base,M1@S6,True,True,1.0,True,ok,True,,answered,2019,answered,correct
+z01,base,M1@S6,False,True,0.06666666666666667,True,ok,True,,answered,50,answered,correct
+z02,base,M1@S6,False,True,0.0,True,ok,True,,answered,80,answered,correct
+z03,base,M1@S6,False,True,0.0,False,invalid answer,False,model,,,answered,invalid
+z04,base,M1@S6,True,True,1.0,True,ok,True,,answered,37,answered,correct
+z05,base,M1@S6,False,True,0.08333333333333333,False,invalid answer,False,model,,,answered,invalid
+n01,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n02,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n03,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n04,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n05,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n06,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n07,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n08,base,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-t03,language,M1@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+en-t04,language,M1@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+en-t09,language,M1@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+en-a01,language,M1@S6,True,True,1.0,True,ok,True,,answered,250,answered,correct
+en-a03,language,M1@S6,True,True,1.0,True,ok,True,,answered,11,answered,correct
+en-c01,language,M1@S6,True,True,1.0,True,ok,True,,answered,100,answered,correct
+en-c02,language,M1@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+en-c05,language,M1@S6,True,True,0.5,True,ok,True,,answered,24,answered,correct
+en-c06,language,M1@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+en-c08,language,M1@S6,True,True,1.0,True,ok,True,,answered,15,answered,correct
+en-c09,language,M1@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+en-c11,language,M1@S6,True,True,1.0,True,ok,True,,answered,1,answered,correct
+en-c12,language,M1@S6,True,True,1.0,True,ok,True,,answered,2000,answered,correct
+en-c14,language,M1@S6,True,True,0.3333333333333333,True,ok,True,,answered,25 000,answered,correct
+en-d01,language,M1@S6,True,True,1.0,True,ok,True,,answered,65,answered,correct
+en-d04,language,M1@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+en-z01,language,M1@S6,True,True,1.0,True,ok,True,,answered,50,answered,correct
+en-z04,language,M1@S6,True,True,0.5,True,ok,True,,answered,37,answered,correct
+en-n01,language,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-n05,language,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+p01,applicability,M1@S6,True,True,0.2,True,ok,True,,answered,"3,5",answered,correct
+p02,applicability,M1@S6,True,True,0.25,True,ok,True,,answered,"4,5",answered,correct
+p03,applicability,M1@S6,True,True,0.3333333333333333,True,ok,True,,answered,"5,6",answered,correct
+p04,applicability,M1@S6,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+p05,applicability,M1@S6,True,True,0.5,True,ok,True,,answered,"2,2",answered,correct
+p06,applicability,M1@S6,True,True,0.5,True,ok,True,,answered,"2,8",answered,correct
+p07,applicability,M1@S6,False,False,0.16666666666666666,False,status needs_human,False,search,needs_human,,answered,false refusal
+p08,applicability,M1@S6,True,False,0.5,True,ok,True,,answered,"7,1",answered,correct
+p09,applicability,M1@S6,True,False,0.3333333333333333,True,ok,False,,answered,"5,6",answered,correct
+p10,applicability,M1@S6,True,False,0.5,True,ok,True,,answered,"5,6",answered,correct
+p11,applicability,M1@S6,True,True,0.5,True,ok,True,,answered,II,answered,correct
+p12,applicability,M1@S6,True,False,0.2,False,status needs_human,False,assembly,needs_human,,answered,false refusal
+v01,point_in_time,M1@S6,True,True,1.0,True,ok,True,,answered,1000,answered,correct
+v02,point_in_time,M1@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v03,point_in_time,M1@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+v04,point_in_time,M1@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v05,point_in_time,M1@S6,True,True,0.5,True,ok,False,,answered,"5,0",answered,correct
+v06,point_in_time,M1@S6,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
+v07,point_in_time,M1@S6,True,True,0.5,True,ok,True,,answered,85,answered,correct
+v08,point_in_time,M1@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+v09,point_in_time,M1@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v10,point_in_time,M1@S6,True,True,0.25,True,ok,True,,answered,"7,1",answered,correct
+i01,incident,M1@S6,False,True,0.08333333333333333,False,invalid answer,False,model,,,answered,invalid
+i02,incident,M1@S6,False,True,0.07692307692307693,True,ok,True,,answered,"4,5",answered,correct
+i03,incident,M1@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+w01,what_changed,M1@S6,False,True,0.09090909090909091,True,ok,True,,answered,"4,5",answered,correct
+w02,what_changed,M1@S6,True,True,0.3333333333333333,False,missing ['720'],False,model,answered,500,answered,wrong
+w03,what_changed,M1@S6,True,True,0.5,True,ok,True,,answered,80,answered,correct
+w04,what_changed,M1@S6,True,True,0.5,True,ok,True,,answered,500,answered,correct
+m01,multi_evidence,M1@S6,False,True,0.0,False,invalid answer,False,model,,,answered,invalid
+m02,multi_evidence,M1@S6,False,False,0.16666666666666666,True,ok,True,,answered,"7,1",answered,correct
+m03,multi_evidence,M1@S6,False,True,0.1,True,ok,True,,answered,24,answered,correct
+m04,multi_evidence,M1@S6,False,True,0.08333333333333333,True,ok,True,,answered,"11,2",answered,correct
+m05,multi_evidence,M1@S6,True,True,0.3333333333333333,True,ok,True,,answered,1,answered,correct
+m06,multi_evidence,M1@S6,True,True,1.0,True,ok,True,,answered,8,answered,correct
+m07,multi_evidence,M1@S6,False,True,0.0,True,ok,False,,answered,"4,0",answered,correct
+m08,multi_evidence,M1@S6,True,True,0.5,True,ok,True,,answered,"2,8",answered,correct
+k01,cross_doc,M1@S6,False,True,0.0,True,ok,True,,answered,4,answered,correct
+k02,cross_doc,M1@S6,False,True,0.16666666666666666,False,invalid answer,False,model,,,answered,invalid
+k03,cross_doc,M1@S6,False,True,0.0,True,ok,True,,answered,4,answered,correct
+f01,conflict,M1@S6,False,True,0.5,True,ok,True,,conflict,,conflict,correct
+f02,conflict,M1@S6,False,True,0.5,True,ok,True,,conflict,,conflict,correct
+f03,conflict,M1@S6,False,True,1.0,True,ok,True,,conflict,"6,0",conflict,correct
+f04,conflict,M1@S6,False,True,0.3333333333333333,True,ok,True,,conflict,,conflict,correct
+f05,conflict,M1@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f06,conflict,M1@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f07,conflict,M1@S6,True,True,1.0,True,ok,True,,conflict,,conflict,correct
+f08,conflict,M1@S6,True,True,1.0,True,ok,True,,conflict,,conflict,correct
+f09,conflict,M1@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+r01,table_row,M1@S6,True,True,0.16666666666666666,True,ok,True,,answered,"1,6",answered,correct
+r02,table_row,M1@S6,False,True,0.0,True,ok,True,,answered,100,answered,correct
+r03,table_row,M1@S6,True,True,0.16666666666666666,True,ok,True,,answered,"4,0",answered,correct
+r04,table_row,M1@S6,True,True,0.14285714285714285,True,ok,True,,answered,250,answered,correct
+r05,table_row,M1@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+r06,table_row,M1@S6,True,True,0.16666666666666666,True,ok,True,,answered,50,answered,correct
+r07,table_row,M1@S6,True,True,0.16666666666666666,True,ok,True,,answered,300,answered,correct
+r08,table_row,M1@S6,True,True,0.16666666666666666,True,ok,True,,answered,80,answered,correct
+g01,tag_variant,M1@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+g02,tag_variant,M1@S6,True,True,1.0,True,ok,True,,answered,65,answered,correct
+g03,tag_variant,M1@S6,True,True,1.0,True,ok,True,,answered,45,answered,correct
+g04,tag_variant,M1@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+g05,tag_variant,M1@S6,True,True,1.0,True,ok,True,,answered,2019,answered,correct
+g06,tag_variant,M1@S6,True,True,0.5,True,ok,True,,answered,32,answered,correct
+x01,not_in_documents,M1@S6,,,,True,ok,True,,needs_human,,not_in_documents,correct
+x02,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x03,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x04,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x05,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x06,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x07,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x08,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x09,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x10,not_in_documents,M1@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+t01,base,M2@S6,True,True,1.0,True,ok,True,,answered,"2,8",answered,correct
+t02,base,M2@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t03,base,M2@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t04,base,M2@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+t05,base,M2@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+t06,base,M2@S6,True,True,1.0,True,ok,True,,answered,"11,2",answered,correct
+t07,base,M2@S6,True,True,1.0,True,ok,True,,answered,"11,2",answered,correct
+t08,base,M2@S6,True,True,1.0,True,ok,True,,answered,"18,0",answered,correct
+t09,base,M2@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+t10,base,M2@S6,True,True,1.0,True,ok,True,,answered,"9,0",answered,correct
+a01,base,M2@S6,True,True,0.5,True,ok,True,,answered,250,answered,correct
+a02,base,M2@S6,True,True,0.3333333333333333,True,ok,True,,answered,30,answered,correct
+a03,base,M2@S6,True,True,0.5,True,ok,True,,answered,11,answered,correct
+a04,base,M2@S6,True,True,0.5,True,ok,True,,answered,400,answered,correct
+c01,base,M2@S6,True,True,0.3333333333333333,True,ok,True,,answered,100,answered,correct
+c02,base,M2@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c03,base,M2@S6,True,True,1.0,True,ok,True,,answered,12,answered,correct
+c04,base,M2@S6,True,True,1.0,True,ok,True,,answered,30,answered,correct
+c05,base,M2@S6,True,True,1.0,True,ok,True,,answered,24,answered,correct
+c06,base,M2@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+c07,base,M2@S6,True,True,1.0,True,ok,True,,answered,8,answered,correct
+c08,base,M2@S6,True,True,1.0,True,ok,True,,answered,15,answered,correct
+c09,base,M2@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+c10,base,M2@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c11,base,M2@S6,True,True,1.0,True,ok,True,,answered,1,answered,correct
+c12,base,M2@S6,True,True,1.0,True,ok,True,,answered,2000,answered,correct
+c13,base,M2@S6,True,True,1.0,True,ok,True,,answered,"0,05",answered,correct
+c14,base,M2@S6,True,True,1.0,True,ok,True,,answered,25 000,answered,correct
+c15,base,M2@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c16,base,M2@S6,True,True,1.0,True,ok,True,,answered,600,answered,correct
+c17,base,M2@S6,True,True,1.0,True,ok,True,,answered,1000,answered,correct
+d01,base,M2@S6,True,True,0.5,True,ok,True,,answered,65,answered,correct
+d02,base,M2@S6,True,True,0.5,True,ok,True,,answered,125,answered,correct
+d03,base,M2@S6,True,True,0.5,True,ok,True,,answered,2950,answered,correct
+d04,base,M2@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+d05,base,M2@S6,True,True,1.0,True,ok,True,,answered,640,answered,correct
+d06,base,M2@S6,True,True,0.5,True,ok,True,,answered,2019,answered,correct
+z01,base,M2@S6,False,True,0.07142857142857142,False,invalid answer,False,model,,,answered,invalid
+z02,base,M2@S6,False,True,0.07142857142857142,False,invalid answer,False,model,,,answered,invalid
+z03,base,M2@S6,False,True,0.07692307692307693,False,invalid answer,False,model,,,answered,invalid
+z04,base,M2@S6,True,True,1.0,True,ok,True,,answered,37,answered,correct
+z05,base,M2@S6,False,True,0.07142857142857142,False,invalid answer,False,model,,,answered,invalid
+n01,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n02,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n03,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n04,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n05,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n06,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n07,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n08,base,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-t03,language,M2@S6,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
+en-t04,language,M2@S6,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+en-t09,language,M2@S6,True,True,0.5,True,ok,True,,answered,"5,6",answered,correct
+en-a01,language,M2@S6,True,True,1.0,True,ok,True,,answered,250,answered,correct
+en-a03,language,M2@S6,True,True,1.0,True,ok,True,,answered,11,answered,correct
+en-c01,language,M2@S6,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c02,language,M2@S6,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c05,language,M2@S6,False,True,0.1,True,ok,True,,answered,24,answered,correct
+en-c06,language,M2@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+en-c08,language,M2@S6,True,True,1.0,True,ok,True,,answered,15,answered,correct
+en-c09,language,M2@S6,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c11,language,M2@S6,False,False,0.1,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c12,language,M2@S6,False,False,0.125,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c14,language,M2@S6,False,False,0.1111111111111111,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-d01,language,M2@S6,True,True,1.0,True,ok,True,,answered,65,answered,correct
+en-d04,language,M2@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+en-z01,language,M2@S6,True,True,0.5,True,ok,True,,answered,50,answered,correct
+en-z04,language,M2@S6,True,True,0.5,True,ok,False,,answered,37,answered,correct
+en-n01,language,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-n05,language,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+p01,applicability,M2@S6,True,True,0.5,True,ok,True,,answered,"3,5",answered,correct
+p02,applicability,M2@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+p03,applicability,M2@S6,True,True,0.5,True,ok,True,,answered,"5,6",answered,correct
+p04,applicability,M2@S6,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+p05,applicability,M2@S6,True,True,0.3333333333333333,True,ok,True,,answered,"2,2",answered,correct
+p06,applicability,M2@S6,True,True,0.3333333333333333,True,ok,True,,answered,"2,8",answered,correct
+p07,applicability,M2@S6,True,True,1.0,True,ok,True,,answered,"3,5",answered,correct
+p08,applicability,M2@S6,True,False,0.5,True,ok,True,,answered,"7,1",answered,correct
+p09,applicability,M2@S6,True,True,0.5,True,ok,True,,answered,"5,6",answered,correct
+p10,applicability,M2@S6,True,False,0.5,True,ok,True,,answered,"5,6",answered,correct
+p11,applicability,M2@S6,True,True,0.5,True,ok,True,,answered,II,answered,correct
+p12,applicability,M2@S6,True,False,0.25,True,ok,True,,answered,"3,5",answered,correct
+v01,point_in_time,M2@S6,True,True,1.0,True,ok,True,,answered,1000,answered,correct
+v02,point_in_time,M2@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v03,point_in_time,M2@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+v04,point_in_time,M2@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v05,point_in_time,M2@S6,True,True,0.5,True,ok,True,,answered,"5,0",answered,correct
+v06,point_in_time,M2@S6,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
+v07,point_in_time,M2@S6,True,True,0.5,True,ok,True,,answered,85,answered,correct
+v08,point_in_time,M2@S6,True,True,0.5,True,ok,True,,answered,80,answered,correct
+v09,point_in_time,M2@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v10,point_in_time,M2@S6,True,True,0.5,True,ok,True,,answered,"7,1",answered,correct
+i01,incident,M2@S6,True,True,0.25,True,ok,True,,answered,"5,0",answered,correct
+i02,incident,M2@S6,True,True,0.2,False,invalid answer,False,model,,,answered,invalid
+i03,incident,M2@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+w01,what_changed,M2@S6,False,True,0.2,True,ok,True,,answered,"4,5",answered,correct
+w02,what_changed,M2@S6,True,True,0.3333333333333333,False,missing ['720'],False,model,answered,500,answered,wrong
+w03,what_changed,M2@S6,True,True,0.25,True,ok,True,,answered,80,answered,correct
+w04,what_changed,M2@S6,False,True,0.1,True,ok,True,,answered,500,answered,correct
+m01,multi_evidence,M2@S6,False,True,0.0,True,ok,True,,answered,"4,5",answered,correct
+m02,multi_evidence,M2@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+m03,multi_evidence,M2@S6,False,True,0.0,True,ok,True,,answered,"2,8",answered,correct
+m04,multi_evidence,M2@S6,False,True,0.0,True,ok,True,,answered,"11,2",answered,correct
+m05,multi_evidence,M2@S6,True,True,1.0,True,ok,True,,answered,1,answered,correct
+m06,multi_evidence,M2@S6,True,True,1.0,True,ok,True,,answered,8,answered,correct
+m07,multi_evidence,M2@S6,False,True,0.0,True,ok,False,,answered,"4,0",answered,correct
+m08,multi_evidence,M2@S6,True,True,1.0,True,ok,True,,answered,"2,8",answered,correct
+k01,cross_doc,M2@S6,False,True,0.0,True,ok,True,,answered,4,answered,correct
+k02,cross_doc,M2@S6,True,True,0.2,True,ok,True,,answered,3,answered,correct
+k03,cross_doc,M2@S6,False,True,0.0,True,ok,True,,answered,4,answered,correct
+f01,conflict,M2@S6,False,True,1.0,True,ok,True,,conflict,,conflict,correct
+f02,conflict,M2@S6,False,True,0.5,True,ok,True,,conflict,,conflict,correct
+f03,conflict,M2@S6,False,True,1.0,True,ok,False,,conflict,,conflict,correct
+f04,conflict,M2@S6,False,True,1.0,True,ok,True,,conflict,,conflict,correct
+f05,conflict,M2@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f06,conflict,M2@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f07,conflict,M2@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f08,conflict,M2@S6,True,True,1.0,True,ok,True,,conflict,,conflict,correct
+f09,conflict,M2@S6,False,False,1.0,False,"status answered, expected conflict",False,search,answered,25 000,conflict,wrong
+r01,table_row,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,"1,6",answered,correct
+r02,table_row,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,100,answered,correct
+r03,table_row,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,"4,0",answered,correct
+r04,table_row,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,250,answered,correct
+r05,table_row,M2@S6,True,True,0.14285714285714285,True,ok,True,,answered,"2,5",answered,correct
+r06,table_row,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,50,answered,correct
+r07,table_row,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,300,answered,correct
+r08,table_row,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,80,answered,correct
+g01,tag_variant,M2@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+g02,tag_variant,M2@S6,True,True,0.5,True,ok,True,,answered,65,answered,correct
+g03,tag_variant,M2@S6,True,True,1.0,True,ok,True,,answered,45,answered,correct
+g04,tag_variant,M2@S6,True,True,0.16666666666666666,True,ok,True,,answered,"2,5",answered,correct
+g05,tag_variant,M2@S6,True,True,0.5,True,ok,True,,answered,2019,answered,correct
+g06,tag_variant,M2@S6,True,True,0.5,True,ok,True,,answered,32,answered,correct
+x01,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x02,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x03,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x04,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x05,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x06,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x07,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x08,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x09,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x10,not_in_documents,M2@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
 t01,base,M3@S6,True,True,1.0,True,ok,True,,answered,"2,8",answered,correct
 t02,base,M3@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
 t03,base,M3@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
@@ -1449,3 +2164,146 @@ x07,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,c
 x08,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
 x09,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
 x10,not_in_documents,M3@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+t01,base,M4@S6,True,True,0.5,True,ok,True,,answered,"2,8",answered,correct
+t02,base,M4@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+t03,base,M4@S6,True,True,0.5,True,ok,True,,answered,"4,5",answered,correct
+t04,base,M4@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+t05,base,M4@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+t06,base,M4@S6,True,True,1.0,True,ok,True,,answered,"11,2",answered,correct
+t07,base,M4@S6,True,True,0.5,True,ok,True,,answered,"11,2",answered,correct
+t08,base,M4@S6,True,True,1.0,True,ok,True,,answered,"18,0",answered,correct
+t09,base,M4@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+t10,base,M4@S6,True,True,1.0,True,ok,True,,answered,"9,0",answered,correct
+a01,base,M4@S6,True,True,0.5,True,ok,True,,answered,250,answered,correct
+a02,base,M4@S6,True,True,1.0,True,ok,True,,answered,30,answered,correct
+a03,base,M4@S6,True,True,0.3333333333333333,True,ok,True,,answered,11,answered,correct
+a04,base,M4@S6,True,True,0.5,True,ok,True,,answered,400,answered,correct
+c01,base,M4@S6,True,True,1.0,True,ok,True,,answered,100,answered,correct
+c02,base,M4@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c03,base,M4@S6,True,True,1.0,True,ok,True,,answered,12,answered,correct
+c04,base,M4@S6,True,True,1.0,True,ok,True,,answered,30,answered,correct
+c05,base,M4@S6,True,True,1.0,True,ok,True,,answered,24,answered,correct
+c06,base,M4@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+c07,base,M4@S6,True,True,1.0,True,ok,True,,answered,8,answered,correct
+c08,base,M4@S6,True,True,1.0,True,ok,True,,answered,15,answered,correct
+c09,base,M4@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+c10,base,M4@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c11,base,M4@S6,True,True,1.0,True,ok,True,,answered,1,answered,correct
+c12,base,M4@S6,True,True,1.0,True,ok,True,,answered,2000,answered,correct
+c13,base,M4@S6,True,True,1.0,True,ok,True,,answered,"0,05",answered,correct
+c14,base,M4@S6,True,True,1.0,True,ok,True,,answered,25 000,answered,correct
+c15,base,M4@S6,True,True,1.0,True,ok,True,,answered,5,answered,correct
+c16,base,M4@S6,True,True,1.0,True,ok,True,,answered,600,answered,correct
+c17,base,M4@S6,True,True,1.0,True,ok,True,,answered,1000,answered,correct
+d01,base,M4@S6,True,True,0.5,True,ok,True,,answered,65,answered,correct
+d02,base,M4@S6,True,True,0.5,True,ok,True,,answered,125,answered,correct
+d03,base,M4@S6,True,True,0.3333333333333333,True,ok,True,,answered,2950,answered,correct
+d04,base,M4@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+d05,base,M4@S6,True,True,0.3333333333333333,True,ok,True,,answered,640,answered,correct
+d06,base,M4@S6,True,True,1.0,True,ok,True,,answered,2019,answered,correct
+z01,base,M4@S6,True,True,1.0,True,ok,False,,answered,50,answered,correct
+z02,base,M4@S6,True,True,1.0,False,invalid answer,False,model,,,answered,invalid
+z03,base,M4@S6,True,True,1.0,False,invalid answer,False,model,,,answered,invalid
+z04,base,M4@S6,True,True,1.0,True,ok,True,,answered,37,answered,correct
+z05,base,M4@S6,True,True,0.5,True,ok,True,,answered,520,answered,correct
+n01,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n02,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n03,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n04,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n05,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n06,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n07,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+n08,base,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-t03,language,M4@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+en-t04,language,M4@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+en-t09,language,M4@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+en-a01,language,M4@S6,True,True,1.0,True,ok,True,,answered,250,answered,correct
+en-a03,language,M4@S6,True,True,1.0,True,ok,True,,answered,11,answered,correct
+en-c01,language,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c02,language,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c05,language,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c06,language,M4@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+en-c08,language,M4@S6,True,True,1.0,True,ok,True,,answered,15,answered,correct
+en-c09,language,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c11,language,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c12,language,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-c14,language,M4@S6,False,False,0.0,False,status not_in_documents,False,search,not_in_documents,,answered,false refusal
+en-d01,language,M4@S6,True,True,0.5,True,ok,True,,answered,65,answered,correct
+en-d04,language,M4@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+en-z01,language,M4@S6,True,True,1.0,True,ok,True,,answered,50,answered,correct
+en-z04,language,M4@S6,True,True,1.0,False,invalid answer,False,model,,,answered,invalid
+en-n01,language,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+en-n05,language,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+p01,applicability,M4@S6,True,True,0.5,True,ok,True,,answered,"3,5",answered,correct
+p02,applicability,M4@S6,True,True,0.5,True,ok,True,,answered,,answered,correct
+p03,applicability,M4@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+p04,applicability,M4@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+p05,applicability,M4@S6,True,True,0.3333333333333333,True,ok,True,,answered,"2,2",answered,correct
+p06,applicability,M4@S6,True,True,0.3333333333333333,True,ok,True,,answered,"2,8",answered,correct
+p07,applicability,M4@S6,True,True,1.0,True,ok,True,,answered,"3,5",answered,correct
+p08,applicability,M4@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+p09,applicability,M4@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+p10,applicability,M4@S6,True,True,1.0,True,ok,True,,answered,"5,6",answered,correct
+p11,applicability,M4@S6,True,True,1.0,True,ok,True,,answered,II,answered,correct
+p12,applicability,M4@S6,True,False,0.3333333333333333,False,status needs_human,False,assembly,needs_human,,answered,false refusal
+v01,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,1000,answered,correct
+v02,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v03,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+v04,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v05,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,"5,0",answered,correct
+v06,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+v07,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,85,answered,correct
+v08,point_in_time,M4@S6,True,True,0.5,True,ok,True,,answered,80,answered,correct
+v09,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,720,answered,correct
+v10,point_in_time,M4@S6,True,True,1.0,True,ok,True,,answered,"7,1",answered,correct
+i01,incident,M4@S6,True,True,0.25,True,ok,True,,answered,,answered,correct
+i02,incident,M4@S6,True,True,0.25,True,ok,True,,answered,"4,5",answered,correct
+i03,incident,M4@S6,True,True,1.0,True,ok,True,,answered,500,answered,correct
+w01,what_changed,M4@S6,True,True,0.25,True,ok,True,,answered,"4,5",answered,correct
+w02,what_changed,M4@S6,True,True,0.5,False,missing ['720'],False,model,answered,500,answered,wrong
+w03,what_changed,M4@S6,True,True,1.0,True,ok,True,,answered,80,answered,correct
+w04,what_changed,M4@S6,False,True,0.0,True,ok,True,,answered,500,answered,correct
+m01,multi_evidence,M4@S6,False,True,0.0,True,ok,True,,answered,"4,5",answered,correct
+m02,multi_evidence,M4@S6,True,True,0.5,False,invalid answer,False,model,,,answered,invalid
+m03,multi_evidence,M4@S6,False,True,0.0,True,ok,True,,answered,24,answered,correct
+m04,multi_evidence,M4@S6,False,True,0.0,True,ok,True,,answered,"11,2",answered,correct
+m05,multi_evidence,M4@S6,True,True,1.0,True,ok,True,,answered,1,answered,correct
+m06,multi_evidence,M4@S6,True,True,1.0,True,ok,True,,answered,"4,5",answered,correct
+m07,multi_evidence,M4@S6,False,True,0.0,True,ok,False,,answered,"4,0",answered,correct
+m08,multi_evidence,M4@S6,True,True,1.0,True,ok,True,,answered,"2,8",answered,correct
+k01,cross_doc,M4@S6,False,True,0.0,True,ok,True,,answered,4,answered,correct
+k02,cross_doc,M4@S6,False,True,0.14285714285714285,True,ok,True,,answered,3,answered,correct
+k03,cross_doc,M4@S6,False,True,0.0,True,ok,True,,answered,4,answered,correct
+f01,conflict,M4@S6,False,True,1.0,True,ok,True,,conflict,,conflict,correct
+f02,conflict,M4@S6,False,True,0.5,True,ok,True,,conflict,,conflict,correct
+f03,conflict,M4@S6,False,True,0.5,True,ok,True,,conflict,,conflict,correct
+f04,conflict,M4@S6,False,True,0.5,True,ok,True,,conflict,,conflict,correct
+f05,conflict,M4@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f06,conflict,M4@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f07,conflict,M4@S6,True,True,0.5,True,ok,True,,conflict,,conflict,correct
+f08,conflict,M4@S6,True,True,1.0,True,ok,True,,conflict,,conflict,correct
+f09,conflict,M4@S6,False,False,1.0,False,"status answered, expected conflict",False,search,answered,25 000,conflict,wrong
+r01,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,"1,6",answered,correct
+r02,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,100,answered,correct
+r03,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,"4,0",answered,correct
+r04,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,250,answered,correct
+r05,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,"2,5",answered,correct
+r06,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,50,answered,correct
+r07,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,300,answered,correct
+r08,table_row,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,80,answered,correct
+g01,tag_variant,M4@S6,True,True,1.0,True,ok,True,,answered,55,answered,correct
+g02,tag_variant,M4@S6,True,True,0.3333333333333333,True,ok,True,,answered,65,answered,correct
+g03,tag_variant,M4@S6,True,True,1.0,True,ok,True,,answered,45,answered,correct
+g04,tag_variant,M4@S6,True,True,0.16666666666666666,True,ok,True,,answered,"2,5",answered,correct
+g05,tag_variant,M4@S6,True,True,1.0,True,ok,True,,answered,2019,answered,correct
+g06,tag_variant,M4@S6,True,True,1.0,True,ok,True,,answered,32,answered,correct
+x01,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x02,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x03,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x04,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x05,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x06,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x07,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x08,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x09,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct
+x10,not_in_documents,M4@S6,,,,True,ok,True,,not_in_documents,,not_in_documents,correct

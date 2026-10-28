@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import re
 import threading
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Iterable
@@ -25,6 +26,7 @@ import numpy as np
 import snowballstemmer
 from rank_bm25 import BM25Okapi
 
+from .crossencoder import parse_rerank, rerank_request
 from .normalize import normalize_tags
 from .store import Chunk
 from .units import plain
@@ -133,7 +135,8 @@ class VectorStore:
     """Vectors of the chunks and of the questions of one embedding model.
 
     Files: <dir>/<name>.npz with arrays `chunk_vectors`, `query_vectors` and <dir>/<name>.json with the
-    manifest: model, dimension, index_version of the corpus, chunk ids and query texts in the same order.
+    manifest: model, dimension, index_version of the corpus, chunk ids and query texts in the same order, the
+    instruction the questions were embedded with (`query_prefix`) and the latency of each query embedding call.
     Vectors from another corpus or another model are refused: that is what the manifest is for.
     """
 
@@ -145,6 +148,8 @@ class VectorStore:
         self.chunk_vectors = _unit(arrays["chunk_vectors"])
         self.queries: dict[str, int] = {q: i for i, q in enumerate(self.manifest["queries"])}
         self.query_vectors = _unit(arrays["query_vectors"])
+        self.query_prefix: str = self.manifest.get("query_prefix", "")
+        self.latency: list[float] = self.manifest.get("query_latency_s") or [0.0] * len(self.queries)
 
     def check(self, index_version_corpus: str) -> None:
         if not index_version_corpus.startswith(self.manifest["corpus"]):
@@ -156,6 +161,10 @@ class VectorStore:
             raise KeyError(f"no saved vector for this query: {query[:60]!r}. Use a live embedding profile.")
         return self.query_vectors[self.queries[query]]
 
+    def query_latency(self, query: str) -> float:
+        """Seconds of the embedding call for this question when the vectors were built (replay keeps it)."""
+        return float(self.latency[self.queries[query]]) if query in self.queries else 0.0
+
 
 def _unit(x: np.ndarray) -> np.ndarray:
     x = np.asarray(x, dtype=np.float32)
@@ -166,8 +175,12 @@ class DenseIndex:
     """Cosine similarity in numpy: at a thousand chunks no vector database is needed."""
 
     def __init__(self, chunks: list[Chunk], vectors: VectorStore, rows: str | bool = "pages",
-                 embed_query: Callable[[str], np.ndarray] | None = None):
+                 embed_query: Callable[[str], np.ndarray] | None = None, normalize: bool = False):
+        """`embed_query` embeds a question that has no saved vector (live; it adds the instruction itself).
+        `normalize`: tags of the question in one form (the chunks were embedded with normalized tags)."""
         self.chunks = view(chunks, rows)
+        self.normalize = normalize
+        self._live: dict[str, tuple[np.ndarray, float]] = {}
         self.ids = [c.chunk_id for c in self.chunks]
         pos = {cid: i for i, cid in enumerate(vectors.chunk_ids)}
         missing = [cid for cid in self.ids if cid not in pos]
@@ -177,9 +190,19 @@ class DenseIndex:
         self.vectors = vectors
         self.embed_query = embed_query
 
+    def query_vector(self, query: str) -> tuple[np.ndarray, float]:
+        """The vector of the question and the seconds its embedding call took (saved, or measured live)."""
+        q = normalize_tags(query) if self.normalize else query
+        if q in self.vectors.queries or self.embed_query is None:
+            return self.vectors.query_vector(q), self.vectors.query_latency(q)
+        if q not in self._live:
+            t = time.perf_counter()
+            v = _unit(np.asarray(self.embed_query(q), dtype=np.float32))
+            self._live[q] = (v, time.perf_counter() - t)
+        return self._live[q]
+
     def scores(self, query: str) -> np.ndarray:
-        q = _unit(self.embed_query(query)) if self.embed_query else self.vectors.query_vector(query)
-        return self.matrix @ q
+        return self.matrix @ self.query_vector(query)[0]
 
     def search(self, query: str, k: int = 5, allowed: Callable[[Chunk], bool] | None = None) -> list[Hit]:
         return top_k(self.ids, self.chunks, self.scores(query), k, allowed, "dense")
@@ -225,6 +248,10 @@ def rerank_messages(query: str, candidates: list[Chunk], max_chars: int = 500) -
     return [{"role": "system", "content": RERANK_SYSTEM}, {"role": "user", "content": user}]
 
 
+def passage(c: Chunk, max_chars: int = 500) -> str:
+    return re.sub(r"\s+", " ", c.text)[:max_chars]
+
+
 def rerank(client, query: str, hits: list[Hit], chunks_by_id: dict[str, Chunk], k: int = 5,
            meta: dict | None = None) -> tuple[list[Hit], dict]:
     """Reorder the candidates by the model. Labels the model did not return keep their order after the ranked
@@ -244,4 +271,21 @@ def rerank(client, query: str, hits: list[Hit], chunks_by_id: dict[str, Chunk], 
     out = [Hit(hits[i].chunk_id, hits[i].score, r + 1, "rerank") for r, i in enumerate(order[:k])]
     return out, {"ok": ok and resp.ok, "error": resp.error, "latency_s": resp.latency_s,
                  "prompt_tokens": resp.prompt_tokens, "completion_tokens": resp.completion_tokens}
+
+
+# ---------------------------------------------------------------------------------------------
+# Cross-encoder (bge-reranker-v2-m3 on the course server): one /rerank call per question, no chat tokens
+# ---------------------------------------------------------------------------------------------
+def cross_rerank(client, query: str, hits: list[Hit], chunks_by_id: dict[str, Chunk], k: int = 5,
+                 meta: dict | None = None) -> tuple[list[Hit], dict]:
+    """Reorder the candidates by the cross-encoder score. The passages are the same as for the LLM reranker
+    (document id + the first 500 characters). An unusable response keeps the original order (and says so)."""
+    candidates = [chunks_by_id[h.chunk_id] for h in hits]
+    resp = client.chat(rerank_request(query, [f"{c.doc_id}: {passage(c)}" for c in candidates]), meta=meta)
+    order = parse_rerank(resp.content, len(hits)) if resp.ok else None
+    ok = order is not None
+    order = order or list(range(len(hits)))
+    out = [Hit(hits[i].chunk_id, hits[i].score, r + 1, "cross") for r, i in enumerate(order[:k])]
+    return out, {"ok": ok, "error": resp.error, "latency_s": resp.latency_s, "prompt_tokens": 0,
+                 "completion_tokens": 0, "reranker_tokens": resp.prompt_tokens}
 

@@ -11,9 +11,27 @@ nh03,needs_human,S6,False,False,0.08333333333333333,False,"status not_in_documen
 nh04,needs_human,S6,False,False,0.2,False,answered without the missing data,False,search,answered,"4,5",needs_human,wrong
 nh05,needs_human,S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,correct
 nh06,needs_human,S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,correct
+nh01,needs_human,M1@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,correct
+nh02,needs_human,M1@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,correct
+nh03,needs_human,M1@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,correct
+nh04,needs_human,M1@S6,False,True,0.16666666666666666,True,ok,True,,needs_human,,needs_human,correct
+nh05,needs_human,M1@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,correct
+nh06,needs_human,M1@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,correct
+nh01,needs_human,M2@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,correct
+nh02,needs_human,M2@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,correct
+nh03,needs_human,M2@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,correct
+nh04,needs_human,M2@S6,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,wrong
+nh05,needs_human,M2@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,correct
+nh06,needs_human,M2@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,correct
 nh01,needs_human,M3@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,correct
 nh02,needs_human,M3@S6,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,correct
 nh03,needs_human,M3@S6,True,True,1.0,True,ok,True,,needs_human,,needs_human,correct
 nh04,needs_human,M3@S6,True,True,1.0,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,wrong
 nh05,needs_human,M3@S6,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,correct
 nh06,needs_human,M3@S6,True,True,0.3333333333333333,True,ok,True,,needs_human,,needs_human,correct
+nh01,needs_human,M4@S6,True,False,1.0,True,ok,True,,needs_human,,needs_human,correct
+nh02,needs_human,M4@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,correct
+nh03,needs_human,M4@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,correct
+nh04,needs_human,M4@S6,True,True,0.25,False,"status conflict, expected needs_human",False,model,conflict,,needs_human,wrong
+nh05,needs_human,M4@S6,True,True,0.5,True,ok,True,,needs_human,,needs_human,correct
+nh06,needs_human,M4@S6,True,True,0.25,True,ok,True,,needs_human,,needs_human,correct

@@ -19,8 +19,8 @@ are ready tools and rows of an ablation table. The practice is about the enginee
 Everything you need is in this folder: synthetic documents, the store of practice 3, the retrieval set, the
 lecturer's saved model answers (replay files) and reference results.
 
-A second part of practice 4 will follow as a separate notebook: dense and hybrid search, text answers graded by a
-judge, and a document-context step.
+A second part of practice 4 will follow as a separate notebook: dense and hybrid search in depth (here they are only
+rows of the ablation table), text answers graded by a judge, and a document-context step.
 
 ## What is inside
 
@@ -34,7 +34,7 @@ judge, and a document-context step.
 | `data/questions.jsonl` | the retrieval set: 143 questions with evidence and gold chunk ids |
 | `data/holdout.jsonl`, `data/holdout_drafts.jsonl` | 27 holdout questions written by role (and all 75 drafts); `scripts/draft_holdout.py` |
 | `data/ground_truth/` | page texts and the clause and table pages of the new documents |
-| `data/replay/` | the lecturer's model calls: answers, reranker rankings, translations (`vectors/`: embedding vectors, see "Dense search") |
+| `data/replay/` | the lecturer's model calls: answers, LLM reranker rankings, cross-encoder scores, translations (`vectors/`: e5-mistral vectors, see "Dense search") |
 | `reference/` | `results.md`, `ablation.csv`, `cost.csv`, slices, losses, per-question scores, `s0_failures.md`, the holdout (`holdout_ablation.csv`, `holdout_review.md`), the audit record of the P-101 answer, the store `reference/store/`, the executed notebook |
 | `scripts/` | `generate_corpus.py`, `build_questions.py`, `build_reference.py`, `build_vectors.py`, `build_notebook.py`; content in `corpus_content.py`, `questions_content.py` |
 | `src/plant_assistant/` | `corpus.py`, `normalize.py`, `search.py`, `query.py`, `applicability.py`, `filters.py`, `assemble.py`, `answer.py`, `verify.py`, `reval.py`, `audit.py`, `pipeline.py`; the client, the store and the statistics from practices 1–3 |
@@ -162,28 +162,40 @@ uv run python scripts/build_reference.py --replay            # reference/ from r
 uv run python scripts/build_notebook.py
 ```
 
-### Dense search (M1, M2): not measured yet
+### Dense search and the cross-encoder (M1, M2, M4)
 
-On 27.10.2026 the course LiteLLM has no embedding and no rerank model, and the machine used for the reference had no
-Ollama, so **the rows M1 and M2 of the reference table are TODO**. The code is ready: `search.DenseIndex` (cosine in
-numpy over saved vectors), `search.HybridIndex` (RRF), `search.VectorStore` (vectors with a manifest that refuses
-vectors of another corpus or model). To fill the rows:
+On 28.10.2026 the course server has an embedding model and a cross-encoder for the lecturer's key; whether a student
+token sees them is not known, so the notebook replays them:
+
+- **M1** dense search: `iairlab/e5-mistral-7b-instruct`, 4096-dim, cosine in numpy (`search.DenseIndex`). The model is
+  asymmetric: a question is embedded with the instruction of the profile (`query_prefix` in `models.toml`:
+  `Instruct: Given a question about plant equipment, retrieve the regulation or manual passages that answer
+  it\nQuery: `), a passage without it. The vectors of all 440 chunks and of every question wording that goes to
+  search (the 143 questions, the holdout, the needs_human set, the M1t translations, each also with normalized tags)
+  are in `data/replay/vectors/e5-mistral.npz` (float16, 4.9 MB) with a manifest (`.json`) that refuses vectors of
+  another corpus and keeps the latency of each query embedding call.
+- **M2** hybrid: reciprocal rank fusion of the BM25 and the dense top-20 (`search.rrf`, c = 60).
+- **M4** cross-encoder: `iairlab/bge-reranker-v2-m3` via `POST <server root>/rerank` (not under `/v1`), one call per
+  question over the top-20 of the row, the same passages as the LLM reranker (M3). It uses no chat tokens. Its
+  answers are in `data/replay/crossencoder_course.jsonl`, replayed like the LLM calls.
+
+To rebuild with your own key (or with Ollama: `--profile embed-bge-m3 --name bge-m3`, then change `VECTORS` in
+`scripts/build_reference.py`):
 
 ```bash
-ollama pull bge-m3                                          # ~1.2 GB, from ollama.com, no Hugging Face
-uv run python -m plant_assistant.smoke_test embed-bge-m3
-uv run python scripts/build_vectors.py --profile embed-bge-m3 --name bge-m3
-uv run python scripts/build_reference.py --configs S0 S1 S2 S2b S3 S4 S5 S6 M1@S0 M2@S0 M1@S6 M2@S6
+uv run python -m plant_assistant.smoke_test embed-course
+uv run python -m plant_assistant.smoke_test rerank-course
+uv run python scripts/build_vectors.py --profile embed-course --name e5-mistral
+uv run python scripts/build_reference.py        # live: saved requests are replayed, new ones go to the server
 ```
-
-The reranker (M3) works today: it is an LLM reranker on the course model (one listwise call per question over the
-top-20); its answers are in `data/replay/rerank_course.jsonl`.
 
 ## Expected results
 
 See `reference/results.md` (the full table with Wilson intervals, paired verdicts, slices and losses by link).
 
-In short (lecturer's run, course Qwen 3.8 27B, thinking off, 143 questions; seconds = median per question):
+In short (lecturer's run, course Qwen 3.8 27B, thinking off, 143 questions; seconds = median per question;
+calls = all model calls per question: chat, the question embedding of dense rows, the cross-encoder; tokens in =
+chat prompt tokens only: the cross-encoder reads ~1500–1750 tokens per question of its own, no chat model):
 
 | Row | recall@5 | evidence recall | end-to-end | paired verdict vs `vs` | s / q | calls / q | tokens in / q |
 |-----|----------|-----------------|------------|------------------------|-------|-----------|---------------|
@@ -195,8 +207,14 @@ In short (lecturer's run, course Qwen 3.8 27B, thinking off, 143 questions; seco
 | S4 + date filter | 76% | 76% | 76% | better (+7 / −0) | 1.8 | 1 | 1135 |
 | S5 + evidence pack | 76% | 88% | 86% | better (+14 / −0) | 3.1 | 1 | 2811 |
 | S6 + contract and checks | 76% | 88% | 91% | better (+8 / −1): conflicts 0/9 → 8/9 | 4.8 | 1 | 3036 |
+| M1@S0 dense (e5-mistral) instead of BM25 | 68% | 62% | 63% | better than S0 (+32 / −15, p = 0.02) | 2.0 | 2 | 1298 |
+| M2@S0 hybrid BM25 + dense (RRF) | 63% | 53% | 60% | better than S0 (+23 / −10, p = 0.04) | 1.9 | 2 | 1073 |
 | M3@S0 LLM reranker on BM25 | 76% | 73% | 71% | better than S0 (+32 / −4) | 3.5 | 2 | 2895 |
-| M3@S6 LLM reranker on S6 | 85% | 93% | 91% | not different from S6 (+5 / −5) | 6.4 | 2 | 4534 |
+| M4@S0 cross-encoder on BM25 | 73% | 65% | 66% | better than S0 (+27 / −6) | 2.0 | 2 | 1341 |
+| M1@S6 S6 with dense search | 81% | 93% | 93% | not different from S6 (+11 / −8) | 5.5 | 2 | 3386 |
+| M2@S6 S6 with hybrid search | 80% | 92% | 91% | not different from S6 (+6 / −6) | 5.4 | 2 | 3384 |
+| M3@S6 LLM reranker on S6 | 85% | 93% | 91% | not different from S6 (+5 / −5); evidence better (+7 / −0) | 6.4 | 2 | 4534 |
+| M4@S6 cross-encoder on S6 | 84% | 93% | 90% | not different from S6 (+5 / −6); evidence better (+6 / −0) | 5.2 | 2 | 3295 |
 | M1t translation, `language` slice | 9/18 | 9/18 | 13/20 | better than S0 on the slice (5/20) | 1.9 | 2 | 769 |
 
 - At S0, 60 of 70 wrong answers are lost **in search**, 2 in assembly, 8 in the model, none in reading.
@@ -213,7 +231,23 @@ In short (lecturer's run, course Qwen 3.8 27B, thinking off, 143 questions; seco
   S0 56%, S3 74%, S6 78%, M3@S0 85%, M3@S6 85% (Wilson intervals about ±15 points). On everyday questions the
   reranker alone is at least as good as the plant-side ladder; the ladder is what fixes versions, applicability
   and conflicts, and those are rare in the holdout. 27 questions cannot separate S6 from M3@S0.
-- Dense and hybrid rows: TODO (see "Dense search").
+- **Mechanisms against plant knowledge** (end-to-end by slice in `reference/results.md`). Instead of plant
+  knowledge, every mechanism beats S0, and none comes close to S6 (best: M3@S0, 71% against 91%). They fix what is
+  about words: dense search answers 17/20 English questions (translation M1t: 13/20) and 6/6 tag variants. They do
+  not fix what is about the plant: dense search is 3/10 on `point_in_time`, 3/12 on `applicability` and 0/9 on
+  `conflict` (S6: 10/10, 12/12, 8/9). On top of S6, no mechanism changes end-to-end detectably. Dense search on S6
+  answers all 20 English questions and the last conflict (f09: it finds clause 6.4 of the manual), and loses a few
+  base, table and applicability questions; the rerankers raise evidence recall (+7 / −0, +6 / −0), not end-to-end.
+- **The cross-encoder against the LLM reranker:** most of the gain for a quarter of the time: +0.5 s and no chat
+  tokens per question against +2 s and ~2000 chat tokens (on S0: 66% against 71%; holdout 81% against 85%).
+- **The token limit of the contract:** with more sources in the context, the claims and citations of a long answer
+  do not fit into 3000 tokens: 5 invalid answers at M1@S6 and M2@S6, 4 at M4@S6, 3 at M3@S6, 0 at S6 (mostly the
+  P-205 datasheet questions; m01 at M1@S6). A limit on the number of claims and citations in the schema is the
+  fix; it changes every S6 prompt, so it is not in this reference.
+- Dense search alone invents more: 5 values on "not in the documents" questions (S0: 1). A nearest neighbour
+  always exists.
+- Holdout: M1@S0 59%, M2@S0 67%, M4@S0 81%, M1@S6 81%, M2@S6 78%, M4@S6 81% (S6 78%, M3@S0 85%): the rerankers alone
+  are as good as the whole ladder on everyday questions; dense search alone is not.
 
 **How the rows fail matters, not only how often.** A refusal ("not in the documents" or "needs a person" when the
 answer is in the documents) is safe but not free: the engineer searches the archive by hand or waits for a person,
@@ -233,6 +267,10 @@ schema. Every question is exactly one of: right, false refusal, wrong or invente
 | S6 | 130 | 12 (10%), 1 of them `needs_human` (k02) | 1 | 20/20 (x01: `needs_human`) | 0 |
 | M3@S0 | 101 | 15 (12%) | 27 (3 invented: n03, n04, n07) | 17/20 | 0 |
 | M3@S6 | 130 | 7 (6%) | 3 (1 invented) | 19/20 (x01: `needs_human`) | 3 |
+| M1@S0 | 90 | 26 (21%) | 27 (5 invented) | 15/20 | 0 |
+| M4@S0 | 94 | 22 (18%) | 27 (3 invented) | 17/20 | 0 |
+| M1@S6 | 133 | 4 (3%) | 1 | 20/20 | 5 |
+| M4@S6 | 129 | 8 (7%) | 2 | 20/20 | 4 |
 | Holdout S6 (27) | 21 | 3/23 | 3 (1 invented) | 3/4 | 0 |
 | Holdout M3@S0 | 23 | 2/23 | 2 (1 invented) | 3/4 | 0 |
 | Holdout M3@S6 | 23 | 2/23 | 2 (1 invented) | 3/4 | 0 |
@@ -242,15 +280,15 @@ answer. The reranker alone (M3@S0) refuses three times less than S0 and gives as
 
 **Needs a person** (6 questions; cells: status (value)):
 
-| Question | S5 (no status field) | S6 | M3@S6 |
-|----------|----------------------|----|-------|
-| nh01 P-215, no power, no class | answered (2,8) | invalid: needs_human, then the token limit | needs_human |
-| nh02 "P-220": P-220A or P-220B | not_in_documents | needs_human | needs_human |
-| nh03 no tag, station 2 | not_in_documents | not_in_documents | needs_human |
-| nh04 spare P-216, no station | answered (4,5) | answered (4,5) | conflict |
-| nh05 grease from a missing datasheet | not_in_documents | needs_human | needs_human |
-| nh06 one direction of three measured | answered (4,5) | needs_human | needs_human |
-| right | 0/6 | 3/6 | 5/6 |
+| Question | S5 (no status field) | S6 | M1@S6 | M2@S6 | M3@S6 | M4@S6 |
+|----------|----------------------|----|-------|-------|-------|-------|
+| nh01 P-215, no power, no class | answered (2,8) | invalid: needs_human, then the token limit | needs_human | needs_human | needs_human | needs_human |
+| nh02 "P-220": P-220A or P-220B | not_in_documents | needs_human | needs_human | needs_human | needs_human | needs_human |
+| nh03 no tag, station 2 | not_in_documents | not_in_documents | needs_human | needs_human | needs_human | needs_human |
+| nh04 spare P-216, no station | answered (4,5) | answered (4,5) | needs_human | conflict | conflict | conflict |
+| nh05 grease from a missing datasheet | not_in_documents | needs_human | needs_human | needs_human | needs_human | needs_human |
+| nh06 one direction of three measured | answered (4,5) | needs_human | needs_human | needs_human | needs_human | needs_human |
+| right | 0/6 | 3/6 | 6/6 | 5/6 | 5/6 | 5/6 |
 
 The contract gives the system a way to stop; S5 picks a class or a station itself in half of the cases. The station
 case (nh04) is the hardest: the system either applies R-12 or calls the two regulations a conflict, though only one
