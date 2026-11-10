@@ -23,9 +23,9 @@ def code(text: str) -> None:
 
 # ---------------------------------------------------------------------------------------------
 md(r"""
-# Practice 4. Finding the right clause: diagnose and fix
+# Practice 4. Document Search in Industrial Data
 
-**ML in Industry 2026 · Topic 4: Retrieval-augmented generation**
+**ML in Industry 2026**
 
 ## Goal
 
@@ -37,54 +37,48 @@ same questions.
 **How to work.** Follow sections 0–9 in order (about 60–75 minutes). At the three checkpoints, write a short
 Markdown answer before opening the reference. Keep your answers and final comparison in a copy of this notebook.
 No new API calls or code implementation are required; the optional experiments come last.
-
-**Lecture connection.** Relevance → search; applicability → registry and scope; currency → date intervals;
-completeness → evidence packs; provability → citation checks with known limits. All documents are synthetic and
-available to every user here: permissions/ACL belong to topic 7. Reading is inherited from practice 3; search
-becomes a tool in topic 5, and the regression gate connects to topic 6. The lecture also discusses evaluating
-procedures with a calibrated judge; that evaluation is not implemented in this notebook.
 """)
 md(r"""
-**Glossary: measuring**
+**Glossary (measuring)**
 
-- **chunk**: a piece of a document (clause, table, table row) that search returns.
-- **retrieval set**: 143 questions with known answers and known source chunks.
-- **slice**: a group of questions of one kind, e.g. "the question names a past date".
-- **gold evidence**: the chunks that hold the answer, found from the document structure.
-- **recall@5**: all gold answer items are found; S2b onwards adds up to two row results.
-- **evidence recall**: every annotated evidence item (value, table, action) reached the model.
-- **end-to-end**: the answer passes the value/status grader; prose may still contain errors.
-- **correct + verified**: passes the grader, source/date checks and a numeric-support check; see step 7.
-- **false refusal**: "not in the documents" or "needs a person" although the documents answer.
-- **invented value**: a value given where the documents have none.
-- **token**: a piece of text a model reads or writes; it measures size and cost.
-- **ablation table**: one change per row; each row is compared with the configuration in `vs`.
-- **paired comparison**: both rows answer the same questions; we count questions fixed and broken.
-- **fixed / broke**: questions the new row fixed, and questions it broke.
-- **verdict**: paired-test result at the chosen threshold; subject to sample-size limits.
-- **p**: how unusual this difference would be if both rows performed equally.
-- **[a%–b%]**: uncertainty around a score; small samples give wide intervals.
+- **chunk**: a piece of a document (clause, table, table row) that search returns
+- **retrieval set**: 143 questions with known answers and known source chunks
+- **slice**: a group of questions of one kind, e.g. "the question names a past date"
+- **gold evidence**: the chunks that hold the answer, found from the document structure
+- **recall@5**: all gold answer items are found; S2b onwards adds up to two row results
+- **evidence recall**: every annotated evidence item (value, table, action) reached the model
+- **end-to-end**: the answer passes the value/status grader; prose may still contain errors
+- **correct + verified**: passes the grader, source/date checks and a numeric-support check; see step 7
+- **false refusal**: "not in the documents" or "needs a person" although the documents answer
+- **invented value**: a value given where the documents have none
+- **token**: a piece of text a model reads or writes; it measures size and cost
+- **ablation table**: one change per row; each row is compared with the configuration in `vs`
+- **paired comparison**: both rows answer the same questions; we count questions fixed and broken
+- **fixed / broke**: questions the new row fixed, and questions it broke
+- **verdict**: paired-test result at the chosen threshold; subject to sample-size limits
+- **p**: how unusual this difference would be if both rows performed equally
+- **[a%–b%]**: uncertainty around a score; small samples give wide intervals
 """)
 md(r"""
-**Glossary: the rows of the table**
+**Glossary (the rows of the table)**
 
-- **tag**: the code of a piece of equipment, e.g. pump P-101.
-- **S0**: plain BM25 keyword search: chunks ranked by the words they share with the question.
-- **S1–S6, the ladder**: six plant steps: tags, table rows, applicability, date filter, evidence pack, contract.
-- **S2b**: table rows searched apart from the clauses, at most two rows per question.
-- **applicability**: the equipment registry tells which documents apply to this piece of equipment.
-- **evidence pack**: the found chunks plus the clauses they refer to and their sections.
-- **answer contract**: a fixed answer form with a status, a value and its sources.
-- **statuses**: answered; not in the documents; conflict (documents disagree); needs a person.
-- **vectors**: numbers an embedding model computes for the meaning of a text.
-- **M1**: dense search, by meaning, not by words.
-- **M2**: hybrid search, keywords and dense search together.
-- **M3, reranker**: the course language model puts the top 20 chunks in order.
-- **M4, cross-encoder**: a small reranking model that scores each chunk against the question.
-- **M1t**: an English question is translated into Russian before search.
-- **@S0 / @S6**: the mechanism instead of the plant steps / on top of them.
-- **replay**: saved model answers; the same request gets the same answer offline.
-- **holdout**: 27 role-based questions drafted without the ladder; an additional evaluation sample.
+- **tag**: the code of a piece of equipment, e.g. pump P-101
+- **S0**: plain BM25 keyword search: chunks ranked by the words they share with the question
+- **S1–S6, the ladder**: six plant steps: tags, table rows, applicability, date filter, evidence pack, contract (from the lecture 4)
+- **S2b**: table rows searched apart from the clauses, at most two rows per question
+- **applicability**: the equipment registry tells which documents apply to this piece of equipment
+- **evidence pack**: the found chunks plus the clauses they refer to and their sections
+- **answer contract**: a fixed answer form with a status, a value and its sources
+- **statuses**: answered; not in the documents; conflict (documents disagree); needs a person
+- **vectors**: numbers an embedding model computes for the meaning of a text
+- **M1**: dense search, by meaning, not by words
+- **M2**: hybrid search, keywords and dense search together
+- **M3, reranker**: the course language model puts the top 20 chunks in order
+- **M4, cross-encoder**: a small reranking model that scores each chunk against the question
+- **M1t**: an English question is translated into Russian before search
+- **@S0 / @S6**: the mechanism instead of the plant steps / on top of them
+- **replay**: saved model answers; the same request gets the same answer offline
+- **holdout**: 27 role-based questions drafted without the ladder; an additional evaluation sample
 """)
 md(r"""
 ## Steps
@@ -147,7 +141,7 @@ show(reference, ["config", "vs", "recall@5", "evidence recall", "end-to-end", "e
 md(r"""
 ## 1. Setup
 
-Model settings are in `models.toml`, the URL and the key in `.env`. The answers use the course model Qwen 3.8 27B
+Model settings are in `models.toml`, the URL and the key should be in `.env`. The answers use the course model Qwen 3.8 27B
 with thinking off: no hidden reasoning before the answer. Dense search and the cross-encoder use saved vectors and
 scores; with access to those models you can rebuild them (see README).
 """)
@@ -275,6 +269,60 @@ actions. recall@5 looks only for the chunk with the value; evidence recall needs
 
 # ---------------------------------------------------------------------------------------------
 md(r"""
+### Walkthrough 1. Text → embedding vector
+
+The neural encoder runs on the embedding server. Locally we prepare its input and normalize the returned vector.
+Open [`embeddings.embed`](../src/plant_assistant/embeddings.py) for the `/embeddings` request and
+[`scripts/build_vectors.py`](../scripts/build_vectors.py) for batching and saving the whole corpus.
+The question gets the model's instruction prefix; a document does not. Both get normalized equipment tags.
+
+Below, `EMBED_LIVE = False` loads the saved encoder outputs, not search results. To try the same request live,
+set it to `True` only with a working `embed-course` profile. Chat-model access alone does not provide embeddings.
+""")
+code(r"""
+import numpy as np
+
+from plant_assistant.embeddings import embed
+from plant_assistant.crossencoder import query_text
+from plant_assistant.normalize import normalize_tags
+from plant_assistant.units import plain
+
+EMBED_LIVE = False
+embedding_query = normalize_tags(P101.query)
+embedding_chunk = by_id["R-12-r3-table1"]
+passage_text = normalize_tags(plain(embedding_chunk.text))
+query_prefix = VECTORS.query_prefix
+print("Question sent to encoder:", query_text(embedding_query, query_prefix))
+print("Passage sent to encoder:", passage_text[:240])
+
+if EMBED_LIVE:
+    profile = "embed-course"
+    assert get_profile(profile).query_prefix == query_prefix, "Use the reference embedding instruction"
+    raw_query = np.asarray(embed(profile, [embedding_query], query=True)[0], dtype=np.float32)
+    raw_passage = np.asarray(embed(profile, [passage_text])[0], dtype=np.float32)
+else:
+    # Read the saved encoder outputs before VectorStore applies L2 normalization.
+    with np.load(vectors[0]) as saved:
+        raw_query = saved["query_vectors"][VECTORS.queries[embedding_query]].astype(np.float32)
+        raw_passage = saved["chunk_vectors"][VECTORS.chunk_ids.index(embedding_chunk.chunk_id)].astype(np.float32)
+
+query_unit = raw_query / max(np.linalg.norm(raw_query), 1e-12)
+passage_unit = raw_passage / max(np.linalg.norm(raw_passage), 1e-12)
+print("Vector shapes:", raw_query.shape, raw_passage.shape)
+print("First 6 query components:", raw_query[:6])
+print("Normalized lengths:", np.linalg.norm(query_unit), np.linalg.norm(passage_unit))
+print("Cosine similarity for this pair:", float(query_unit @ passage_unit))
+assert raw_query.shape == raw_passage.shape == (VECTORS.manifest["dimension"],)
+assert np.isclose(np.linalg.norm(query_unit), 1.0)
+""")
+md(r"""
+Expected: two 4096-component vectors for the supplied e5-mistral profile, unit length after normalization,
+and one cosine score. This is the same text preparation used by the corpus builder. A new question needs a
+new encoder call; replay contains only the supplied question wordings. Keep `EMBED_LIVE = False` for the
+reference comparison below: a different model or instruction cannot be mixed with the saved document vectors.
+""")
+
+md(r"""
 ## 4. Baseline S0: keyword search, top 5, no filters
 
 Search runs live; the model answers for all 143 questions come from replay.
@@ -300,6 +348,96 @@ run("S0")
 show(reval.ablation({"S0": scores["S0"]}, {}), ["config", "recall@5", "evidence recall", "end-to-end",
                                                  "correct + verified", "abstain ok", "conflict ok"])
 """)
+md(r"""
+### Walkthrough 2. Query → scores → top-k
+
+Open [`BM25Index`, `DenseIndex`, `rrf` and `HybridIndex`](../src/plant_assistant/search.py).
+BM25 scores token matches; dense search multiplies normalized document vectors by the normalized question vector.
+We use the same page-table collection, tag normalization and no filters for both methods here. These are
+illustrative rankings; the S0 metrics below still use S0's unnormalized configuration.
+""")
+code(r"""
+from plant_assistant.search import BM25Index, DenseIndex, rrf, tokenize
+
+query = P101.query
+bm25_example = BM25Index(chunks, normalize=True, rows="pages")
+dense_example = DenseIndex(chunks, VECTORS, normalize=True, rows="pages")
+print("BM25 query tokens:", tokenize(normalize_tags(query)))
+bm25_scores = bm25_example.scores(query)
+q_vector, _ = dense_example.query_vector(query)
+cosine_scores = dense_example.matrix @ q_vector
+np.testing.assert_allclose(cosine_scores, dense_example.scores(query))
+
+for label, index, values in [("BM25", bm25_example, bm25_scores), ("dense", dense_example, cosine_scores)]:
+    positions = np.argsort(-values, kind="stable")[:5]
+    manual_top = [index.ids[i] for i in positions]
+    assert manual_top == [h.chunk_id for h in index.search(query, k=5)]
+    display(Markdown(f"**{label}: scores → top-5**"), pd.DataFrame({
+        "rank": range(1, 6), "chunk": manual_top, "score": values[positions],
+        "source": [where(by_id[c]) for c in manual_top]}))
+
+# Hybrid search combines ranks, not the incompatible BM25 and cosine scores.
+rankings = [bm25_example.search(query, k=20), dense_example.search(query, k=20)]
+fused = rrf(rankings, k=5, c=60)
+first = fused[0]
+manual_rrf = sum(1 / (60 + hit.rank) for ranking in rankings for hit in ranking
+                 if hit.chunk_id == first.chunk_id)
+assert np.isclose(manual_rrf, first.score)
+print("Hybrid top-1:", first.chunk_id, "RRF score:", manual_rrf)
+""")
+md(r"""
+Expected: the manually selected top-5 matches each index's `search` result, and the RRF sum matches its top-1
+score. BM25, cosine scores and fusion are calculated now; only encoder outputs are saved. Later,
+[`System.retrieve`](../src/plant_assistant/pipeline.py) adds date/scope filters, separate table rows, optional
+reranking and context assembly. LLM and cross-encoder reranking functions are in `search.py`; their external
+model responses come from replay on the required path.
+""")
+md(r"""
+### Walkthrough 3. One question → retrieval metrics → answer grade
+
+Open [`retrieval_metrics`, `grade`, `attribute` and `score`](../src/plant_assistant/reval.py).
+For `m06`, find the deadline and the comparison limit. Recall requires every annotated **answer** item in the
+search top-k; evidence recall requires every evidence item in the final context. Each `any_of` group allows
+alternative chunks. MRR uses the first answer item's rank in the retrieved candidate list (up to depth 20),
+not just the five chunks supplied to the model.
+""")
+code(r"""
+from plant_assistant.units import has_value
+
+metric_case = case_by_id["m06"]
+metric_record = next(r for r in records["S0"] if r["case_id"] == metric_case.case_id)
+print(metric_case.question_en)
+answer_groups = metric_case.gold("answer")
+all_groups = metric_case.gold()
+top_ids = set(metric_record["top"])
+context_ids = set(metric_record["context"])
+display(pd.DataFrame({"evidence alternatives": [sorted(g) for g in all_groups],
+                      "in search top-k": [bool(g & top_ids) for g in all_groups],
+                      "in final context": [bool(g & context_ids) for g in all_groups]}))
+first_rank = next((i for i, cid in enumerate(metric_record["retrieved"], 1) if cid in answer_groups[0]), None)
+manual_metrics = {"recall@k": all(bool(g & top_ids) for g in answer_groups),
+                  "evidence_recall": all(bool(g & context_ids) for g in all_groups),
+                  "mrr": 1 / first_rank if first_rank else 0.0}
+assert manual_metrics == reval.retrieval_metrics(metric_case, metric_record)
+print("Manual metrics = module metrics:", manual_metrics)
+
+answer = metric_record["answer"]
+answer_text = f"{answer['answer']} {answer.get('value') or ''}"
+number_checks = {v: has_value(answer_text, v) for v in metric_case.expected["values"]}
+manual_grade = answer["status"] == "answered" and all(number_checks.values())
+correct, reason = reval.grade(metric_case, answer)
+assert manual_grade == correct
+print("Expected numbers present:", number_checks)
+print("Answer grade:", correct, reason, "| loss link:", reval.attribute(metric_case, metric_record, correct, by_id))
+""")
+md(r"""
+Expected for S0 `m06`: answer recall is true, evidence recall is false, and the answer fails the number check:
+it gives 8 h but omits the 4.5 mm/s limit. The diagnosed link is assembly. This multi-value grader checks numeric
+presence, not units, roles or prose correctness. Single-value cases also check units. Across questions,
+`score` produces one row per case; `ablation` aggregates it with Wilson intervals and paired comparisons from
+[`evals/stats.py`](../src/plant_assistant/evals/stats.py). No metric is read from a saved model response.
+""")
+
 code(r"""
 display(Markdown("**Wrong answers of S0 by link**"))
 pd.DataFrame([reval.losses(scores["S0"])], index=["S0"])

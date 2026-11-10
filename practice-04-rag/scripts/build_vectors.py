@@ -34,7 +34,7 @@ from plant_assistant.cases import load_cases  # noqa: E402
 from plant_assistant.config import get_profile  # noqa: E402
 from plant_assistant.corpus import index_version  # noqa: E402
 from plant_assistant.normalize import normalize_tags  # noqa: E402
-from plant_assistant.smoke_test import embed  # noqa: E402
+from plant_assistant.embeddings import embed  # noqa: E402
 from plant_assistant.store import load_store  # noqa: E402
 from plant_assistant.units import plain  # noqa: E402
 

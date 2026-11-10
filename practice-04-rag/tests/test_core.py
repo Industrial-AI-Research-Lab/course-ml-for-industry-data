@@ -550,3 +550,33 @@ def test_contract_v3_check_field_and_leaks(chunks, cases):
     assert out["fallback"] and out["answer"].status == "needs_human" and out["answer"].value is None
     assert len(out["leaks"]) == 2
 
+
+
+@pytest.mark.parametrize("query", [False, True])
+def test_embedding_request_prepares_queries_only(monkeypatch, query):
+    from types import SimpleNamespace
+    import openai
+    from plant_assistant import embeddings
+
+    profile = SimpleNamespace(base_url="http://example.invalid/v1", api_key="test-key", timeout_s=7,
+                              model="test-encoder", query_prefix="Instruction: ")
+    request = {}
+
+    class FakeClient:
+        def __init__(self, **kwargs):
+            request["client"] = kwargs
+            self.embeddings = self
+
+        def create(self, **kwargs):
+            request["body"] = kwargs
+            return SimpleNamespace(data=[SimpleNamespace(embedding=[1.0, 0.0]),
+                                         SimpleNamespace(embedding=[0.0, 1.0])])
+
+    monkeypatch.setattr(embeddings, "get_profile", lambda name: profile)
+    monkeypatch.setattr(openai, "OpenAI", FakeClient)
+    texts = ["P-101 limit", "P-205 limit"]
+    assert embeddings.embed("test", texts, query=query) == [[1.0, 0.0], [0.0, 1.0]]
+    expected = [profile.query_prefix + t for t in texts] if query else texts
+    assert request["body"] == {"model": profile.model, "input": expected}
+    assert request["client"] == {"base_url": profile.base_url, "api_key": profile.api_key, "timeout": 7}
+    assert texts == ["P-101 limit", "P-205 limit"]

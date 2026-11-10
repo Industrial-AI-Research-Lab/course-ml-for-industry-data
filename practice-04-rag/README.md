@@ -34,7 +34,7 @@ PRACTICE_MODE=replay uv run --offline --locked jupyter nbconvert \
 ```
 
 Verified on macOS with Python 3.12.12 on 2026-11-10: fresh environment, empty package cache,
-40 passing tests and 40 executed notebook code cells. Replay reference tables reproduced exactly;
+42 passing tests and 43 executed notebook code cells. Replay reference tables reproduced exactly;
 runtime checks used no credentials and blocked external Python connections.
 
 ### Optional live answers
@@ -48,6 +48,14 @@ uv run --locked jupyter lab notebooks/practice_04_rag.ipynb
 
 The notebook calls the course Qwen for individual examples when available; full evaluations stay on replay.
 `PRACTICE_MODE=replay` forces replay. Live results may differ from the saved run.
+
+## Code walkthroughs
+
+The notebook exposes three small calculations: text preparation and encoder output, BM25/cosine scores and
+RRF ranking, and metrics for one question checked against the evaluation module. Follow the source links in
+each walkthrough. Production functions remain in `src/plant_assistant/`: `embeddings.py` calls the encoder,
+`search.py` ranks chunks, `pipeline.py` connects the steps, and `reval.py` computes the metrics.
+The embedding call is optional; the required path uses saved vectors and recalculates search and metrics locally.
 
 ## Student work and scope
 
