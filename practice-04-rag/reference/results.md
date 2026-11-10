@@ -1,6 +1,6 @@
 # Practice 4 — reference results
 
-Lecturer's run on the course model `iairlab/qwen3.8-27b` (thinking off), replayed. Search and filters are deterministic; model answers may differ by a question or two in a live run (compare with the intervals).
+Reference run on the course model `iairlab/qwen3.8-27b` (thinking off), replayed. Search and filters are deterministic; model answers may differ by a question or two in a live run (compare with the intervals).
 
 - Store: 16 documents, 47 pages, 440 chunks (110 of them rows of the long valve table); index version `corpus-5719c6dc76.parser-a53367.emb-none`.
 - Retrieval set: 143 questions; by slice: {'base': 50, 'language': 20, 'applicability': 12, 'point_in_time': 10, 'incident': 3, 'what_changed': 4, 'multi_evidence': 8, 'cross_doc': 3, 'conflict': 9, 'table_row': 8, 'tag_variant': 6, 'not_in_documents': 10}.
@@ -196,7 +196,7 @@ False refusals add manual work. Wrong or invented values can mislead decisions. 
 
 ## Latency and cost per question
 
-Median seconds per question = search (measured on the lecturer's laptop) + model latency of every call (as measured when the answer was made; replay keeps it). Calls and tokens are per question, all calls counted (an uncached system).
+Median seconds per question = search (measured on the reference machine) + model latency of every call (as measured when the answer was made; replay keeps it). Calls and tokens are per question, all calls counted (an uncached system).
 
 | config   |   median s / question |   p90 s |   search ms (median) |   model calls / question |   chat calls / question |   prompt tokens / question |   completion tokens / question |   cross-encoder tokens / question |
 |:---------|----------------------:|--------:|---------------------:|-------------------------:|------------------------:|---------------------------:|-------------------------------:|----------------------------------:|

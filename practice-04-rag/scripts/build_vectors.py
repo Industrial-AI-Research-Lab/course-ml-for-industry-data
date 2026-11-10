@@ -1,7 +1,7 @@
 """Embedding vectors of the chunks and of the questions, for dense search (M1) and hybrid search (M2).
 
 Needs an embedding profile that answers (models.toml): e5-mistral-7b-instruct on the course server (the
-lecturer's reference, `embed-course`) or Ollama on your laptop (`ollama pull bge-m3`). Writes
+saved reference, `embed-course`) or Ollama on your laptop (`ollama pull bge-m3`). Writes
 data/replay/vectors/<name>.npz (chunk_vectors, query_vectors, float16) and <name>.json (model, dimension, corpus
 version, chunk ids and query texts in the same order, the query instruction, the latency of each query call).
 

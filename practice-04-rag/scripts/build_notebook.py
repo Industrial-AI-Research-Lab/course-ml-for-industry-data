@@ -33,6 +33,16 @@ An engineer asks: *"After a bearing change, pump P-101 vibrates at 4.8 mm/s. Is 
 regulation R-12, but the plant archive now has 16 documents, with old revisions, near-copies and a manual in English.
 You measure where answers get lost, fix one cause at a time, and compare each fix with the step before it on the
 same questions.
+
+**How to work.** Follow sections 0–9 in order (about 60–75 minutes). At the three checkpoints, write a short
+Markdown answer before opening the reference. Keep your answers and final comparison in a copy of this notebook.
+No new API calls or code implementation are required; the optional experiments come last.
+
+**Lecture connection.** Relevance → search; applicability → registry and scope; currency → date intervals;
+completeness → evidence packs; provability → citation checks with known limits. All documents are synthetic and
+available to every user here: permissions/ACL belong to topic 7. Reading is inherited from practice 3; search
+becomes a tool in topic 5, and the regression gate connects to topic 6. The lecture also discusses evaluating
+procedures with a calibrated judge; that evaluation is not implemented in this notebook.
 """)
 md(r"""
 **Glossary: measuring**
@@ -48,7 +58,7 @@ md(r"""
 - **false refusal**: "not in the documents" or "needs a person" although the documents answer.
 - **invented value**: a value given where the documents have none.
 - **token**: a piece of text a model reads or writes; it measures size and cost.
-- **ablation table**: one change per row; each row is compared with the row above.
+- **ablation table**: one change per row; each row is compared with the configuration in `vs`.
 - **paired comparison**: both rows answer the same questions; we count questions fixed and broken.
 - **fixed / broke**: questions the new row fixed, and questions it broke.
 - **verdict**: paired-test result at the chosen threshold; subject to sample-size limits.
@@ -86,14 +96,18 @@ md(r"""
 | 2 Archive | 16 documents, 440 chunks |
 | 3 Questions | 143 in 12 slices |
 | 4 S0 | half right, losses in search |
-| 5 S1–S5 | each step fixes its slice |
-| 6 Mechanisms | wording fixed, dates not |
+| 5 S1–S5 | gains and regressions by slice |
+| 6 Mechanisms | compare gains by slice and cost |
 | 7 Contract | checked citations, conflicts |
 | 8 Audit, holdout | a record, a gate, new questions |
 | 9 Check | your numbers equal the reference |
 
-**Live or replay.** Search runs on your laptop; model answers come from replay. `Mode: REPLAY` with a course
-token: check `.env` (README, "Common problems").
+**Before you start.** Complete README → “Run the practice”. Choose Python 3.12 and the installed practice
+environment as your notebook kernel. Start with `PRACTICE_MODE=replay`; no key is needed.
+
+Search runs locally. Full evaluations always replay saved model responses; only individual examples can use a
+configured live model. `Mode: REPLAY` is the expected result on the required path. If imports fail, check the
+kernel; if a request raises `ReplayMiss`, restore the supplied question, prompt and configuration.
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -102,6 +116,16 @@ md(r"""
 
 The final table of this practice. Each row adds one change to the row in "compared with" and is compared with it
 on the same questions.
+
+**How to work.** Follow sections 0–9 in order (about 60–75 minutes). At the three checkpoints, write a short
+Markdown answer before opening the reference. Keep your answers and final comparison in a copy of this notebook.
+No new API calls or code implementation are required; the optional experiments come last.
+
+**Lecture connection.** Relevance → search; applicability → registry and scope; currency → date intervals;
+completeness → evidence packs; provability → citation checks with known limits. All documents are synthetic and
+available to every user here: permissions/ACL belong to topic 7. Reading is inherited from practice 3; search
+becomes a tool in topic 5, and the regression gate connects to topic 6. The lecture also discusses evaluating
+procedures with a calibrated judge; that evaluation is not implemented in this notebook.
 """)
 code(r"""
 import warnings
@@ -157,7 +181,7 @@ replay = {task: ReplayClient(REPLAY_DIR / f"{task}_course.jsonl")
 live = LLMClient(get_profile(PROFILE), logger=CallLogger(RUNS_DIR / f"my-{PROFILE}" / "calls.jsonl")) if LIVE \
     else replay["answers"]
 print("Mode:", f"LIVE single questions on {PROFILE}, the full set from replay" if LIVE else
-      "REPLAY of the lecturer's saved answers (course model)")
+      "REPLAY of saved reference answers (course model)")
 from plant_assistant.search import VectorStore
 
 vectors = sorted((REPLAY_DIR / "vectors").glob("*.npz"))
@@ -210,8 +234,9 @@ pd.DataFrame([{f: getattr(by_id[cid], f) for f in fields} for cid in
                "VL-2-r4-tА.2-V-12")])
 """)
 md(r"""
-The **index version** is a fingerprint of the chunks, the PDF reader and the embedding model. Every answer record
-keeps it; when it changes, the questions run again.
+The **index version** fingerprints chunk ids/text and parser versions; this build uses the embedding label
+`none`. The vector manifest records the embedding model separately. The current fingerprint does not include
+scope/date metadata, so metadata changes also require explicit evaluation; an unchanged hash is not sufficient.
 """)
 code(r"""
 print("index_version:", summary["index_version"])
@@ -291,10 +316,19 @@ hits_frame(rec, P101, by_id)
 md(r"""
 None of the five holds the answer. They share "после замены подшипника" (after a bearing change) with the
 question: one clause in three regulations, and two maintenance clauses. Table 3 and the inspection deadline are
-missing. **Task 1 of the lecture** used five failures of this run:
+missing.
+
+**Checkpoint 1 — Diagnose (5 minutes).** Before opening the reference below, inspect `g01`, `m06` and `i01` in
+`records["S0"]`. Use `case_by_id[id]`, `hits_frame(record, case, by_id)` and `context_frame(record, case, by_id)`.
+For each case, write: **case → first lost link → missing or misused evidence → one proposed fix**.
+Use the displayed English translation to read the question; search still uses its original language.
+
+Expected output: three diagnoses, each backed by a chunk id or an absent gold item. The reference includes
+search, assembly and model failures; there is no reading failure in this store. Compare only after writing.
 """)
 code(r"""
-display(Markdown((REFERENCE_DIR / "s0_failures.md").read_text(encoding="utf-8")))
+display(Markdown("<details><summary>Checkpoint 1: reference diagnoses</summary>\n\n" +
+                 (REFERENCE_DIR / "s0_failures.md").read_text(encoding="utf-8") + "\n</details>"))
 """)
 
 # ---------------------------------------------------------------------------------------------
@@ -338,7 +372,8 @@ pd.DataFrame({name: scores[name].set_index("case_id").loc[broken, "correct"] for
 md(r"""
 **S3: applicability.** The equipment registry gives each pump its station, class and documents. Search then sees
 only the documents for that station. Pump P-310 is at station 3, so R-14 applies, not R-12. The manual of P-205
-never names the pump; only the registry links them.
+is linked through the registry. The example demonstrates explicit equipment-to-document links, rather than
+relying on keyword matches.
 """)
 code(r"""
 from plant_assistant.applicability import load_registry
@@ -416,7 +451,14 @@ for name in ("S4", "S5"):
 ctx[ctx.gold != ""]
 """)
 md(r"""
-The ladder in the table, each row against the row above:
+**Checkpoint 2 — Measure one fix (7 minutes).** Before running the next cells, predict which slice improves
+most from S3 to S4 and which evidence S5 adds for `m06`. Then inspect the ladder and slice counts.
+Write: **comparison → fixed/broken counts → paired verdict → one case explaining the change**.
+Also compare S2 with S2b on the nine-case table above: does every failed question recover?
+
+Expected output: a four-line comparison. S4 targets past-date questions; S5 supplies Table 3 for `m06`.
+S2b restores the seven cases S1 answered, while `d01` and `d02` already failed at S1. Use `vs`, not row position,
+when interpreting paired verdicts.
 """)
 code(r"""
 for name in ("S3", "S4", "S5"):
@@ -512,9 +554,13 @@ checks.insert(1, "where", checks.chunk_id.map(lambda c: where(by_id[c]) if c els
 checks
 """)
 md(r"""
-**Task 3 of the lecture**: "Inspect P-101 within 24 hours (R-12, rev. 3, clause 4.3.4)". The clause exists and is
-in force, but it is about the stop limit; "24 hours" is in the next clause, 4.3.3. The model can cite only chunks
-it was given, but it can still cite the wrong one. The checks catch it.
+**Checkpoint 3 — Check the evidence (5 minutes).** The answer says “Inspect P-101 within 24 hours” and cites
+R-12 rev. 3, clause 4.3.4. Before running the next cell, predict which check fails. Repeat for revision 2 clause
+4.3.3 and for clause 6.2, which is absent from the supplied context.
+
+Expected output: **citation → failed check → reason**, three lines. Compare with the next table: 4.3.4 lacks
+24 h; revision 2 is out of force; 6.2 is not in the context. Explain why S6 can still be “verified” while refusing
+the answer to P-101. These checks do not certify the full recommended action.
 """)
 code(r"""
 from plant_assistant.answer import Answer, Claim
@@ -544,8 +590,8 @@ for cid in ("f01", "f05"):
     print(f"{cid}: {rec['answer']['status']} | cited {cited} | {rec['answer']['answer'][:220]}")
 """)
 md(r"""
-**Not in the documents.** Valve V-912 is in no document; valve V-112 is only in the registry. Both "not in the
-documents" and "needs a person" are right here: no value is given.
+**Not in the documents.** Valve V-912 is in no document; valve V-112 is only in the registry. The code grader accepts either "not in the
+documents" or "needs a person" here when no value is given; it does not assess the refusal explanation.
 """)
 code(r"""
 for cid in ("x01", "x03"):
@@ -568,8 +614,7 @@ show(ba, ["config", "vs", "end-to-end", "e2e: fixed / broke", "e2e verdict", "fa
 """)
 md(r"""
 **What `check` shows.** Pump P-205 at 6.0 mm/s, where R-12 and the manual disagree (`f03`). At S6 the model sees
-both and still picks R-12, by a rule nobody gave it. `check` does not fix this, but the log shows why, so a person
-can fix the rule or the prompt. With dense search or the reranker on top, the answer is right.
+both and still picks R-12, by a rule nobody gave it. `check` does not fix this, and the log records the model's stated justification. Treat it as an output to inspect, not a causal explanation. With dense search or the reranker on top, the answer is right.
 """)
 code(r"""
 f03 = case_by_id["f03"]
@@ -661,16 +706,20 @@ md(r"""
 md(r"""
 ## 9. Check yourself
 
-Your search columns must equal the reference exactly; end-to-end from replay too. A live run may differ by a few
-questions.
+Your search and replay grader columns must equal the reference exactly. The cell below fails if any compared
+value differs. Live examples can differ; they do not replace the replay comparison.
 """)
 code(r"""
 mine = reval.ablation(scores, previous).set_index("config")
 ref = reference.set_index("config")
 common = [c for c in mine.index if c in ref.index]
-pd.DataFrame({"recall@5 (yours)": mine.loc[common, "recall@5"], "recall@5 (reference)": ref.loc[common, "recall@5"],
-              "end-to-end (yours)": mine.loc[common, "end-to-end"],
-              "end-to-end (reference)": ref.loc[common, "end-to-end"]})
+metrics = ["recall@5", "evidence recall", "end-to-end"]
+comparison = pd.DataFrame({f"{m} ({label})": frame.loc[common, m]
+                           for m in metrics for label, frame in (("yours", mine), ("reference", ref))})
+display(comparison)
+assert {c.name for c in LADDER} <= set(common), "Missing ladder rows"
+assert mine.loc[common, metrics].equals(ref.loc[common, metrics]), "Results differ: see comparison above"
+print(f"PASS: {len(common)} configurations match the reference on all three metrics.")
 """)
 md(r"""
 **Success criteria**
@@ -680,8 +729,10 @@ md(r"""
 - Valve V-912 gets no value; P-205 and the lubrication of P-101 get "conflict" with both documents cited.
 """)
 md(r"""
-**What you built:** a question set, losses by link, six plant steps, an answer contract with checks, an audit
-record and a regression gate.
+**Your result.** Keep the three checkpoint answers and the passing comparison. Finish with three sentences:
+which fix you would try first, what evidence supports that choice, and what the automatic score cannot prove.
+For your project, start with 20 questions covering applicable/current evidence and absent answers; compare S0
+with one proposed fix before adding more mechanisms.
 """)
 md(r"""
 **Typical mistakes**

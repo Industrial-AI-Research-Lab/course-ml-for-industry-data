@@ -5,7 +5,7 @@ against that: a model gets only the documents and short descriptions of four rol
 people would ask. Then code keeps the questions it can grade: the evidence resolves to chunks, the value is in the
 evidence, the wording does not copy the answer chunk (lexical leak), the question is not a near-copy of the set.
 
-Live (lecturer):  uv run python scripts/draft_holdout.py --draft        # calls the `drafter` profile
+Optional live generation:  uv run python scripts/draft_holdout.py --draft        # calls the `drafter` profile
 Rebuild:          uv run python scripts/draft_holdout.py                # from data/holdout_drafts.jsonl
 Writes data/holdout.jsonl (slice "holdout", tag "role") and the list of all drafts with the reasons they were
 kept or dropped to runs/holdout_review.md (not published).

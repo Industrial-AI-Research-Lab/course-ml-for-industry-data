@@ -7,7 +7,7 @@ Task: for each answer write where it was lost: R = reading, S = search, C = cont
 
 - Question (asked in Russian): После замены подшипника насос P-101 вибрирует 4,8 мм/с. Это норма? Что делать и в какой срок?
 - Translation: After a bearing change pump P-101 vibrates at 4.8 mm/s. Is this normal? What must be done, and by when?
-- Expected: ['4,5', '24'] h
+- Expected numbers: 4,5; 24 (check units and roles in gold evidence).
 - System answer: The sources do not specify the vibration limit to determine if 4.8 mm/s is normal, but they mandate that measurements be taken within 8 hours after startup following a bearing replacement. You must perform the measurement within this 8-hour window. (value: None)
 - Gold evidence: R-12 r3 cl 4.3.3; R-12 r3 t 3; R-12 r3 cl 6.1; R-12 r3 cl 6.2
 - Top-5 of search: R-12 rev. 2 cl. 4.4.2; R-12 rev. 3 cl. 4.4.2; R-14 rev. 1 cl. 4.4.2; R-15 rev. 1 cl. 4.3; R-15 rev. 1 cl. 5.1
@@ -37,7 +37,7 @@ Task: for each answer write where it was lost: R = reading, S = search, C = cont
 
 - Question (asked in Russian): После замены подшипника насос P-101 запустили. В течение скольких часов нужно измерить вибрацию и с какой границей сравнить результат?
 - Translation: Pump P-101 was started after a bearing change. Within how many hours must the vibration be measured, and against which limit?
-- Expected: ['8', '4,5'] h
+- Expected numbers: 8; 4,5 (check units and roles in gold evidence).
 - System answer: Vibration measurements must be taken within 8 hours after startup. The sources do not specify the comparison limit. (value: 8)
 - Gold evidence: R-12 r3 cl 4.4.2; R-12 r3 t 3
 - Top-5 of search: R-12 rev. 2 cl. 4.4.2; R-12 rev. 3 cl. 4.4.2; R-14 rev. 1 cl. 4.4.2; FS-07 rev. 2 cl. 3.3; R-12 rev. 2 cl. 6.1
@@ -47,7 +47,7 @@ Task: for each answer write where it was lost: R = reading, S = search, C = cont
 
 - Question (asked in Russian): 10.02.2025 насос P-101 вибрировал 4,8 мм/с, осмотр в течение суток не провели. Было ли это нарушением регламента?
 - Translation: On 10 February 2025 pump P-101 vibrated at 4.8 mm/s and nobody inspected it within 24 hours. Was this a violation of the regulation?
-- Expected: ['5,0'] mm/s
+- Expected numbers: 5,0 (check units and roles in gold evidence).
 - System answer: Yes, it was a violation of the regulation. The vibration of 4.8 mm/s exceeded the inspection threshold of 4.5 mm/s for a Class II pump, requiring an inspection within 24 hours, which was not performed. (value: 4,5)
 - Gold evidence: R-12 r2 t 3; R-12 r2 cl 4.3.3
 - Top-5 of search: R-12 rev. 2 cl. 4.3.3; R-12 rev. 3 cl. 4.3.3; R-14 rev. 1 cl. 4.3.3; R-12 rev. 2 Table 3; R-12 rev. 3 Table 3

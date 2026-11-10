@@ -1,6 +1,6 @@
 """Build the reference results of practice 4 and the replay files.
 
-Live (the lecturer, with the course token):   uv run python scripts/build_reference.py
+Live (with a configured course token):   uv run python scripts/build_reference.py
 From replay (anyone, no network):              uv run python scripts/build_reference.py --replay
 Only the needs_human set, live, merged into the replay:  uv run python scripts/build_reference.py --only-needs-human
 
@@ -213,7 +213,8 @@ def failures_md(cases, records: dict, df: pd.DataFrame, by_id: dict, picked: lis
         out += [f"## {i}. {cid} ({c.slice}) — lost in: **{row.link}**\n",
                 (f"- Question (asked in English, sent to search as is): {c.question_en}" if c.language == "en" else
                  f"- Question (asked in Russian): {c.question_ru}\n- Translation: {c.question_en}"),
-                f"- Expected: {exp} {c.expected.get('unit') or ''}".rstrip(),
+                (f"- Expected numbers: {'; '.join(map(str, exp))} (check units and roles in gold evidence)."
+                 if isinstance(exp, list) else f"- Expected: {exp} {c.expected.get('unit') or ''}".rstrip()),
                 f"- System answer: {ans.get('answer', '(invalid)')} (value: {ans.get('value')})",
                 f"- Gold evidence: {'; '.join(e['any_of'][0] for e in c.evidence) or 'none: not in the documents'}",
                 "- Top-5 of search: " + "; ".join(describe_chunk(by_id[x]) for x in r["retrieved"][:5]),
@@ -455,7 +456,7 @@ def main() -> None:
     lines = [
         "# Practice 4 — reference results",
         "",
-        "Lecturer's run on the course model `iairlab/qwen3.8-27b` (thinking off), "
+        "Reference run on the course model `iairlab/qwen3.8-27b` (thinking off), "
         f"{'replayed' if args.replay else 'live'}. Search and filters are deterministic; model answers may differ "
         "by a question or two in a live run (compare with the intervals).",
         "",
@@ -561,7 +562,7 @@ def main() -> None:
         "",
         "## Latency and cost per question",
         "",
-        "Median seconds per question = search (measured on the lecturer's laptop) + model latency of every call "
+        "Median seconds per question = search (measured on the reference machine) + model latency of every call "
         "(as measured when the answer was made; replay keeps it). Calls and tokens are per question, all calls "
         "counted (an uncached system).",
         "",

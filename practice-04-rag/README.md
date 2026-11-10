@@ -49,6 +49,17 @@ uv run --locked jupyter lab notebooks/practice_04_rag.ipynb
 The notebook calls the course Qwen for individual examples when available; full evaluations stay on replay.
 `PRACTICE_MODE=replay` forces replay. Live results may differ from the saved run.
 
+## Student work and scope
+
+Allow 60–75 minutes for the guided notebook. Write three short checkpoint answers: diagnose failures, compare
+one fix, and identify invalid citations. Keep them with the final metric comparison and a three-sentence
+conclusion. Each checkpoint provides an expected format and a reference result. Optional experiments are extensions.
+
+The notebook applies the lecture's process: diagnose a loss, change one link, compare paired results.
+It reuses practice 3's reading output and prepares search as a tool (topic 5) and regression checks (topic 6).
+Permissions/ACL are deferred to topic 7. Text-answer evaluation with a calibrated judge, discussed in the lecture,
+is outside the implemented notebook; numbers/statuses and limited citation checks are evaluated here.
+
 ## Files
 
 | Path | Contents |

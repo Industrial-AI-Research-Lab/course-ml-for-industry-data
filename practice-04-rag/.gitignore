@@ -1,4 +1,4 @@
-# Your own builds and runs. The lecturer's reference (reference/, incl. reference/store/), the documents
+# Your own builds and runs. The saved reference (reference/, incl. reference/store/), the documents
 # (data/docs/) and the replay files (data/replay/) are in git on purpose.
 # "/store/" (not "store/"): a pattern without the leading slash would also hide reference/store/.
 /store/
