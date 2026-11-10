@@ -467,6 +467,14 @@ def main() -> None:
         "hybrid = RRF of the BM25 and dense top-20, the LLM reranker (M3, course Qwen, listwise) and the cross-encoder "
         "`iairlab/bge-reranker-v2-m3` (M4, `/rerank`), both over the top-20 of the row they are added to.",
         "",
+        "## Evaluation limits",
+        "",
+        "End-to-end is the code-grader score: one value and its unit, the presence of required numbers in a "
+        "multi-value answer, or an expected status. It does not grade the full explanation or recommended action. "
+        "Citation checks test sources, dates and numeric presence; they do not establish support for every claim. "
+        "The small synthetic holdout and unadjusted paired tests are exploratory. See README, 'What the evaluation "
+        "does and does not prove'.",
+        "",
         "## Ablation table",
         "",
         "Every row adds one change to the row named in `vs` and is compared with it in pairs on the same questions "
@@ -499,8 +507,8 @@ def main() -> None:
         "the sources agree, is the number in the cited text, is the answer in the documents at all), logged and never "
         f"shown or graded, and `maxLength` {A.ANSWER_MAX} on `answer`. A leak detector in code (markers such as "
         "\"Wait\", \"Let me\", \"Actually\", or an answer cut at the limit) asks once more, then falls back to "
-        "`needs_human`. With thinking off, the JSON is the only place the model can reason: in v1 it reasoned inside "
-        "`answer`, and that caught the conflict of f03; v2 took the room away.",
+        "`needs_human`. The internal field records a brief consistency check. It is not evidence of the model's "
+        "reasoning or of answer correctness; the version comparison measures observed outputs only.",
         "- **v2 in thinking mode** (`S6:think`, profile `course-thinking`): the reasoning goes to its own channel "
         "(not logged in the replay); the server applies the JSON schema to the content after it (checked).",
         "",
@@ -521,8 +529,8 @@ def main() -> None:
         "",
         md_table(contract_slices, index=True),
         "",
-        "Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict that v1 caught by reasoning "
-        "in the answer; n04: \"not in the documents\"); `check` is the internal field of v3: logged for the audit, "
+        "Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict answered correctly "
+        "by v1; n04: \"not in the documents\"); `check` is the internal field of v3: logged for the audit, "
         "never shown to the engineer:",
         "",
         md_table(p101_rows.fillna("")),
@@ -547,8 +555,7 @@ def main() -> None:
         "questions whose answer is not in the documents (\"needs a person\" is accepted there: no value is given). "
         "Invalid: no answer of the schema.",
         "",
-        "A refusal is safe but not free: the engineer searches the archive by hand or waits for a person, and a "
-        "system that refuses a third of the time is not used. A wrong value is worse: it goes into a decision. "
+        "False refusals add manual work. Wrong or invented values can mislead decisions. "
         "S0 fails both ways; S6 almost only by refusing; the reranker alone (M3@S0) refuses less than S0 but keeps "
         "giving wrong values and invents values on \"not in the documents\" questions.",
         "",
@@ -581,7 +588,7 @@ def main() -> None:
         "norm is in the documents, but the answer depends on equipment data that no document and no registry card "
         "has (a pump without power and class, a tag that matches two pumps, no tag, a spare pump without a station, "
         "a grease named only in a missing datasheet, a measurement in one direction of three). Right: only "
-        "`needs_human`. `not_in_documents` is wrong but safe; a value means the system chose a class, a station or "
+        "`needs_human`. `not_in_documents` does not meet the expected status; a value means the system chose a class, a station or "
         "a measurement that nobody gave it. S5 has no status field: it shows what the contract adds. Cells: status "
         "(value).",
         "",

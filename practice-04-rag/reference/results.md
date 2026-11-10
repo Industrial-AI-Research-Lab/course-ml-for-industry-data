@@ -6,6 +6,10 @@ Lecturer's run on the course model `iairlab/qwen3.8-27b` (thinking off), replaye
 - Retrieval set: 143 questions; by slice: {'base': 50, 'language': 20, 'applicability': 12, 'point_in_time': 10, 'incident': 3, 'what_changed': 4, 'multi_evidence': 8, 'cross_doc': 3, 'conflict': 9, 'table_row': 8, 'tag_variant': 6, 'not_in_documents': 10}.
 - Mechanisms (the course server): dense search with `iairlab/e5-mistral-7b-instruct` (4096-dim; questions with the instruction, documents without; vectors in `data/replay/vectors/e5-mistral.*`), hybrid = RRF of the BM25 and dense top-20, the LLM reranker (M3, course Qwen, listwise) and the cross-encoder `iairlab/bge-reranker-v2-m3` (M4, `/rerank`), both over the top-20 of the row they are added to.
 
+## Evaluation limits
+
+End-to-end is the code-grader score: one value and its unit, the presence of required numbers in a multi-value answer, or an expected status. It does not grade the full explanation or recommended action. Citation checks test sources, dates and numeric presence; they do not establish support for every claim. The small synthetic holdout and unadjusted paired tests are exploratory. See README, 'What the evaluation does and does not prove'.
+
 ## Ablation table
 
 Every row adds one change to the row named in `vs` and is compared with it in pairs on the same questions (exact McNemar test, practice 2). Intervals: Wilson, 95%. recall@5 and evidence recall exclude the questions whose right answer is "not in the documents" (no evidence). From S2b on, the search result is the top-5 chunks plus up to 2 rows of the row collection; documents that the registry links to the equipment (S3+) are not search: they count in evidence recall, not in recall@5.
@@ -53,7 +57,7 @@ Search and context are the same in every version: evidence recall does not chang
 
 - **v1** (`S6:v1`, `M*@S6:v1`, the first reference run): the model copies citation objects (document, revision, clause, table, row, page) from the source headers; no limits. Long answers ran out of the 3000 tokens.
 - **v2** (`S6:v2`, `M*@S6:v2`): a claim cites the **ids of the chunks** in the context, and the JSON schema makes the id an `enum` of exactly those ids (built per question); at most 5 claims, at most 2 sources per claim; code fills the citation fields from the index. An answer cut by the token limit (3000, unchanged) or not of the schema is asked once more with a short instruction; if it fails again, the answer is `needs_human` with no value (a fallback).
-- **v3** (`S6` and every row built on it): v2 plus an internal field `check` first in the schema (at most 300 characters: do the sources agree, is the number in the cited text, is the answer in the documents at all), logged and never shown or graded, and `maxLength` 600 on `answer`. A leak detector in code (markers such as "Wait", "Let me", "Actually", or an answer cut at the limit) asks once more, then falls back to `needs_human`. With thinking off, the JSON is the only place the model can reason: in v1 it reasoned inside `answer`, and that caught the conflict of f03; v2 took the room away.
+- **v3** (`S6` and every row built on it): v2 plus an internal field `check` first in the schema (at most 300 characters: do the sources agree, is the number in the cited text, is the answer in the documents at all), logged and never shown or graded, and `maxLength` 600 on `answer`. A leak detector in code (markers such as "Wait", "Let me", "Actually", or an answer cut at the limit) asks once more, then falls back to `needs_human`. The internal field records a brief consistency check. It is not evidence of the model's reasoning or of answer correctness; the version comparison measures observed outputs only.
 - **v2 in thinking mode** (`S6:think`, profile `course-thinking`): the reasoning goes to its own channel (not logged in the replay); the server applies the JSON schema to the content after it (checked).
 
 Every S6-based row (S6, M1@S6..M4@S6) is measured with v3; its v1 and v2 answers stay in the replay as `X:v1` and `X:v2` rows.
@@ -97,7 +101,7 @@ End-to-end by slice:
 | M4@S6    | 8/8              | 3/4            | 7/9        | 13/20      | 10/10           |
 | S6:think | 4/8              | 2/4            | 7/9        | 11/20      | 10/10           |
 
-Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict that v1 caught by reasoning in the answer; n04: "not in the documents"); `check` is the internal field of v3: logged for the audit, never shown to the engineer:
+Questions to watch (m01: the lecture question; i01: the incident; f03: a conflict answered correctly by v1; n04: "not in the documents"); `check` is the internal field of v3: logged for the audit, never shown to the engineer:
 
 | row      | question   | status           | value   | right   | verified   | retried   | fallback   |   leaks | check (internal)                                                                                                                                                 |
 |:---------|:-----------|:-----------------|:--------|:--------|:-----------|:----------|:-----------|--------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -188,7 +192,7 @@ Needs a person (6): see the table in the next section (the main rows are v3; `:v
 
 The columns `false refusals` .. `invalid` split the wrong answers by kind (every question is exactly one of: right, false refusal, wrong or invented, invalid). A false refusal is "not in the documents" or "needs a person" on a question whose answer (or conflict) is in the documents: out of the 123 such questions. Wrong or invented: a value that is not the expected one, one side of a conflict given as the answer, or a value where the right answer is "not in the documents". Right abstentions: out of the 20 questions whose answer is not in the documents ("needs a person" is accepted there: no value is given). Invalid: no answer of the schema.
 
-A refusal is safe but not free: the engineer searches the archive by hand or waits for a person, and a system that refuses a third of the time is not used. A wrong value is worse: it goes into a decision. S0 fails both ways; S6 almost only by refusing; the reranker alone (M3@S0) refuses less than S0 but keeps giving wrong values and invents values on "not in the documents" questions.
+False refusals add manual work. Wrong or invented values can mislead decisions. S0 fails both ways; S6 almost only by refusing; the reranker alone (M3@S0) refuses less than S0 but keeps giving wrong values and invents values on "not in the documents" questions.
 
 ## Latency and cost per question
 
@@ -266,7 +270,7 @@ The first reference run (rows mixed with the clauses) broke these questions; Tru
 
 ## The status "needs a person": its own small set
 
-6 questions (`data/needs_human.jsonl`, slice `needs_human`, not in the retrieval set): the norm is in the documents, but the answer depends on equipment data that no document and no registry card has (a pump without power and class, a tag that matches two pumps, no tag, a spare pump without a station, a grease named only in a missing datasheet, a measurement in one direction of three). Right: only `needs_human`. `not_in_documents` is wrong but safe; a value means the system chose a class, a station or a measurement that nobody gave it. S5 has no status field: it shows what the contract adds. Cells: status (value).
+6 questions (`data/needs_human.jsonl`, slice `needs_human`, not in the retrieval set): the norm is in the documents, but the answer depends on equipment data that no document and no registry card has (a pump without power and class, a tag that matches two pumps, no tag, a spare pump without a station, a grease named only in a missing datasheet, a measurement in one direction of three). Right: only `needs_human`. `not_in_documents` does not meet the expected status; a value means the system chose a class, a station or a measurement that nobody gave it. S5 has no status field: it shows what the contract adds. Cells: status (value).
 
 | question            | S5               | S6               | M1@S6          | M2@S6          | M3@S6            | M4@S6            | S6:v1            | M1@S6:v1    | M2@S6:v1    | M3@S6:v1    | M4@S6:v1    | S6:v2            | M1@S6:v2    | M2@S6:v2       | M3@S6:v2       | M4@S6:v2       | S6:think         |
 |:--------------------|:-----------------|:-----------------|:---------------|:---------------|:-----------------|:-----------------|:-----------------|:------------|:------------|:------------|:------------|:-----------------|:------------|:---------------|:---------------|:---------------|:-----------------|

@@ -41,19 +41,19 @@ md(r"""
 - **retrieval set**: 143 questions with known answers and known source chunks.
 - **slice**: a group of questions of one kind, e.g. "the question names a past date".
 - **gold evidence**: the chunks that hold the answer, found from the document structure.
-- **recall@5**: the chunk with the answer is among the first five search results.
-- **evidence recall**: every needed chunk (value, table, action) reached the model.
-- **end-to-end**: the final answer is right: the value with its unit, or the right status.
-- **correct + verified**: right, and every citation passes the three checks of step 7.
+- **recall@5**: all gold answer items are found; S2b onwards adds up to two row results.
+- **evidence recall**: every annotated evidence item (value, table, action) reached the model.
+- **end-to-end**: the answer passes the value/status grader; prose may still contain errors.
+- **correct + verified**: passes the grader, source/date checks and a numeric-support check; see step 7.
 - **false refusal**: "not in the documents" or "needs a person" although the documents answer.
 - **invented value**: a value given where the documents have none.
 - **token**: a piece of text a model reads or writes; it measures size and cost.
 - **ablation table**: one change per row; each row is compared with the row above.
 - **paired comparison**: both rows answer the same questions; we count questions fixed and broken.
 - **fixed / broke**: questions the new row fixed, and questions it broke.
-- **verdict**: "B is better": new row B beats row A, and not by chance.
-- **p**: the chance to see such a difference by luck; below 0.05 we call it a real difference.
-- **[a%–b%]**: the true share lies in this range with 95% confidence.
+- **verdict**: paired-test result at the chosen threshold; subject to sample-size limits.
+- **p**: how unusual this difference would be if both rows performed equally.
+- **[a%–b%]**: uncertainty around a score; small samples give wide intervals.
 """)
 md(r"""
 **Glossary: the rows of the table**
@@ -74,7 +74,7 @@ md(r"""
 - **M1t**: an English question is translated into Russian before search.
 - **@S0 / @S6**: the mechanism instead of the plant steps / on top of them.
 - **replay**: saved model answers; the same request gets the same answer offline.
-- **holdout**: 27 extra questions the fixes were never tuned on.
+- **holdout**: 27 role-based questions drafted without the ladder; an additional evaluation sample.
 """)
 md(r"""
 ## Steps
@@ -169,9 +169,9 @@ VECTORS = VectorStore(vectors[0]) if vectors else None
 md(r"""
 ## 2. The plant archive, version 2
 
-The four documents of practice 3 plus 12 new synthetic ones. All were created as digital files, not scans, so
-reading the PDFs does not get in the way. The scale is small (tens of pages, 440 chunks); the process is the same at any scale. The
-document registry (`data/documents.csv`) gives each document its dates of validity and the stations it covers.
+Four documents reuse the practice 3 store; 12 new PDFs have text layers. The corpus has 47 pages and 440 chunks.
+The document registry (`data/documents.csv`) gives validity dates and scope. Larger archives may need different
+indexing and performance choices.
 """)
 code(r"""
 from plant_assistant.corpus import build_corpus, load_registry
@@ -282,7 +282,7 @@ pd.DataFrame([reval.losses(scores["S0"])], index=["S0"])
 md(r"""
 A wrong answer is charged to the first link that lost it: reading the PDF, search, building the context, or the
 model. Most answers are lost **in search**: the chunk with the answer never reached the model. Nothing is lost in
-reading, because the documents were created as digital files, not scans. Below: the top five search results for the P-101 question.
+reading in this reference store, which reuses the practice 3 output and text-layer PDFs. Below: the top five search results for the P-101 question.
 """)
 code(r"""
 rec = next(r for r in records["S0"] if r["case_id"] == "m01")
@@ -473,7 +473,7 @@ pd.DataFrame({name: [f"{int(scores[name].set_index('case_id').loc[lang, m].astyp
 """)
 md(r"""
 - Mechanisms fix wording and language: dense search answers 17 of 20 English questions.
-- Only the plant steps fix dates, applicability and conflicts: dense search alone answers 3 of 10 past-date questions.
+- Registry and date filters target applicability and versions; dense search alone answers 3 of 10 past-date questions.
 - The cross-encoder gives most of the reranker's gain in a quarter of the time: 0.5 s extra against 2 s.
 """)
 
@@ -485,14 +485,15 @@ S6 adds a fixed answer form: a status, the value with its unit, and up to five s
 model may cite only chunks it was given; code then adds the document, revision, clause and page.
 """)
 md(r"""
-**A place to think.** With thinking off, the model writes the answer at once. So the form starts with a short
-internal field, `check`: do the sources agree, is the number in the cited text? It is logged for the audit, never
-shown to the engineer and never graded.
+**An internal check.** The form starts with `check`: do the sources agree, is the number in the cited text?
+It is logged, hidden from the engineer and not graded. This is a model-generated note, not proof that the
+answer is correct.
 """)
 md(r"""
-**Three checks of every citation**: it **exists** (the chunk was given to the model), it is **in force** on the
-date of the question, and it **supports** the answer (the number and the unit are in its text). One citation must
-support the value; the others back other claims and are checked in part 2 by a judge (a grading model).
+**Citation checks** test source existence, validity dates and whether at least one cited chunk or linked table
+contains the key number and unit. They do not check the correct table row, numerical comparison, every claim or
+action. For conflicts, two different documents suffice; their disagreement is not checked. Full prose evaluation
+is outside this practice.
 """)
 md(r"""
 **The P-101 question.** At S6, keyword search puts Table 3 sixth, so the evidence pack has nothing to start from.
@@ -552,11 +553,9 @@ for cid in ("x01", "x03"):
     print(cid, rec["answer"]["status"], "|", rec["answer"]["answer"][:160])
 """)
 md(r"""
-**The contract in three versions.** An early version had no length limit: long answers were cut off, and the
-model sometimes reasoned inside the answer. The final version adds limits and the `check` field. Thinking mode was
-worse and three times slower. S6:v1 is the early version, S6:v2 adds limits, S6 is the final version with `check`,
-S6:think is thinking mode. The table counts invalid answers, reasoning found in the answer, and answers handed to
-a person.
+**Contract versions.** S6:v1 copies citation objects; long outputs can be cut off. S6:v2 restricts source ids and
+length. S6 adds `check`; S6:think uses v2 with thinking enabled. The table compares grader scores, refusals and
+format failures. Thinking mode scored lower and took about three times longer in the saved run.
 """)
 code(r"""
 for name in ("S6:v1", "S6:v2", "S6:think"):
@@ -589,8 +588,10 @@ full = reval.ablation(scores, previous)
 show(full[full.config.isin([c.name for c in LADDER])], cols + ["correct + verified", "abstain ok", "conflict ok"])
 """)
 md(r"""
-**How a row fails matters.** A refusal is safe but costs the engineer time; a wrong value goes into a decision.
-S0 fails both ways, S6 almost only by refusing, and M3@S0 gives wrong and invented values.
+**Grader limits.** A single-value case checks value and unit. A multi-value case checks only that the numbers
+appear, not their roles or actions. A conflict or needs-a-person case checks the status. A no-answer case also
+accepts a non-conflict response without a value. These scores can miss incorrect prose. See README, “What the
+evaluation does and does not prove”.
 """)
 code(r"""
 modes = ["false refusals", "wrong or invented", "right abstentions", "invalid", "fallbacks"]
@@ -638,8 +639,9 @@ print(f"S6 vs S5: {g['A right']} -> {g['B right']} of {g['n']}, fixed {g['B fixe
 """)
 
 md(r"""
-**Holdout.** 27 questions written by a model from the documents and four job roles only: operator, mechanic,
-reliability engineer, auditor. The fixes were never tuned on them, so they show whether the gains carry over.
+**Holdout.** 27 questions drafted from the documents and four job roles: operator, mechanic, reliability engineer,
+auditor. The drafting prompt did not include the ladder. This is a small synthetic sample; repeated experiments
+mean it is not an untouched final test.
 """)
 code(r"""
 holdout = load_cases(REPLAY_DIR.parent / "holdout.jsonl")
@@ -651,8 +653,8 @@ show(reval.ablation(h_scores, previous), ["config", "vs", "recall@5", "evidence 
 """)
 md(r"""
 - The plant steps still help on the holdout; applicability (S3) is the big step.
-- Between the best rows the differences are within noise: 27 questions are too few.
-- Everyday questions rarely ask about dates or conflicts, so a reranker alone does about as well there.
+- The small holdout does not establish clear differences between the best rows.
+- This sample has few date or conflict questions; a reranker alone scores similarly to S6.
 """)
 
 # ---------------------------------------------------------------------------------------------
