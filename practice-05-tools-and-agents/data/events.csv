@@ -1,0 +1,5 @@
+event_id,date,line_id,event
+E-001,2026-11-08,L-2,Routine inspection. No fault recorded.
+E-002,2026-11-09,L-2,Sealing unit adjusted before production.
+E-003,2026-11-09,L-2,New film roll introduced. Supplier unchanged.
+E-004,2026-11-08,L-1,Routine inspection. No fault recorded.
