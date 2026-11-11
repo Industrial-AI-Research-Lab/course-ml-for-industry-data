@@ -1,0 +1,12 @@
+{
+  "model": "iairlab/qwen3.8-27b",
+  "origin": "course live responses",
+  "recorded_on": "2026-11-11",
+  "requests": 16,
+  "data_sha256": {
+    "batches.csv": "d4767f008a600ed1915dc8e91dfdcb2c6d04663f29dcc371832863d2aba5da9c",
+    "events.csv": "917d9337610ba9bd241b1f6a4d0fedf76f7ce321a1a33a29a35a818a19abc14a"
+  },
+  "replay_sha256": "6f8e3586f87f8bbf0e4cc2bc6bcd9f4f7dcf4aee311fdfed613f4669aba8d4c4",
+  "note": "Saved model latency is not local replay runtime. Synthetic manufacturing data."
+}
