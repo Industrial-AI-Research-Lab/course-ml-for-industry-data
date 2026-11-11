@@ -2,7 +2,6 @@
 
 Investigate a change in production quality with three read-only tools.
 Compare a LangGraph workflow with an agent that chooses its tools.
-Allow 60 to 90 minutes. All data is synthetic. No model training is needed.
 
 ## Start
 
